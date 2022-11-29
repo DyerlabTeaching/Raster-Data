@@ -1,22 +1,24 @@
-# Topic Title
+# Raster Data
 
 
 ## Impetus
 
-This is a description of the basic template file for a course component repository
+For continuously distributed data, the raster data structure is a much more efficient approach 
 
 ## Student Learning Objectives
 
 At the end of this topic, you should be able to:  
- - *Learning Objective 1* 
- - *Learning Objective 2*
- - *Learning Objective 3* 
+%%tana%%
+ - Understand the data structure of raster data. 
+ - Manipulate and transform data that is presented in raster form.
+ - Visualize raster data using normal and `ggplot()` formats.
+ - Extract data from rasters using point data.
 
 ## Content
- - [Slides](slides.html)
- - [Narrative](narrative.html)
- - [In Class](in-class.html)
- - Data Set
+ - The [slides](https://dyerlabteaching.github.io/Raster-Data/slides.html) associated with this topic.
+ - A longer [narrative](https://dyerlabteaching.github.io/Raster-Data/narrative.html) that goes into more depth on the use and analysis of raster-based data.
+ - An [in-class](https://dyerlabteaching.github.io/Raster-Data/in-class.html) activity to from the beetle data set.
+ - an external [Visual Raster Cheat Sheet](https://rpubs.com/etiennebr/visualraster) that briefly covers seveal raster-based operations.
 
 ## Contact Information
 
