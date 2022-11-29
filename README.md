@@ -1,5 +1,6 @@
 # Raster Data
 
+![Rasters!](https://live.staticflickr.com/65535/50510757837_c3606682ac_c_d.jpg)
 
 ## Impetus
 
