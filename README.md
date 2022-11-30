@@ -9,7 +9,7 @@ For continuously distributed data, the raster data structure is a much more effi
 ## Student Learning Objectives
 
 At the end of this topic, you should be able to:  
-%%tana%%
+
  - Understand the data structure of raster data. 
  - Manipulate and transform data that is presented in raster form.
  - Visualize raster data using normal and `ggplot()` formats.
