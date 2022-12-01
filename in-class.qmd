@@ -22,6 +22,63 @@ beetle_url <- "https://raw.githubusercontent.com/DyerlabTeaching/Raster-Data/mai
 
 1. Load the raster and point data in and crop to an appropriate size to display the locations of the sampling plots and make a label for each site.
 
+```{r}
+library( tidyverse )
+library( raster )
+library( sf ) 
+
+elev <- raster( raster_url )
+
+read_csv( beetle_url )  %>% 
+  st_as_sf( coords = c("Longitude","Latitude"), 
+            crs = 4326 ) -> beetles 
+
+beetles
+```
+
+
+
+```{r}
+plot( elev, xlab="Longitude" )
+```
+
+
+```{r}
+beetles %>%
+  st_union() %>%
+  st_buffer( dist = 1 ) %>%
+  st_bbox() 
+
+baja_extent <- extent( c(-115.29354,-108,22,30))
+
+baja_elev <- crop( elev, baja_extent )
+baja_elev
+plot( baja_elev) 
+
+```
+
+
+```{r}
+plot( baja_elev, xlab="Longitude", ylab="Latitude")
+text( beetles, add=TRUE, pch=16, col="red" )
+```
+
+
+```{r}
+library( ggrepel )
+baja_elev %>%
+  rasterToPoints() %>%
+  as.data.frame() %>% 
+  ggplot() +
+  geom_raster( aes(x,y,fill=alt_22) ) +
+  geom_sf_label( aes(label=Site), 
+                 data = beetles) +
+  coord_equal()
+```
+
+
+
+
 2. Use the `click()` function to crop the raster and filter the sites to include only the region that is on the peninsula of Baja California.  Plot the raster and sites as labels.
 
 3. The peninsula of Baja California is divided into the States of *Baja California Norte* and *Baja California Sur*.  The border between these states is at 28° Latitude.  Divide the sample locations into groups based upon which state they are located and plot the average sex ratio of the sample sites partitioned by each site.
