@@ -5,7 +5,6 @@ author: Rodney Dyer, PhD
 format: revealjs
 execute:
   echo: true
-  
 ---
 
 
@@ -61,9 +60,11 @@ x
 ```
 :::
 
-## Spatial Designations
+## Spatial Designations {.smaller}
 
 For each value in the `matrix`, when it is turned into a `raster` object: 
+
+::: {.incremental}
 
 - The `cell` (pixel) has a defined spatial extent (width, height, & origin).
 
@@ -74,6 +75,8 @@ For each value in the `matrix`, when it is turned into a `raster` object:
   - 3x5 matrix for Continental US may not adequately capture elevation trends.
   
   - 1m<sup>2</sup> matrix for elevation may be *a bit* too big.
+
+:::
 
 ## Matrix $\to$ Raster
 
