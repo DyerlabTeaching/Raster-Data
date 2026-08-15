@@ -6,8 +6,8 @@
 <script src="slides_files/libs/quarto-html/tippy.umd.min.js"></script>
 <link href="slides_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="slides_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="slides_files/libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.9.36">
+<link href="slides_files/libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.9.37">
 
   <meta name="author" content="Rodney Dyer, PhD">
   <title>Raster Data</title>
@@ -233,8 +233,8 @@ Rasters represent data distributed continuously across a spatial extent
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a>values <span class="ot">&lt;-</span> <span class="fu">rpois</span>( <span class="at">n =</span> <span class="dv">36</span>, <span class="at">lambda=</span><span class="dv">12</span>)</span>
 <span id="cb1-2"><a href=""></a>values</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] 15 14 18 15 14 13 12 11 10  4 10 14 14  7 11  6 16  5 18 11 10 13 19 10  9
-[26] 14  9 11 12 12 11 15  9  8 11 10</code></pre>
+<pre><code> [1] 12 15 11 13 14 12 11 11  7 11 11 14 10 12  7  7 16 10 13 13 16 12 10  8  7
+[26]  8 11 17  9 12  6  8 15 12  7 10</code></pre>
 </div>
 </div>
 <div class="fragment">
@@ -243,12 +243,12 @@ Rasters represent data distributed continuously across a spatial extent
 <span id="cb3-2"><a href=""></a>x</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2] [,3] [,4] [,5] [,6]
-[1,]   15   12   14   18    9   11
-[2,]   14   11    7   11   14   15
-[3,]   18   10   11   10    9    9
-[4,]   15    4    6   13   11    8
-[5,]   14   10   16   19   12   11
-[6,]   13   14    5   10   12   10</code></pre>
+[1,]   12   11   10   13    7    6
+[2,]   15   11   12   13    8    8
+[3,]   11    7    7   16   11   15
+[4,]   13   11    7   12   17   12
+[5,]   14   11   16   10    9    7
+[6,]   12   14   10    8   12   10</code></pre>
 </div>
 </div>
 </div>
@@ -280,7 +280,7 @@ extent     : 0, 1, 0, 1  (xmin, xmax, ymin, ymax)
 crs        : NA 
 source     : memory
 names      : layer 
-values     : 4, 19  (min, max)</code></pre>
+values     : 6, 17  (min, max)</code></pre>
 </div>
 </div>
 </section>

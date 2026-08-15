@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.36">
+<meta name="generator" content="quarto-1.9.37">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -68,7 +68,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="narrative_files/libs/quarto-html/tippy.umd.min.js"></script>
 <script src="narrative_files/libs/quarto-html/anchor.min.js"></script>
 <link href="narrative_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="narrative_files/libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="narrative_files/libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="narrative_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="narrative_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="narrative_files/libs/bootstrap/bootstrap-138a6193a3bd40baf1e627da441a4734.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -145,31 +145,31 @@ window.Quarto = {
 <pre><code>Loading required package: sp</code></pre>
 </div>
 </div>
-<p>Raster are representations of continuous, or semi-continuous, data. TYou can envision a raster just like an image. When me make a <code>leaflet()</code> map and how the tiles, each pixel is colored a particular value representing elevation, temperature, precipitation, habitat type, or whatever. This is exactly the same for rasters. The <em>key point</em> here is that each pixel represents some defined region on the earth and as such the raster itself is georeferenced. It has a coordinate reference system (CRS), boundaries, etc.</p>
+<p>Rasters are representations of continuous, or semi-continuous, data. You can envision a raster just like an image. <mark>When me make a <code>leaflet()</code> map and how the tiles, each pixel is colored a particular value representing elevation, temperature, precipitation, habitat type, or whatever.</mark> This is exactly the same for rasters. The <em>key point</em> here is that each pixel represents some defined region on the earth and as such the raster itself is georeferenced. It has a coordinate reference system (CRS), boundaries, etc.</p>
 <section id="making-rasters-de-novo" class="level2">
 <h2 class="anchored" data-anchor-id="making-rasters-de-novo">Making Rasters <em>de novo</em></h2>
 <p>A raster is simply a matrix with rows and columns and each element has a value associated with it. You can create a raster <em>de novo</em> by making a matrix of data and filling it with values, then turning it into a raster.</p>
-<p>Here I make a raster with random numbrers selected from the Poisson Distribution (fishy, I know) using the <code>rpois()</code> function. I then turn it into a matrix with 7 rows (and 7 columns).</p>
+<p>Here I make a raster with random numbers selected from the Poisson Distribution (fishy, I know) using the <code>rpois()</code> function. I then turn it into a matrix with 7 rows (and 7 columns).</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>vals <span class="ot">&lt;-</span> <span class="fu">rpois</span>(<span class="dv">49</span>, <span class="at">lambda=</span><span class="dv">12</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">matrix</span>( vals, <span class="at">nrow=</span><span class="dv">7</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>x</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2] [,3] [,4] [,5] [,6] [,7]
-[1,]   13   17   13    8   14    9    9
-[2,]   19   17   10   19    7   12   14
-[3,]   10   10   12   11   14    8   16
-[4,]   14   14   10   14    6   26   12
-[5,]    7    9    9   13   12   14   13
-[6,]    8   12    7    6   17   17   14
-[7,]   18   17   13    7   11   14    9</code></pre>
+[1,]    8   14   10   11    8   13    5
+[2,]   12   12   10   13   12   15   18
+[3,]   10   10    9   10   10    8   11
+[4,]   12   18   11   12    8   15   12
+[5,]   21   12   14   17   12   11   14
+[6,]   15   13    4   13   10   21   11
+[7,]   11   12    9   10    7   12    8</code></pre>
 </div>
 </div>
 <p>While we haven’t used matrices much thus far, it is a lot like a <code>data.frame</code> with respect to getting and setting values using numerical indices. For example, the value of the 3rd row and 5th column is:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>x[<span class="dv">3</span>,<span class="dv">5</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 14</code></pre>
+<pre><code>[1] 10</code></pre>
 </div>
 </div>
 <p>To convert this set of data, as a matrix, into a geospatially referenced <code>raster()</code> object we do the following:</p>
@@ -184,13 +184,13 @@ extent     : 0, 1, 0, 1  (xmin, xmax, ymin, ymax)
 crs        : NA 
 source     : memory
 names      : layer 
-values     : 6, 26  (min, max)</code></pre>
+values     : 4, 21  (min, max)</code></pre>
 </div>
 </div>
 <p>Notice that when I plot it out, it does not show the data, but a summary of the data along with some key data about the contents, including:<br>
 - A class definition<br>
 - The dimensions of the underlying data matrix,<br>
-- The resolution (e.g., the spatial extent of the sides of each pixel). Since we have no CRS here, it is equal to <span class="math inline">\(nrows(x)^{-1}\)</span> and <span class="math inline">\(ncols(x)^{-1}\)</span>.<br>
+- The resolution (e.g., the spatial extent of the sides of each pixel). Since we have no CRS here, it is equal to <span class="math inline">\(nrow(x)^{-1}\)</span> and <span class="math inline">\(ncol(x)^{-1}\)</span>.<br>
 - The extent (the bounding box) and again since we do not have a CRS defined it just goes from <span class="math inline">\(0\)</span> to <span class="math inline">\(1\)</span>. - The <code>crs</code> (missing) - The source can be either <code>memory</code> if the raster is not that big or <code>out of memory</code> if it is just referencing.</p>
 <p>If these data represent something on the planet, we can assign the dimensions and <code>CRS</code> values to it and use it in our normal day-to-day operations.</p>
 </section>
@@ -234,8 +234,8 @@ values     : -202, 5469  (min, max)</code></pre>
 </section>
 <section id="cropping" class="level2">
 <h2 class="anchored" data-anchor-id="cropping">Cropping</h2>
-<p>One of the first things to do is to crop the data down to represent the size and extent of our study area. If we over 10 million missing data points (the ocean) and most of Mexico in this raster above but we are only working with sites in Baja California (Norte y Sur), we would do well to excise (or crop) the raster to only include the area we are interested in working with.</p>
-<p>Top do this, we need to figure out a bounding box (e.g., the minimim and maximum values of longitude and latitude that enclose our data). Let’s assume we are working with the Beetle Data from the <a href="https://dyerlab.github.io/ENVS-Lectures/spatial/spatial_points/slides.html#1">Spatial Points Slides</a> and load in the Sex-biased dispersal data set and use those points as a starting estimate of the bounding box.</p>
+<p>One of the first things to do is to crop the data down to represent the size and extent of our study area. If we have over 10 million missing data points (the ocean) and most of Mexico in this raster above but we are only working with sites in Baja California (Norte y Sur), we would do well to excise (or crop) the raster to only include the area we are interested in working with.</p>
+<p>To do this, we need to figure out a bounding box (e.g., the minimum and maximum values of longitude and latitude that enclose our data). Let’s assume we are working with the Beetle Data from the <a href="https://dyerlab.github.io/ENVS-Lectures/spatial/spatial_points/slides.html#1">Spatial Points Slides</a> and load in the Sex-biased dispersal data set and use those points as a starting estimate of the bounding box.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>( sf )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
@@ -246,9 +246,9 @@ values     : -202, 5469  (min, max)</code></pre>
 <pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
 ✔ dplyr     1.2.1     ✔ readr     2.2.0
 ✔ forcats   1.0.1     ✔ stringr   1.6.0
-✔ ggplot2   4.0.2     ✔ tibble    3.3.1
+✔ ggplot2   4.0.3     ✔ tibble    3.3.1
 ✔ lubridate 1.9.5     ✔ tidyr     1.3.2
-✔ purrr     1.2.1     </code></pre>
+✔ purrr     1.2.2     </code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
@@ -274,13 +274,13 @@ dbl (8): Males, Females, Suitability, MFRatio, GenVarArapat, GenVarEuphli, L...
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>( beetles )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>     Site               Males          Females       Suitability    
- Length:31          Min.   : 9.00   Min.   : 5.00   Min.   :0.0563  
- Class :character   1st Qu.:16.00   1st Qu.:15.50   1st Qu.:0.2732  
- Mode  :character   Median :21.00   Median :21.00   Median :0.3975  
-                    Mean   :25.68   Mean   :23.52   Mean   :0.4276  
-                    3rd Qu.:31.50   3rd Qu.:29.00   3rd Qu.:0.5442  
-                    Max.   :64.00   Max.   :63.00   Max.   :0.9019  
+<pre><code>        Site        Males          Females       Suitability    
+ Length   :31   Min.   : 9.00   Min.   : 5.00   Min.   :0.0563  
+ N.unique :31   1st Qu.:16.00   1st Qu.:15.50   1st Qu.:0.2732  
+ N.blank  : 0   Median :21.00   Median :21.00   Median :0.3975  
+ Min.nchar: 1   Mean   :25.68   Mean   :23.52   Mean   :0.4276  
+ Max.nchar: 5   3rd Qu.:31.50   3rd Qu.:29.00   3rd Qu.:0.5442  
+                Max.   :64.00   Max.   :63.00   Max.   :0.9019  
     MFRatio        GenVarArapat     GenVarEuphli             geometry 
  Min.   :0.5938   Min.   :0.0500   Min.   :0.0500   POINT        :31  
  1st Qu.:0.8778   1st Qu.:0.1392   1st Qu.:0.1777   epsg:4326    : 0  
@@ -298,7 +298,7 @@ dbl (8): Males, Females, Suitability, MFRatio, GenVarArapat, GenVarEuphli, L...
 -114.29353   23.28550 -109.32700   29.32541 </code></pre>
 </div>
 </div>
-<p>OK, so this is the strict bounding box for these points. This means that the minimum and maximum values for these points are defined by the original locations—for both the latitude and longitude (both minimum and maximum)—we have sites on each of the edges. This is fine here but we could probably add a little bit of a <em>buffer</em> around that bounding box so that we do not have our sites on the very edge of the plot. We can do this by either <em>eyeballing-it</em> to round up to some reasonable area around the points <em>or</em> apply a buffer (<code>st_buffer</code>) to the union of all the points with some distance and then take the boounding box. I’ll go for the former and make it into an <code>extent</code> object.</p>
+<p>OK, so this is the strict bounding box for these points. This means that the minimum and maximum values for these points are defined by the original locations—for both the latitude and longitude (both minimum and maximum)—we have sites on each of the edges. This is fine here but we could probably add a little bit of a <em>buffer</em> around that bounding box so that we do not have our sites on the very edge of the plot. We can do this by either <em>eyeballing-it</em> to round up to some reasonable area around the points <em>or</em> apply a buffer (<code>st_buffer</code>) to the union of all the points with some distance and then take the bounding box. I’ll go for the former and make it into an <code>extent</code> object.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>baja_extent <span class="ot">&lt;-</span> <span class="fu">extent</span>( <span class="fu">c</span>(<span class="sc">-</span><span class="dv">116</span>, <span class="sc">-</span><span class="dv">109</span>, <span class="dv">22</span>, <span class="dv">30</span> ) )</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>baja_extent</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -310,7 +310,7 @@ ymin       : 22
 ymax       : 30 </code></pre>
 </div>
 </div>
-<p>Then we can <code>crop()</code> the original raster using this extent object to create our working raster. I can then dump my points onto the same raster plot by indicaating <code>add=TRUE</code></p>
+<p>Then we can <code>crop()</code> the original raster using this extent object to create our working raster. I can then dump my points onto the same raster plot by indicating <code>add=TRUE</code>.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>alt <span class="ot">&lt;-</span> <span class="fu">crop</span>( r, baja_extent )</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(alt)</span>
@@ -335,7 +335,7 @@ ymax       : 30 </code></pre>
 &nbsp; &nbsp;
 </td>
 <td>
-You need to be careful here. When you use built-in graphics processes in a markdown document such as this and intend to add subsequent plots to an existing plot you <strong>cannot</strong> run the lines individual. They <strong>must</strong> be all executed as the whole chunk. So there is no <tt>CTRL/CMD + RETURN</tt> action here, it will plot the first one and then complain throughout the remaining ones saying something like <code>plot.new has not been called yet</code>. So you have to either knit the whole document or just run the whole chunk to get them to overlay.
+You need to be careful here. When you use built-in graphics processes in a markdown document such as this and intend to add subsequent plots to an existing plot you <strong>cannot</strong> run the lines individually. They <strong>must</strong> be all executed as the whole chunk. So there is no <tt>CTRL/CMD + RETURN</tt> action here, it will plot the first one and then complain throughout the remaining ones saying something like <code>plot.new has not been called yet</code>. So you have to either knit the whole document or just run the whole chunk to get them to overlay.
 </td>
 </tr>
 </tbody></table>
@@ -343,7 +343,7 @@ You need to be careful here. When you use built-in graphics processes in a markd
 </section>
 <section id="masking" class="level2">
 <h2 class="anchored" data-anchor-id="masking">Masking</h2>
-<p>There is another way to grab just a portion of the raster—similar to cropping—which is to mask. A mask will not change the size of the raster but just put <code>NA</code> values in the cells that are not in the are of interest. So if we were to just mask above, it would never actually reduce the size of the raster, just add a lot more <code>NA</code> values. However, the setup is the same.</p>
+<p>There is another way to grab just a portion of the raster—similar to cropping—which is to mask. A mask will not change the size of the raster but just put <code>NA</code> values in the cells that are not in the area of interest. So if we were to just mask above, it would never actually reduce the size of the raster, just add a lot more <code>NA</code> values. However, the setup is the same.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>beetles <span class="sc">%&gt;%</span></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>( Site <span class="sc">!=</span> <span class="dv">32</span> ) <span class="sc">%&gt;%</span></span>
@@ -378,7 +378,7 @@ values     : -202, 1838  (min, max)</code></pre>
 </section>
 <section id="plotting-with-ggplot" class="level2">
 <h2 class="anchored" data-anchor-id="plotting-with-ggplot">Plotting with GGPlot</h2>
-<p>As you may suspect, our old friend <code>ggplot</code> has some tricks up its sleave for us. The main thing here is that <code>ggplot</code> requires a <code>data.frame</code> object and a raster is not a <code>data.frame</code> — Unless we turn it into one (hehehe) using a cool function called <code>rasterToPoints()</code>. This takes the cells of the raster (and underlying matrix) and makes points from it.</p>
+<p>As you may suspect, our old friend <code>ggplot</code> has some tricks up its sleeve for us. The main thing here is that <code>ggplot</code> requires a <code>data.frame</code> object and a raster is not a <code>data.frame</code> — Unless we turn it into one (hehehe) using a cool function called <code>rasterToPoints()</code>. This takes the cells of the raster (and underlying matrix) and makes points from it.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>alt <span class="sc">%&gt;%</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rasterToPoints</span>() <span class="sc">%&gt;%</span></span>
@@ -402,7 +402,7 @@ values     : -202, 1838  (min, max)</code></pre>
 <pre><code>[1] "matrix" "array" </code></pre>
 </div>
 </div>
-<p>So, if we are going to use this, w need to transform it from a <code>matrix</code> object into a <code>data.frame</code> object. We can do this using the <code>as.data.frame()</code> function. Remember from the <a href="https://dyerlab.github.io/ENVS-Lectures/r_language/data_frames/slides.html#1">lecture on <code>data.frame</code> objects</a> that we can coerce columns of data (either <code>matrix</code> or <code>array</code>) into a <code>data.frame</code> this way.</p>
+<p>So, if we are going to use this, we need to transform it from a <code>matrix</code> object into a <code>data.frame</code> object. We can do this using the <code>as.data.frame()</code> function. Remember from the <a href="https://dyerlab.github.io/ENVS-Lectures/r_language/data_frames/slides.html#1">lecture on <code>data.frame</code> objects</a> that we can coerce columns of data (either <code>matrix</code> or <code>array</code>) into a <code>data.frame</code> this way.</p>
 <p>So here it is in one pipe, using the following tricks:<br>
 - Converting raster to points and then to <code>data.frame</code> so it will go into <code>ggplot</code><br>
 - Renaming the columns of data I am going to keep so I don’t have to make <code>xlab</code> and <code>ylab</code></p>
@@ -425,7 +425,7 @@ values     : -202, 1838  (min, max)</code></pre>
 </div>
 </div>
 <p>Then we can plot it by:<br>
-- Plotting it using <code>geom_raster()</code> and setting the fill color to the value of elevation. - Making the coordinates equal (e.g., roughtly equal in area for longitude and latitude), and - Applying only a minimal theme.</p>
+- Plotting it using <code>geom_raster()</code> and setting the fill color to the value of elevation. - Making the coordinates equal (e.g., roughly equal in area for longitude and latitude), and - Applying only a minimal theme.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>alt.df <span class="sc">%&gt;%</span></span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>()  <span class="sc">+</span> </span>
@@ -472,7 +472,7 @@ values     : -202, 1838  (min, max)</code></pre>
 </div>
 </div>
 </div>
-<p>Now that looks great. Now, how about overlaying the points onto the plot and indicate the size of the point by the <strong>♂♀</strong> ratio.</p>
+<p>Now that looks great. Now, how about overlaying the points onto the plot and indicating the size of the point by the <strong>♂♀</strong> ratio.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>baja_map <span class="sc">+</span> </span>
 <span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>( <span class="fu">aes</span>(<span class="at">size =</span> MFRatio ), </span>
@@ -491,8 +491,8 @@ values     : -202, 1838  (min, max)</code></pre>
 </section>
 <section id="identifying-points" class="level2">
 <h2 class="anchored" data-anchor-id="identifying-points">Identifying Points</h2>
-<p>You can get some information from a raster plot interactively by using the <code>click</code> function. This <strong>must</strong> be done with an active raster plot. After that, you use the <code>click()</code> function to grab what you need. Your mouse will turn from an arrow into a cross hair and you can position it where you like and get information such as the corrdinates (spatial) of the point and the value of the raster pixel at that location.</p>
-<p>If you do not specify <code>n=</code> in the function then it will continue to collect data until you click outside the graphing area. If you set <code>id=TRUE</code> it will plot the number of the point onto the map so you can see where you had clicked. Since this is interactive, you will not see the process when you execute the code below, but it will look like.</p>
+<p>You can get some information from a raster plot interactively by using the <code>click</code> function. This <strong>must</strong> be done with an active raster plot. After that, you use the <code>click()</code> function to grab what you need. Your mouse will turn from an arrow into a cross hair and you can position it where you like and get information such as the coordinates (spatial) of the point and the value of the raster pixel at that location.</p>
+<p>If you do not specify <code>n=</code> in the function then it will continue to collect data until you click outside the graphing area. If you set <code>id=TRUE</code> it will plot the number of the point onto the map so you can see where you had clicked. Since this is interactive, you will not see the process when you execute the code below, but it will look like this:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>( alt )</span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">click</span>(alt, <span class="at">xy=</span><span class="cn">TRUE</span>, <span class="at">value=</span><span class="cn">TRUE</span>, <span class="at">n=</span><span class="dv">3</span> ) <span class="ot">-&gt;</span> points</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -503,7 +503,7 @@ values     : -202, 1838  (min, max)</code></pre>
 <figcaption>map with points</figcaption>
 </figure>
 </div>
-<p>Here are what the points look like.</p>
+<p>Here is what the points look like.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>points</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -514,7 +514,7 @@ values     : -202, 1838  (min, max)</code></pre>
 4 -109.9958 23.48750  1145</code></pre>
 </div>
 </div>
-<p>I’m going to rename the column names</p>
+<p>I’m going to rename the column names.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>points <span class="sc">%&gt;%</span></span>
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>( <span class="at">Longitude =</span> x,</span>
@@ -539,8 +539,8 @@ values     : -202, 1838  (min, max)</code></pre>
 </section>
 <section id="reprojecting-rasters" class="level2">
 <h2 class="anchored" data-anchor-id="reprojecting-rasters">Reprojecting Rasters</h2>
-<p>Just like points, we can reproject the entire raster using the <code>projectRaster</code> function. HJere I am going to project the raster into UTM Zone 12N, a common projection for this part of <a href="https://epsg.io/6367">Mexico from epsg.io</a>.</p>
-<p>Unfortunatly, the <code>raster</code> library does not use epsg codes so we’ll have to use the large description of that projection. See the <a href="https://epsg.io/6367">page</a> for this projection and scroll down to the proj.4 definition.</p>
+<p>Just like points, we can reproject the entire raster using the <code>projectRaster</code> function. Here I am going to project the raster into UTM Zone 12N, a common projection for this part of <a href="https://epsg.io/6367">Mexico from epsg.io</a>.</p>
+<p>Unfortunately, the <code>raster</code> library does not use epsg codes so we’ll have to use the large description of that projection. See the <a href="https://epsg.io/6367">page</a> for this projection and scroll down to the proj.4 definition.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>new.proj <span class="ot">&lt;-</span> <span class="st">"+proj=utm +zone=12 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs "</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -591,7 +591,7 @@ Geodetic CRS:  WGS 84</code></pre>
 </div>
 </div>
 <p>Now, we need to figure out what the value of elevation in the <code>alt</code> raster is at this site. This can be done with the <code>extract()</code> function from the <code>raster</code> library.</p>
-<p><strong>However</strong>, the this function doesn’t work directly with <code>sf</code> objects so we need to cast it into a <code>Spatial</code> object<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. Fortunatly, that is a pretty easy coercion.</p>
+<p><strong>However</strong>, this function doesn’t work directly with <code>sf</code> objects so we need to cast it into a <code>Spatial</code> object<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. Fortunately, that is a pretty easy coercion.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>raster<span class="sc">::</span><span class="fu">extract</span>(alt, <span class="fu">as</span>(sfran,<span class="st">"Spatial"</span>) ) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -603,7 +603,7 @@ Geodetic CRS:  WGS 84</code></pre>
 </div>
 <section id="option-1---manipulate-the-raster" class="level3">
 <h3 class="anchored" data-anchor-id="option-1---manipulate-the-raster">Option 1 - Manipulate the Raster</h3>
-<p>To work on a raster directly, we can access the values within it using the <code>values()</code> function (I know, these statistican/programmers are quite cleaver).</p>
+<p>To work on a raster directly, we can access the values within it using the <code>values()</code> function (I know, these statisticians/programmers are quite clever).</p>
 <p>So, to make a copy and make only the values that are +/- 100m of <code>sfran</code> we can.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>alt_band <span class="ot">&lt;-</span> alt</span>
@@ -636,7 +636,7 @@ values     : 206, 404  (min, max)</code></pre>
 </section>
 <section id="option-2---manipulate-the-data-frames" class="level3">
 <h3 class="anchored" data-anchor-id="option-2---manipulate-the-data-frames">Option 2 - Manipulate the Data Frames</h3>
-<p>We can also proceed by relying upon the <code>data.frame</code> objects representing the elevation. So let’s go back to our the <code>alt.df</code> object and use that in combination with a <code>filter</code> and plot both <code>data.frame</code> objects (the outline of the landscape in gray and the elevation range as a gradient). I then overlay the beetle data with the ratios as sizes and label the locales with <code>ggrepel</code>. Notice here that you can use the <code>sf::geometry</code> object from <code>beetles</code> if you pass it through the <code>st_coordinates</code> function as a statistical tranform making it regular coordinates and not <code>sf</code> objects (yes this is kind of a trick and hack but KEEP IT HANDY!).</p>
+<p>We can also proceed by relying upon the <code>data.frame</code> objects representing the elevation. So let’s go back to our <code>alt.df</code> object and use that in combination with a <code>filter</code> and plot both <code>data.frame</code> objects (the outline of the landscape in gray and the elevation range as a gradient). I then overlay the beetle data with the ratios as sizes and label the locales with <code>ggrepel</code>. Notice here that you can use the <code>sf::geometry</code> object from <code>beetles</code> if you pass it through the <code>st_coordinates</code> function as a statistical tranform making it regular coordinates and not <code>sf</code> objects (yes this is kind of a trick and hack but KEEP IT HANDY!).</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>( ggrepel )</span>
 <span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>alt.df <span class="sc">%&gt;%</span></span>

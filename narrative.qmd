@@ -13,13 +13,13 @@ All raster operations in this topic are accomplished using the `raster` library.
 library(raster)
 ```
 
-Raster are representations of continuous, or semi-continuous, data.  TYou can envision a raster just like an image.  When me make a `leaflet()` map and how the tiles, each pixel is colored a particular value representing elevation, temperature, precipitation, habitat type, or whatever.  This is exactly the same for rasters.  The *key point* here is that each pixel represents some defined region on the earth and as such the raster itself is georeferenced.  It has a coordinate reference system (CRS), boundaries, etc.
+Rasters are representations of continuous, or semi-continuous, data.  You can envision a raster just like an image.  <mark>When me make a `leaflet()` map and how the tiles, each pixel is colored a particular value representing elevation, temperature, precipitation, habitat type, or whatever.</mark>  This is exactly the same for rasters.  The *key point* here is that each pixel represents some defined region on the earth and as such the raster itself is georeferenced.  It has a coordinate reference system (CRS), boundaries, etc.
 
 ## Making Rasters *de novo*
 
 A raster is simply a matrix with rows and columns and each element has a value associated with it.  You can create a raster *de novo* by making a matrix of data and filling it with values, then turning it into a raster.
 
-Here I make a raster with random numbrers selected from the Poisson Distribution (fishy, I know) using the `rpois()` function.  I then turn it into a matrix with 7 rows (and 7 columns).
+Here I make a raster with random numbers selected from the Poisson Distribution (fishy, I know) using the `rpois()` function.  I then turn it into a matrix with 7 rows (and 7 columns).
 
 
 ```{r}
@@ -44,7 +44,7 @@ r
 Notice that when I plot it out, it does not show the data, but a summary of the data along with some key data about the contents, including:  
 - A class definition  
 - The dimensions of the underlying data matrix,  
-- The resolution (e.g., the spatial extent of the sides of each pixel).  Since we have no CRS here, it is equal to $nrows(x)^{-1}$ and $ncols(x)^{-1}$.  
+- The resolution (e.g., the spatial extent of the sides of each pixel).  Since we have no CRS here, it is equal to $nrow(x)^{-1}$ and $ncol(x)^{-1}$.  
 - The extent (the bounding box) and again since we do not have a CRS defined it just goes from $0$ to $1$.
 - The `crs` (missing)
 - The source can be either `memory` if the raster is not that big or `out of memory` if it is just referencing.
@@ -78,9 +78,9 @@ format( sum( is.na( values(r) ) ), big.mark = "," )
 
 ## Cropping
 
-One of the first things to do is to crop the data down to represent the size and extent of our study area.  If we over 10 million missing data points (the ocean) and most of Mexico in this raster above but we are only working with sites in Baja California (Norte y Sur), we would do well to excise (or crop) the raster to only include the area we are interested in working with.  
+One of the first things to do is to crop the data down to represent the size and extent of our study area.  If we have over 10 million missing data points (the ocean) and most of Mexico in this raster above but we are only working with sites in Baja California (Norte y Sur), we would do well to excise (or crop) the raster to only include the area we are interested in working with.  
 
-Top do this, we need to figure out a bounding box (e.g., the minimim and maximum values of longitude and latitude that enclose our data).  Let's assume we are working with the Beetle Data from the [Spatial Points Slides](https://dyerlab.github.io/ENVS-Lectures/spatial/spatial_points/slides.html#1) and load in the Sex-biased dispersal data set and use those points as a starting estimate of the bounding box.
+To do this, we need to figure out a bounding box (e.g., the minimum and maximum values of longitude and latitude that enclose our data).  Let's assume we are working with the Beetle Data from the [Spatial Points Slides](https://dyerlab.github.io/ENVS-Lectures/spatial/spatial_points/slides.html#1) and load in the Sex-biased dispersal data set and use those points as a starting estimate of the bounding box.
 
 
 ```{r}
@@ -100,14 +100,14 @@ Now, we can take the bounding box of these points and get a first approximation.
 beetles %>% st_bbox()
 ```
 
-OK, so this is the strict bounding box for these points.  This means that the minimum and maximum values for these points are defined by the original locations—for both the latitude and longitude (both minimum and maximum)—we have sites on each of the edges.  This is fine here but we could probably add a little bit of a *buffer* around that bounding box so that we do not have our sites on the very edge of the plot.  We can do this by either *eyeballing-it* to round up to some reasonable area around the points *or* apply a buffer (`st_buffer`) to the union of all the points with some distance and then take the boounding box.   I'll go for the former and make it into an `extent` object.
+OK, so this is the strict bounding box for these points.  This means that the minimum and maximum values for these points are defined by the original locations—for both the latitude and longitude (both minimum and maximum)—we have sites on each of the edges.  This is fine here but we could probably add a little bit of a *buffer* around that bounding box so that we do not have our sites on the very edge of the plot.  We can do this by either *eyeballing-it* to round up to some reasonable area around the points *or* apply a buffer (`st_buffer`) to the union of all the points with some distance and then take the bounding box.   I'll go for the former and make it into an `extent` object.
 
 ```{r}
 baja_extent <- extent( c(-116, -109, 22, 30 ) )
 baja_extent
 ```
 
-Then we can `crop()` the original raster using this extent object to create our working raster.  I can then dump my points onto the same raster plot by indicaating `add=TRUE`
+Then we can `crop()` the original raster using this extent object to create our working raster.  I can then dump my points onto the same raster plot by indicating `add=TRUE`.
 
 ```{r}
 alt <- crop( r, baja_extent )
@@ -120,14 +120,14 @@ plot( beetles["Suitability"], pch=16, add=TRUE)
 <tr>
 <td><h1>⚠️</h1></td>
 <td> &nbsp;  &nbsp; </td>
-<td>You need to be careful here.  When you use built-in graphics processes in a markdown document such as this and intend to add subsequent plots to an existing plot you **cannot** run the lines individual.  They **must** be all executed as the whole chunk.  So there is no <tt>CTRL/CMD + RETURN</tt> action here, it will plot the first one and then complain throughout the remaining ones saying something like `plot.new has not been called yet`.  So you have to either knit the whole document or just run the whole chunk to get them to overlay.</td>
+<td>You need to be careful here.  When you use built-in graphics processes in a markdown document such as this and intend to add subsequent plots to an existing plot you **cannot** run the lines individually.  They **must** be all executed as the whole chunk.  So there is no <tt>CTRL/CMD + RETURN</tt> action here, it will plot the first one and then complain throughout the remaining ones saying something like `plot.new has not been called yet`.  So you have to either knit the whole document or just run the whole chunk to get them to overlay.</td>
 </tr>
 </table>
 </div>
 
 ## Masking
 
-There is another way to grab just a portion of the raster—similar to cropping—which is to mask.  A mask will not change the size of the raster but just put `NA` values in the cells that are not in the are of interest.  So if we were to just mask above, it would never actually reduce the size of the raster, just add a lot more `NA` values.  However, the setup is the same.
+There is another way to grab just a portion of the raster—similar to cropping—which is to mask.  A mask will not change the size of the raster but just put `NA` values in the cells that are not in the area of interest.  So if we were to just mask above, it would never actually reduce the size of the raster, just add a lot more `NA` values.  However, the setup is the same.
 
 ```{r}
 beetles %>%
@@ -151,7 +151,7 @@ plot(baja)
 
 ## Plotting with GGPlot
 
-As you may suspect, our old friend `ggplot` has some tricks up its sleave for us.  The main thing here is that `ggplot` requires a `data.frame` object and a raster is not a `data.frame` --- Unless we turn it into one (hehehe) using a cool function called `rasterToPoints()`.  This takes the cells of the raster (and underlying matrix) and makes points from it.
+As you may suspect, our old friend `ggplot` has some tricks up its sleeve for us.  The main thing here is that `ggplot` requires a `data.frame` object and a raster is not a `data.frame` --- Unless we turn it into one (hehehe) using a cool function called `rasterToPoints()`.  This takes the cells of the raster (and underlying matrix) and makes points from it.
 
 ```{r}
 alt %>%
@@ -167,7 +167,7 @@ alt %>%
   class()
 ```
 
-So, if we are going to use this, w need to transform it from a `matrix` object into a `data.frame` object.  We can do this using the `as.data.frame()` function.  Remember from the [lecture on `data.frame` objects](https://dyerlab.github.io/ENVS-Lectures/r_language/data_frames/slides.html#1) that we can coerce columns of data (either `matrix` or `array`) into a `data.frame` this way.
+So, if we are going to use this, we need to transform it from a `matrix` object into a `data.frame` object.  We can do this using the `as.data.frame()` function.  Remember from the [lecture on `data.frame` objects](https://dyerlab.github.io/ENVS-Lectures/r_language/data_frames/slides.html#1) that we can coerce columns of data (either `matrix` or `array`) into a `data.frame` this way.
 
 
 So here it is in one pipe, using the following tricks:  
@@ -186,7 +186,7 @@ head( alt.df )
 
 Then we can plot it by:  
 - Plotting it using `geom_raster()` and setting the fill color to the value of elevation.
-- Making the coordinates equal (e.g., roughtly equal in area for longitude and latitude), and
+- Making the coordinates equal (e.g., roughly equal in area for longitude and latitude), and
 - Applying only a minimal theme.
 
 
@@ -214,7 +214,7 @@ baja_elevation +
 ```
 
 
-Or you can go dive into colors and set your own, you can set up your own gradient for `ggplot` using independent colors and then tell it where the midpoint is along that gradient and it will *do the right thing<sup>&copy;</copy>*.
+Or you can go dive into colors and set your own, you can set up your own gradient for `ggplot` using independent colors and then tell it where the midpoint is along that gradient and it will *do the right thing<sup>&copy;</sup>*.
 
 ```{r}
 baja_elevation + 
@@ -225,7 +225,7 @@ baja_elevation +
 baja_map
 ```
 
-Now that looks great.  Now, how about overlaying the points onto the plot and indicate the size of the point by the **♂♀** ratio.
+Now that looks great.  Now, how about overlaying the points onto the plot and indicating the size of the point by the **♂♀** ratio.
 
 ```{r message=FALSE}
 baja_map + 
@@ -238,9 +238,9 @@ Now that looks nice.
 
 ## Identifying Points
 
-You can get some information from a raster plot interactively by using the `click` function.  This **must** be done with an active raster plot.  After that, you use the `click()` function to grab what you need.  Your mouse will turn from an arrow into a cross hair and you can position it where you like and get information such as the corrdinates (spatial) of the point and the value of the raster pixel at that location.
+You can get some information from a raster plot interactively by using the `click` function.  This **must** be done with an active raster plot.  After that, you use the `click()` function to grab what you need.  Your mouse will turn from an arrow into a cross hair and you can position it where you like and get information such as the coordinates (spatial) of the point and the value of the raster pixel at that location.
 
-If you do not specify `n=` in the function then it will continue to collect data until you click outside the graphing area.  If you set `id=TRUE` it will plot the number of the point onto the map so you can see where you had clicked.  Since this is interactive, you will not see the process when you execute the code below, but it will look like.
+If you do not specify `n=` in the function then it will continue to collect data until you click outside the graphing area.  If you set `id=TRUE` it will plot the number of the point onto the map so you can see where you had clicked.  Since this is interactive, you will not see the process when you execute the code below, but it will look like this:
 
 ```{r, eval=FALSE}
 plot( alt )
@@ -254,13 +254,13 @@ points <- data.frame( x = c(-113.6292, -112.4792, -111.2458, -109.9958),
                       value = c(870, 1185, 135, 1145) )
 ```
 
-Here are what the points look like.  
+Here is what the points look like.
 
 ```{r}
 points
 ```
 
-I'm going to rename the column names
+I'm going to rename the column names.
 
 ```{r}
 points %>%
@@ -282,9 +282,9 @@ Mexellent!
 
 ## Reprojecting Rasters 
 
-Just like points, we can reproject the entire raster using the `projectRaster` function.  HJere I am going to project the raster into UTM Zone 12N, a common projection for this part of [Mexico from epsg.io](https://epsg.io/6367).  
+Just like points, we can reproject the entire raster using the `projectRaster` function.  Here I am going to project the raster into UTM Zone 12N, a common projection for this part of [Mexico from epsg.io](https://epsg.io/6367).  
 
-Unfortunatly, the `raster` library does not use epsg codes so we'll have to use the large description of that projection.  See the [page](https://epsg.io/6367) for this projection and scroll down to the proj.4 definition.  
+Unfortunately, the `raster` library does not use epsg codes so we'll have to use the large description of that projection.  See the [page](https://epsg.io/6367) for this projection and scroll down to the proj.4 definition.  
 
 ```{r}
 new.proj <- "+proj=utm +zone=12 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs "
@@ -327,7 +327,7 @@ sfran
 
 Now, we need to figure out what the value of elevation in the `alt` raster is at this site.  This can be done with the `extract()` function from the `raster` library.  
 
-**However**, the this function doesn't work directly with `sf` objects so we need to cast it into a `Spatial` object[^1]. Fortunatly, that is a pretty easy coercion.
+**However**, this function doesn't work directly with `sf` objects so we need to cast it into a `Spatial` object[^1]. Fortunately, that is a pretty easy coercion.
 
 ```{r}
 raster::extract(alt, as(sfran,"Spatial") ) 
@@ -339,7 +339,7 @@ raster::extract(alt, as(sfran,"Spatial") )
 
 ### Option 1 - Manipulate the Raster
 
-To work on a raster directly, we can access the values within it using the `values()` function (I know, these statistican/programmers are quite cleaver).
+To work on a raster directly, we can access the values within it using the `values()` function (I know, these statisticians/programmers are quite clever).
 
 So, to make a copy and make only the values that are +/- 100m of `sfran` we can.
 
@@ -360,7 +360,7 @@ plot( alt_band, add=TRUE )
 
 ### Option 2 - Manipulate the Data Frames
 
-We can also proceed by relying upon the `data.frame` objects representing the elevation.  So let's go back to our the `alt.df` object and use that in combination with a `filter` and plot both `data.frame` objects (the outline of the landscape in gray and the elevation range as a gradient).  I then overlay the beetle data with the ratios as sizes and label the locales with `ggrepel`.  Notice here that you can use the `sf::geometry` object from `beetles` if you pass it through the `st_coordinates` function as a statistical tranform making it regular coordinates and not `sf` objects (yes this is kind of a trick and hack but KEEP IT HANDY!).
+We can also proceed by relying upon the `data.frame` objects representing the elevation.  So let's go back to our `alt.df` object and use that in combination with a `filter` and plot both `data.frame` objects (the outline of the landscape in gray and the elevation range as a gradient).  I then overlay the beetle data with the ratios as sizes and label the locales with `ggrepel`.  Notice here that you can use the `sf::geometry` object from `beetles` if you pass it through the `st_coordinates` function as a statistical tranform making it regular coordinates and not `sf` objects (yes this is kind of a trick and hack but KEEP IT HANDY!).
 
 ```{r echo=TRUE}
 library( ggrepel )
