@@ -31,6 +31,14 @@ For continuously distributed data, the raster data structure is a much more effi
 - An [in-class](https://dyerlabteaching.github.io/Raster-Data/in-class.html) activity using the beetle data set.
 - An external [Visual Raster Cheat Sheet](https://rpubs.com/etiennebr/visualraster) that briefly covers several raster-based operations.
 
+## Assessment
+
+- A [homework](https://dyerlabteaching.github.io/Raster-Data/homework.html) assignment on the topic.
+
+## Logistics
+
+- A [Teaching Log](https://dyerlabteaching.github.io/Raster-Data/log.html) record of delivery and notes.
+
 ## Contact Information
 
 If you need to contact me, I am available at:
