@@ -156,20 +156,20 @@ window.Quarto = {
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>x</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2] [,3] [,4] [,5] [,6] [,7]
-[1,]   13   12   10   13   12   10   12
-[2,]   15   10   22   13   15   14   12
-[3,]   11   15    5   11   13   13   10
-[4,]   10   12   10   16   15    9    7
-[5,]    6   16   12   17    7    5    9
-[6,]   14   15   13    8   15    8   15
-[7,]   13   12   15   11   11   11    9</code></pre>
+[1,]   17   11   13   11   21   13    9
+[2,]   16   15   11   14    6    9   14
+[3,]   20   17    8    7   11    5   10
+[4,]   11    7   13   16   19   10   12
+[5,]   10    6   12   13    6   14   14
+[6,]   15   11    9   10   14   12   15
+[7,]   10   12   11   18   13   12   11</code></pre>
 </div>
 </div>
 <p>While we haven’t used matrices much thus far, it is a lot like a <code>data.frame</code> with respect to getting and setting values using numerical indices. For example, the value of the 3rd row and 5th column is:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>x[<span class="dv">3</span>,<span class="dv">5</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 13</code></pre>
+<pre><code>[1] 11</code></pre>
 </div>
 </div>
 <p>To convert this set of data, as a matrix, into a geospatially referenced <code>raster()</code> object we do the following:</p>
@@ -184,7 +184,7 @@ extent     : 0, 1, 0, 1  (xmin, xmax, ymin, ymax)
 crs        : NA 
 source     : memory
 names      : layer 
-values     : 5, 22  (min, max)</code></pre>
+values     : 5, 21  (min, max)</code></pre>
 </div>
 </div>
 <p>Notice that when I plot it out, it does not show the data, but a summary of the data along with some key data about the contents, including:<br>
@@ -274,13 +274,13 @@ dbl (8): Males, Females, Suitability, MFRatio, GenVarArapat, GenVarEuphli, L...
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>( beetles )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>     Site               Males          Females       Suitability    
- Length:31          Min.   : 9.00   Min.   : 5.00   Min.   :0.0563  
- Class :character   1st Qu.:16.00   1st Qu.:15.50   1st Qu.:0.2732  
- Mode  :character   Median :21.00   Median :21.00   Median :0.3975  
-                    Mean   :25.68   Mean   :23.52   Mean   :0.4276  
-                    3rd Qu.:31.50   3rd Qu.:29.00   3rd Qu.:0.5442  
-                    Max.   :64.00   Max.   :63.00   Max.   :0.9019  
+<pre><code>        Site        Males          Females       Suitability    
+ Length   :31   Min.   : 9.00   Min.   : 5.00   Min.   :0.0563  
+ N.unique :31   1st Qu.:16.00   1st Qu.:15.50   1st Qu.:0.2732  
+ N.blank  : 0   Median :21.00   Median :21.00   Median :0.3975  
+ Min.nchar: 1   Mean   :25.68   Mean   :23.52   Mean   :0.4276  
+ Max.nchar: 5   3rd Qu.:31.50   3rd Qu.:29.00   3rd Qu.:0.5442  
+                Max.   :64.00   Max.   :63.00   Max.   :0.9019  
     MFRatio        GenVarArapat     GenVarEuphli             geometry 
  Min.   :0.5938   Min.   :0.0500   Min.   :0.0500   POINT        :31  
  1st Qu.:0.8778   1st Qu.:0.1392   1st Qu.:0.1777   epsg:4326    : 0  
