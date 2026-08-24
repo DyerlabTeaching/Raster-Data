@@ -6,3 +6,45 @@ format: html
 > Daily updates on progress for the course in each section.
 
 
+## Copy-Edit Log — Raster-Data
+
+Tracks copy-editing passes over this module's `.qmd` documents. Clear-cut
+typos/grammar/spelling errors are corrected directly in the source. Items
+that need an author decision are left in place but wrapped in
+`<mark>...</mark>` so they show up highlighted in the rendered HTML.
+
+### narrative.qmd — 2026-08-15
+
+#### Fixed directly (typos, spelling, grammar)
+
+| Line | Issue | Fix |
+|---|---|---|
+| 16 | "Raster are representations" / "TYou can envision" | "Rasters are representations" / "You can envision" |
+| 22 | "random numbrers" | "random numbers" |
+| 47 | $nrows(x)^{-1}$ / $ncols(x)^{-1}$ — the real R functions are `nrow()`/`ncol()`, no "s" | $nrow(x)^{-1}$ / $ncol(x)^{-1}$ |
+| 81 | "If we over 10 million missing data points" (missing "have") | "If we have over 10 million missing data points" |
+| 83 | "Top do this" / "the minimim" | "To do this" / "the minimum" |
+| 103 | "take the boounding box" | "take the bounding box" |
+| 110 | "indicaating `add=TRUE`" (missing terminal period) | "indicating `add=TRUE`." |
+| 123 | "run the lines individual" | "run the lines individually" |
+| 130 | "not in the are of interest" | "not in the area of interest" |
+| 154 | "tricks up its sleave" | "tricks up its sleeve" |
+| 170 | "w need to transform" | "we need to transform" |
+| 189 | "roughtly equal" | "roughly equal" |
+| 217 | `<sup>&copy;</copy>` — mismatched closing tag, would leave `<sup>` unclosed | `<sup>&copy;</sup>` |
+| 228 | "overlaying ... and indicate the size" (broken parallel structure) | "and indicating the size" |
+| 241 | "the corrdinates (spatial)" | "the coordinates (spatial)" |
+| 243 | "it will look like." (incomplete before the following image) | "it will look like this:" |
+| 257 | "Here are what the points look like." (agreement) | "Here is what the points look like." |
+| 263 | missing terminal period | added |
+| 285 | "HJere I am going to project" | "Here I am going to project" |
+| 287 | "Unfortunatly" | "Unfortunately" |
+| 330 | "the this function" (duplicate word); "Fortunatly" | "this function"; "Fortunately" |
+| 342 | "these statistican/programmers are quite cleaver" | "these statisticians/programmers are quite clever" |
+| 363 | "our the `alt.df` object" (duplicate word) | "our `alt.df` object" |
+
+#### Flagged for your review (highlighted with `<mark>` in the source)
+
+| Line | Text | Why it's flagged |
+|---|---|---|
+| ~16 | "When me make a `leaflet()` map and how the tiles, each pixel is colored a particular value representing elevation, temperature, precipitation, habitat type, or whatever." | Even after fixing "me" → "we", the clause "and how the tiles" doesn't connect to what follows — a verb seems to be missing between "map" and "how" (e.g., "and look at the tiles"). I didn't want to guess which verb you intended. |
