@@ -56,7 +56,7 @@ If these data represent something on the planet, we can assign the dimensions an
 We can also grab a raster object from the filesystem or from some online repository by passing the link to the `raster()` function.  Here is the elevation, in meters, of the region in which Mexico is found. To load it in, pass the url.
 
 ```{r}
-url <- "https://dyerlabteaching.github.io/Raster-Data/data/alt_22.tif"
+url <- "https://dyerlabteaching.github.io/CourseData/Spatial/alt_22.tif"
 r <- raster( url )
 r
 ```
@@ -86,7 +86,7 @@ To do this, we need to figure out a bounding box (e.g., the minimum and maximum 
 ```{r}
 library( sf )
 library( tidyverse )
-beetle_url <- "https://raw.githubusercontent.com/dyerlab/ENVS-Lectures/master/data/Araptus_Disperal_Bias.csv"
+beetle_url <- "https://dyerlabteaching.github.io/CourseData/Spatial/AraptusDispersalBias.csv"
 
 read_csv( beetle_url ) %>%
   st_as_sf( coords=c("Longitude","Latitude"), crs=4326 ) -> beetles

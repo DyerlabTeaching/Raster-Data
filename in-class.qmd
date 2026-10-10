@@ -10,8 +10,8 @@ Rasters are spatial continuous distributions of geospatial data.  We have been s
 The data for this will be the same Baja California data we showed in the lectures on [points](https://dyerlab.github.io/ENVS-Lectures/spatial/spatial_points/slides.html#1) and [rasters](https://dyerlab.github.io/ENVS-Lectures/spatial/rasters/slides.html#1).  
 
 ```{r}
-raster_url <- "https://dyerlabteaching.github.io/Raster-Data/data/alt_22.tif"
-beetle_url <- "https://dyerlabteaching.github.io/Raster-Data/data/AraptusDispersalBias.csv"
+raster_url <- "https://dyerlabteaching.github.io/CourseData/Spatial/alt_22.tif"
+beetle_url <- "https://dyerlabteaching.github.io/CourseData/Spatial/AraptusDispersalBias.csv"
 ```
 
 
