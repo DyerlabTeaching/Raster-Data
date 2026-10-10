@@ -1,6 +1,6 @@
 ---
 title: "In Class Activity - Raster Data"
-format: html
+format: dyerlab-html
 ---
 
 Rasters are spatial continuous distributions of geospatial data.  We have been shown that we an work with data in raster format using either `raster` and working on object directly, or via `dplyr` and using the normal data manipulation routines that we've learned for non-spatial data.  In this *in class* exercise, you may use both of these techniques to load, manipulate, and display geospatial data.
@@ -10,8 +10,8 @@ Rasters are spatial continuous distributions of geospatial data.  We have been s
 The data for this will be the same Baja California data we showed in the lectures on [points](https://dyerlab.github.io/ENVS-Lectures/spatial/spatial_points/slides.html#1) and [rasters](https://dyerlab.github.io/ENVS-Lectures/spatial/rasters/slides.html#1).  
 
 ```{r}
-raster_url <- "https://github.com/DyerlabTeaching/Raster-Data/raw/main/data/alt_22.tif"
-beetle_url <- "https://raw.githubusercontent.com/DyerlabTeaching/Raster-Data/main/data/AraptusDispersalBias.csv"
+raster_url <- "https://dyerlabteaching.github.io/Raster-Data/data/alt_22.tif"
+beetle_url <- "https://dyerlabteaching.github.io/Raster-Data/data/AraptusDispersalBias.csv"
 ```
 
 

@@ -2,7 +2,7 @@
 title: "Raster Data"
 subtitle: "&nbsp;"
 author: Rodney Dyer, PhD
-format: revealjs
+format: dyerlab-revealjs
 execute:
   echo: true
 ---
@@ -112,7 +112,7 @@ By far, you will most commonly working with pre-existing raster data.
 ## Loading A Raster - Example
 
 ```{r cache=TRUE}
-url <- "https://github.com/DyerlabTeaching/Raster-Data/raw/main/data/alt_22.tif"
+url <- "https://dyerlabteaching.github.io/Raster-Data/data/alt_22.tif"
 r <- raster( url )
 r
 ```
@@ -196,7 +196,7 @@ Let's use the beetle data from the [Spatial Points Lecture](https://dyerlabteach
 ```{r}
 library( sf )
 library( tidyverse )
-beetle_url <- "https://raw.githubusercontent.com/DyerlabTeaching/Raster-Data/main/data/AraptusDispersalBias.csv"
+beetle_url <- "https://dyerlabteaching.github.io/Raster-Data/data/AraptusDispersalBias.csv"
 
 read_csv( beetle_url ) %>% 
   st_as_sf( coords=c("Longitude","Latitude"), crs=4326 ) -> beetles

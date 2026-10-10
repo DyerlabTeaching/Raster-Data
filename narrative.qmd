@@ -1,6 +1,6 @@
 ---
 title: "Raster Data Narrative"
-format: html
+format: dyerlab-narrative-html
 ---
 
 <center>
@@ -56,7 +56,7 @@ If these data represent something on the planet, we can assign the dimensions an
 We can also grab a raster object from the filesystem or from some online repository by passing the link to the `raster()` function.  Here is the elevation, in meters, of the region in which Mexico is found. To load it in, pass the url.
 
 ```{r}
-url <- "https://github.com/DyerlabTeaching/Raster-Data/raw/main/data/alt_22.tif"
+url <- "https://dyerlabteaching.github.io/Raster-Data/data/alt_22.tif"
 r <- raster( url )
 r
 ```
