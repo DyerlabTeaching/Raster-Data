@@ -4,7 +4,7 @@ format: dyerlab-narrative-html
 ---
 
 <center>
-![Rasters!](https://live.staticflickr.com/65535/50510757837_c3606682ac_c_d.jpg)
+![Rasters!](media/rasters.jpg)
 </center>
 
 All raster operations in this topic are accomplished using the `raster` library.
@@ -80,7 +80,7 @@ format( sum( is.na( values(r) ) ), big.mark = "," )
 
 One of the first things to do is to crop the data down to represent the size and extent of our study area.  If we have over 10 million missing data points (the ocean) and most of Mexico in this raster above but we are only working with sites in Baja California (Norte y Sur), we would do well to excise (or crop) the raster to only include the area we are interested in working with.  
 
-To do this, we need to figure out a bounding box (e.g., the minimum and maximum values of longitude and latitude that enclose our data).  Let's assume we are working with the Beetle Data from the [Spatial Points Slides](https://dyerlab.github.io/ENVS-Lectures/spatial/spatial_points/slides.html#1) and load in the Sex-biased dispersal data set and use those points as a starting estimate of the bounding box.
+To do this, we need to figure out a bounding box (e.g., the minimum and maximum values of longitude and latitude that enclose our data).  Let's assume we are working with the Beetle Data from the [Spatial Points Slides](https://dyerlabteaching.github.io/Spatial-Points/slides.html) and load in the Sex-biased dispersal data set and use those points as a starting estimate of the bounding box.
 
 
 ```{r}
@@ -167,7 +167,7 @@ alt %>%
   class()
 ```
 
-So, if we are going to use this, we need to transform it from a `matrix` object into a `data.frame` object.  We can do this using the `as.data.frame()` function.  Remember from the [lecture on `data.frame` objects](https://dyerlab.github.io/ENVS-Lectures/r_language/data_frames/slides.html#1) that we can coerce columns of data (either `matrix` or `array`) into a `data.frame` this way.
+So, if we are going to use this, we need to transform it from a `matrix` object into a `data.frame` object.  We can do this using the `as.data.frame()` function.  Remember from the [lecture on `data.frame` objects](https://dyerlabteaching.github.io/Data-Containers/narrative.html) that we can coerce columns of data (either `matrix` or `array`) into a `data.frame` this way.
 
 
 So here it is in one pipe, using the following tricks:  
@@ -247,7 +247,7 @@ plot( alt )
 click(alt, xy=TRUE, value=TRUE, n=3 ) -> points
 ```
 
-![map with points](https://live.staticflickr.com/65535/50505505948_08e3e91dfb_c_d.jpg)
+![map with points](media/map_with_points.jpg)
 ```{r echo=FALSE}
 points <- data.frame( x = c(-113.6292, -112.4792, -111.2458, -109.9958),
                       y = c(28.45417, 26.85417, 24.83750, 23.48750),
