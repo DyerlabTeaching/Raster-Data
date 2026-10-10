@@ -57,7 +57,7 @@ plot( baja_elev)
 
 ```{r}
 plot( baja_elev, xlab="Longitude", ylab="Latitude")
-text( beetles, add=TRUE, pch=16, col="red" )
+text( beetles,  pch=16, col="red" )
 ```
 
 
