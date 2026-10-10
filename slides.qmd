@@ -143,7 +143,7 @@ plot( r,
 :::
 
 ::: {.column width="50%"}
-![](https://live.staticflickr.com/65535/50510331198_2a2c5bfe76_c_d.jpg)
+![](media/flickr_50510331198.jpg)
 :::
 
 ::::
@@ -477,7 +477,7 @@ click( alt,
 :::
 
 ::: {.column width="50%"}
-![](https://live.staticflickr.com/65535/50505505948_08e3e91dfb_w_d.jpg)
+![](media/map_with_points.jpg)
 :::
 
 ::::
@@ -602,7 +602,7 @@ alt.df %>%
 
 &nbsp;
 
-![](https://live.staticflickr.com/65535/50510757837_c3606682ac_c_d.jpg)
+![](media/rasters.jpg)
 :::
 
 ::::
