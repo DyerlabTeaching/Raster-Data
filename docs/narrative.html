@@ -133,7 +133,7 @@ window.Quarto = {
 <center>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="https://live.staticflickr.com/65535/50510757837_c3606682ac_c_d.jpg" class="img-fluid figure-img"></p>
+<p><img src="media/rasters.jpg" class="img-fluid figure-img"></p>
 <figcaption>Rasters!</figcaption>
 </figure>
 </div>
@@ -159,20 +159,20 @@ window.Quarto = {
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>x</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2] [,3] [,4] [,5] [,6] [,7]
-[1,]   16    6    8    8   11   13   17
-[2,]   11   18   10   19   12   12   11
-[3,]    9   17   13    9   10   12   11
-[4,]    9    9    9   14   10   12   15
-[5,]   13    8   13    9   13   12   15
-[6,]   11   10   15   14   10   16   12
-[7,]   14    9    9    7   11   22   14</code></pre>
+[1,]   17   13   10   14   16    5   15
+[2,]   14    8    8    9   14   13   12
+[3,]   11   11    9    8   14    3   11
+[4,]    6    9   14   13    5    7    9
+[5,]   15    8   14   10    9   13   14
+[6,]   13    4   12   16   12    7   14
+[7,]   14   10    9   12    8    5   13</code></pre>
 </div>
 </div>
 <p>While we haven’t used matrices much thus far, it is a lot like a <code>data.frame</code> with respect to getting and setting values using numerical indices. For example, the value of the 3rd row and 5th column is:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>x[<span class="dv">3</span>,<span class="dv">5</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 10</code></pre>
+<pre><code>[1] 14</code></pre>
 </div>
 </div>
 <p>To convert this set of data, as a matrix, into a geospatially referenced <code>raster()</code> object we do the following:</p>
@@ -187,7 +187,7 @@ extent     : 0, 1, 0, 1  (xmin, xmax, ymin, ymax)
 crs        : NA 
 source     : memory
 names      : layer 
-values     : 6, 22  (min, max)</code></pre>
+values     : 3, 17  (min, max)</code></pre>
 </div>
 </div>
 <p>Notice that when I plot it out, it does not show the data, but a summary of the data along with some key data about the contents, including:<br>
@@ -238,7 +238,7 @@ values     : -202, 5469  (min, max)</code></pre>
 <section id="cropping" class="level2">
 <h2 class="anchored" data-anchor-id="cropping">Cropping</h2>
 <p>One of the first things to do is to crop the data down to represent the size and extent of our study area. If we have over 10 million missing data points (the ocean) and most of Mexico in this raster above but we are only working with sites in Baja California (Norte y Sur), we would do well to excise (or crop) the raster to only include the area we are interested in working with.</p>
-<p>To do this, we need to figure out a bounding box (e.g., the minimum and maximum values of longitude and latitude that enclose our data). Let’s assume we are working with the Beetle Data from the <a href="https://dyerlab.github.io/ENVS-Lectures/spatial/spatial_points/slides.html#1">Spatial Points Slides</a> and load in the Sex-biased dispersal data set and use those points as a starting estimate of the bounding box.</p>
+<p>To do this, we need to figure out a bounding box (e.g., the minimum and maximum values of longitude and latitude that enclose our data). Let’s assume we are working with the Beetle Data from the <a href="https://dyerlabteaching.github.io/Spatial-Points/slides.html">Spatial Points Slides</a> and load in the Sex-biased dispersal data set and use those points as a starting estimate of the bounding box.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>( sf )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
@@ -408,7 +408,7 @@ values     : -202, 1838  (min, max)</code></pre>
 <pre><code>[1] "matrix" "array" </code></pre>
 </div>
 </div>
-<p>So, if we are going to use this, we need to transform it from a <code>matrix</code> object into a <code>data.frame</code> object. We can do this using the <code>as.data.frame()</code> function. Remember from the <a href="https://dyerlab.github.io/ENVS-Lectures/r_language/data_frames/slides.html#1">lecture on <code>data.frame</code> objects</a> that we can coerce columns of data (either <code>matrix</code> or <code>array</code>) into a <code>data.frame</code> this way.</p>
+<p>So, if we are going to use this, we need to transform it from a <code>matrix</code> object into a <code>data.frame</code> object. We can do this using the <code>as.data.frame()</code> function. Remember from the <a href="https://dyerlabteaching.github.io/Data-Containers/narrative.html">lecture on <code>data.frame</code> objects</a> that we can coerce columns of data (either <code>matrix</code> or <code>array</code>) into a <code>data.frame</code> this way.</p>
 <p>So here it is in one pipe, using the following tricks:<br>
 - Converting raster to points and then to <code>data.frame</code> so it will go into <code>ggplot</code><br>
 - Renaming the columns of data I am going to keep so I don’t have to make <code>xlab</code> and <code>ylab</code></p>
@@ -505,7 +505,7 @@ values     : -202, 1838  (min, max)</code></pre>
 </div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="https://live.staticflickr.com/65535/50505505948_08e3e91dfb_c_d.jpg" class="img-fluid figure-img"></p>
+<p><img src="media/map_with_points.jpg" class="img-fluid figure-img"></p>
 <figcaption>map with points</figcaption>
 </figure>
 </div>
