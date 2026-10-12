@@ -1,0 +1,11 @@
+title: "Raster Data Narrative"
+repo: Raster-Data
+image:
+  file: media/module_image.jpg
+  alt: "The Sea of Cortez near Loreto, Baja California Sur."
+epigraph: >-
+  Raster data is good for representing continuous surfaces and
+  performing fast analyses on large areas, such as calculating a surface
+  temperature map or a land-cover classification.
+resources:
+  - "An external [Visual Raster Cheat Sheet](https://rpubs.com/etiennebr/visualraster) that briefly covers several raster-based operations."

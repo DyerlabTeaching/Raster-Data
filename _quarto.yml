@@ -1,5 +1,5 @@
 project:
-  title: "Raster Data"
+  title: "Raster Data Narrative"
   output-dir: docs
   pre-render: _extensions/dyerlab/update-extension.sh
   resources:

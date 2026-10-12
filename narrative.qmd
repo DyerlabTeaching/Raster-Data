@@ -3,9 +3,13 @@ title: "Raster Data Narrative"
 format: dyerlab-narrative-html
 ---
 
-<center>
-![Rasters!](media/rasters.jpg)
-</center>
+<!-- BEGIN module:header — generated from module.yml; edit that, not this -->
+
+![](media/module_image.jpg){fig-alt="The Sea of Cortez near Loreto, Baja California Sur."}
+
+> Raster data is good for representing continuous surfaces and performing fast analyses on large areas, such as calculating a surface temperature map or a land-cover classification.
+
+<!-- END module:header -->
 
 All raster operations in this topic are accomplished using the `raster` library.
 
@@ -147,8 +151,6 @@ plot(baja)
 ```
 
 
-
-
 ## Plotting with GGPlot
 
 As you may suspect, our old friend `ggplot` has some tricks up its sleeve for us.  The main thing here is that `ggplot` requires a `data.frame` object and a raster is not a `data.frame` --- Unless we turn it into one (hehehe) using a cool function called `rasterToPoints()`.  This takes the cells of the raster (and underlying matrix) and makes points from it.
@@ -190,7 +192,6 @@ Then we can plot it by:
 - Applying only a minimal theme.
 
 
-
 ```{r}
 alt.df %>%
   ggplot()  + 
@@ -202,8 +203,6 @@ alt.df %>%
 
 baja_elevation
 ```
-
-
 
 
 That looks good but we should probably do something with the colors.  There is a built-in `terrain.colors()` and tell `ggplot` to use this for the fill gradient.
@@ -394,9 +393,7 @@ alt.df %>%
 ```
 
 
-
 Very nice indeed.
-
 
 
 [^1]: A `Spatial` object is from the `sp` library.  This is an older library that is still used by some.  It is a robust library *but* it is put together in a slightly different way that complicates situations a bit, which is not why we are covering it in this topic.

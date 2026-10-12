@@ -1,6 +1,10 @@
-# Raster Data
+# Raster Data Narrative
 
-![Rasters!](https://dyerlabteaching.github.io/Raster-Data/media/rasters.jpg)
+<!-- BEGIN module:header — generated from module.yml; edit that, not this -->
+
+![The Sea of Cortez near Loreto, Baja California Sur.](https://dyerlabteaching.github.io/Raster-Data/media/module_image.jpg)
+
+<!-- END module:header -->
 
 ## Impetus
 
@@ -26,10 +30,14 @@ For continuously distributed data, the raster data structure is a much more effi
 
 ## Content
 
-- The [slides](https://dyerlabteaching.github.io/Raster-Data/slides.html) associated with this topic.
-- A longer [narrative](https://dyerlabteaching.github.io/Raster-Data/narrative.html) that goes into more depth on the use and analysis of raster-based data.
-- An [in-class](https://dyerlabteaching.github.io/Raster-Data/in-class.html) activity using the beetle data set.
+<!-- BEGIN module:resources — generated from module.yml; edit that, not this -->
+
+- The [slides](https://dyerlabteaching.github.io/Raster-Data/slides.html) for this topic.
+- A longer [narrative](https://dyerlabteaching.github.io/Raster-Data/narrative.html) that goes into more depth.
+- An [in-class](https://dyerlabteaching.github.io/Raster-Data/in-class.html) activity.
 - An external [Visual Raster Cheat Sheet](https://rpubs.com/etiennebr/visualraster) that briefly covers several raster-based operations.
+
+<!-- END module:resources -->
 
 ## Assessment
 
