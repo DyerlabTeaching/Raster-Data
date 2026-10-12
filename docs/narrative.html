@@ -130,14 +130,12 @@ window.Quarto = {
 </header>
 
 
-<center>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="media/rasters.jpg" class="img-fluid figure-img"></p>
-<figcaption>Rasters!</figcaption>
-</figure>
-</div>
-</center>
+<!-- BEGIN module:header — generated from module.yml; edit that, not this -->
+<p><img src="media/module_image.jpg" class="img-fluid" alt="The Sea of Cortez near Loreto, Baja California Sur."></p>
+<blockquote class="blockquote">
+<p>Raster data is good for representing continuous surfaces and performing fast analyses on large areas, such as calculating a surface temperature map or a land-cover classification.</p>
+</blockquote>
+<!-- END module:header -->
 <p>All raster operations in this topic are accomplished using the <code>raster</code> library.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(raster)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -159,20 +157,20 @@ window.Quarto = {
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>x</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2] [,3] [,4] [,5] [,6] [,7]
-[1,]   15   14   14   10   13   10   10
-[2,]   15   13    7   15   15   16   16
-[3,]   12    7   12    8   12   19    9
-[4,]    9    9   17    8   14   15    6
-[5,]   12   13   15   16   11   10   12
-[6,]   13    8   12   13   11   13   14
-[7,]    9   15   12   15    9   15   11</code></pre>
+[1,]   14   16   15    9    6    9   13
+[2,]   10    8   13   13   14   15   12
+[3,]    7    8   13    9   11   12   13
+[4,]   11   10   14   12    8   11   12
+[5,]   12   13   14   13   13   14   12
+[6,]    8   18   18   14   11   11   18
+[7,]   14   13   20   10    8   17   15</code></pre>
 </div>
 </div>
 <p>While we haven’t used matrices much thus far, it is a lot like a <code>data.frame</code> with respect to getting and setting values using numerical indices. For example, the value of the 3rd row and 5th column is:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>x[<span class="dv">3</span>,<span class="dv">5</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 12</code></pre>
+<pre><code>[1] 11</code></pre>
 </div>
 </div>
 <p>To convert this set of data, as a matrix, into a geospatially referenced <code>raster()</code> object we do the following:</p>
@@ -187,7 +185,7 @@ extent     : 0, 1, 0, 1  (xmin, xmax, ymin, ymax)
 crs        : NA 
 source     : memory
 names      : layer 
-values     : 6, 19  (min, max)</code></pre>
+values     : 6, 20  (min, max)</code></pre>
 </div>
 </div>
 <p>Notice that when I plot it out, it does not show the data, but a summary of the data along with some key data about the contents, including:<br>
