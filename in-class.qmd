@@ -26,7 +26,7 @@ library( sf )
 
 elev <- raster( raster_url )
 
-read_csv( beetle_url )  %>% 
+read_csv( beetle_url )  |> 
   st_as_sf( coords = c("Longitude","Latitude"), 
             crs = 4326 ) -> beetles 
 
@@ -41,9 +41,9 @@ plot( elev, xlab="Longitude" )
 
 
 ```{r}
-beetles %>%
-  st_union() %>%
-  st_buffer( dist = 1 ) %>%
+beetles |>
+  st_union() |>
+  st_buffer( dist = 1 ) |>
   st_bbox() 
 
 baja_extent <- extent( c(-115.29354,-108,22,30))
@@ -63,9 +63,9 @@ text( beetles,  pch=16, col="red" )
 
 ```{r}
 library( ggrepel )
-baja_elev %>%
-  rasterToPoints() %>%
-  as.data.frame() %>% 
+baja_elev |>
+  rasterToPoints() |>
+  as.data.frame() |> 
   ggplot() +
   geom_raster( aes(x,y,fill=alt_22) ) +
   geom_sf_label( aes(label=Site), 

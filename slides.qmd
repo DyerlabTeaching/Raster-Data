@@ -198,10 +198,10 @@ library( sf )
 library( tidyverse )
 beetle_url <- "https://dyerlabteaching.github.io/CourseData/Spatial/AraptusDispersalBias.csv"
 
-read_csv( beetle_url ) %>% 
+read_csv( beetle_url ) |> 
   st_as_sf( coords=c("Longitude","Latitude"), crs=4326 ) -> beetles
 
-beetles %>% 
+beetles |> 
   st_bbox()
 ```
 
@@ -214,7 +214,7 @@ beetles %>%
 ### Option 1: Eyeball it!
 
 ```{r}
-beetles %>% 
+beetles |> 
   st_bbox()
 ```
 
@@ -231,9 +231,9 @@ eyeball_bbox <- c(-116, -109, 22, 30)
 ### Option 2: Use Buffer
 
 ```{r message=FALSE}
-beetles %>%
-  st_union() %>%
-  st_buffer( dist = 0.5 ) %>%
+beetles |>
+  st_union() |>
+  st_buffer( dist = 0.5 ) |>
   st_bbox()
 ```
 :::
@@ -293,8 +293,8 @@ As you probably guessed, there is a `geom_raster()` available to us.  .redinline
 
 ::: {.column width="50%"}
 ```{r}
-alt %>%
-  rasterToPoints() %>%
+alt |>
+  rasterToPoints() |>
   head()
 ```
 :::
@@ -302,8 +302,8 @@ alt %>%
 ::: {.column width="50%"}
 ::: {.fragment}
 ```{r}
-alt %>%
-  rasterToPoints() %>%
+alt |>
+  rasterToPoints() |>
   class()
 ```
 :::
@@ -314,12 +314,12 @@ alt %>%
 
 ## Converting A `raster` to a `data.frame` {.smaller}
 
-A little coercion to move `matrix` into `as.data.frame()` is necessary.  I also use the `transmute()` function which does in-place renaming (rather than `mutate( X=y ) %>% select( -y )`)
+A little coercion to move `matrix` into `as.data.frame()` is necessary.  I also use the `transmute()` function which does in-place renaming (rather than `mutate( X=y ) |> select( -y )`)
 
 ```{r}
-alt %>%
-  rasterToPoints() %>%
-  as.data.frame() %>% 
+alt |>
+  rasterToPoints() |>
+  as.data.frame() |> 
   transmute(Longitude=x,
             Latitude=y,
             Elevation=alt_22)  -> alt.df
@@ -337,7 +337,7 @@ head( alt.df )
 <p>&nbsp;</p>
 
 ```{r eval=FALSE}
-alt.df %>%
+alt.df |>
   ggplot()  + 
   geom_raster( aes( x = Longitude, 
                     y = Latitude, 
@@ -352,7 +352,7 @@ baja_elevation
 ::: {.column width="50%"}
 ```{r}
 #| echo: false 
-alt.df %>%
+alt.df |>
   ggplot()  + 
   geom_raster( aes( x = Longitude, 
                     y = Latitude, 
@@ -569,9 +569,9 @@ raster::extract( alt, as(sfran,"Spatial") )
 ::: {.column width="50%"}
 ```{r eval=FALSE}
 library( ggrepel )
-alt.df %>%
+alt.df |>
   filter( Elevation >= 205,
-          Elevation <= 405 ) %>%
+          Elevation <= 405 ) |>
   ggplot() + 
   geom_raster( aes( x = Longitude,
                     y = Latitude),

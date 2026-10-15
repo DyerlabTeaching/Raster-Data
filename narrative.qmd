@@ -92,7 +92,7 @@ library( sf )
 library( tidyverse )
 beetle_url <- "https://dyerlabteaching.github.io/CourseData/Spatial/AraptusDispersalBias.csv"
 
-read_csv( beetle_url ) %>%
+read_csv( beetle_url ) |>
   st_as_sf( coords=c("Longitude","Latitude"), crs=4326 ) -> beetles
 
 summary( beetles )
@@ -101,7 +101,7 @@ summary( beetles )
 Now, we can take the bounding box of these points and get a first approximation.
 
 ```{r}
-beetles %>% st_bbox()
+beetles |> st_bbox()
 ```
 
 OK, so this is the strict bounding box for these points.  This means that the minimum and maximum values for these points are defined by the original locations—for both the latitude and longitude (both minimum and maximum)—we have sites on each of the edges.  This is fine here but we could probably add a little bit of a *buffer* around that bounding box so that we do not have our sites on the very edge of the plot.  We can do this by either *eyeballing-it* to round up to some reasonable area around the points *or* apply a buffer (`st_buffer`) to the union of all the points with some distance and then take the bounding box.   I'll go for the former and make it into an `extent` object.
@@ -134,10 +134,10 @@ plot( beetles["Suitability"], pch=16, add=TRUE)
 There is another way to grab just a portion of the raster—similar to cropping—which is to mask.  A mask will not change the size of the raster but just put `NA` values in the cells that are not in the area of interest.  So if we were to just mask above, it would never actually reduce the size of the raster, just add a lot more `NA` values.  However, the setup is the same.
 
 ```{r}
-beetles %>%
-  filter( Site != 32 ) %>%
-  st_union() %>%
-  st_buffer( dist = 1 ) %>%
+beetles |>
+  filter( Site != 32 ) |>
+  st_union() |>
+  st_buffer( dist = 1 ) |>
   st_convex_hull() -> hull
 
 baja <- mask( alt, as(hull, "Spatial"))
@@ -156,16 +156,16 @@ plot(baja)
 As you may suspect, our old friend `ggplot` has some tricks up its sleeve for us.  The main thing here is that `ggplot` requires a `data.frame` object and a raster is not a `data.frame` --- Unless we turn it into one (hehehe) using a cool function called `rasterToPoints()`.  This takes the cells of the raster (and underlying matrix) and makes points from it.
 
 ```{r}
-alt %>%
-  rasterToPoints() %>%
+alt |>
+  rasterToPoints() |>
   head()
 ```
 
 However, they are not a `data.frame` but a matrix.
 
 ```{r}
-alt %>%
-  rasterToPoints() %>%
+alt |>
+  rasterToPoints() |>
   class()
 ```
 
@@ -177,9 +177,9 @@ So here it is in one pipe, using the following tricks:
 - Renaming the columns of data I am going to keep so I don't have to make `xlab` and `ylab`  
 
 ```{r}
-alt %>%
-  rasterToPoints() %>%
-  as.data.frame() %>% 
+alt |>
+  rasterToPoints() |>
+  as.data.frame() |> 
   transmute(Longitude=x,
             Latitude=y,
             Elevation=alt_22)  -> alt.df
@@ -193,7 +193,7 @@ Then we can plot it by:
 
 
 ```{r}
-alt.df %>%
+alt.df |>
   ggplot()  + 
   geom_raster( aes( x = Longitude, 
                     y = Latitude, 
@@ -262,7 +262,7 @@ points
 I'm going to rename the column names.
 
 ```{r}
-points %>%
+points |>
   transmute( Longitude = x,
              Latitude = y,
              Value = value) -> sites
@@ -363,9 +363,9 @@ We can also proceed by relying upon the `data.frame` objects representing the el
 
 ```{r echo=TRUE}
 library( ggrepel )
-alt.df %>%
+alt.df |>
   filter( Elevation >= 205,
-          Elevation <= 405) %>%
+          Elevation <= 405) |>
   ggplot() + 
   geom_raster( aes( x = Longitude,
                     y = Latitude),
