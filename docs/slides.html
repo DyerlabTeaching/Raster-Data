@@ -233,8 +233,8 @@ Rasters represent data distributed continuously across a spatial extent
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a>values <span class="ot">&lt;-</span> <span class="fu">rpois</span>( <span class="at">n =</span> <span class="dv">36</span>, <span class="at">lambda=</span><span class="dv">12</span>)</span>
 <span id="cb1-2"><a href=""></a>values</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] 12 15 11 14 15 12 12 20 12  9  9 10 11 10 12 13  6 15 14 14 20 16 23  8 14
-[26] 10 13 10 14 12  6 15 10  7 10  9</code></pre>
+<pre><code> [1] 11 13 14 10  9 13 12 11 12 12  3 16  8 14 13  8 11 12 13 16 11 11 14 15 14
+[26] 15 13 16 19 12 12 10 14 11 21 12</code></pre>
 </div>
 </div>
 <div class="fragment">
@@ -243,12 +243,12 @@ Rasters represent data distributed continuously across a spatial extent
 <span id="cb3-2"><a href=""></a>x</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2] [,3] [,4] [,5] [,6]
-[1,]   12   12   11   14   14    6
-[2,]   15   20   10   14   10   15
-[3,]   11   12   12   20   13   10
-[4,]   14    9   13   16   10    7
-[5,]   15    9    6   23   14   10
-[6,]   12   10   15    8   12    9</code></pre>
+[1,]   11   12    8   13   14   12
+[2,]   13   11   14   16   15   10
+[3,]   14   12   13   11   13   14
+[4,]   10   12    8   11   16   11
+[5,]    9    3   11   14   19   21
+[6,]   13   16   12   15   12   12</code></pre>
 </div>
 </div>
 </div>
@@ -280,7 +280,7 @@ extent     : 0, 1, 0, 1  (xmin, xmax, ymin, ymax)
 crs        : NA 
 source     : memory
 names      : layer 
-values     : 6, 23  (min, max)</code></pre>
+values     : 3, 21  (min, max)</code></pre>
 </div>
 </div>
 </section>
@@ -416,10 +416,10 @@ values     : -202, 5469  (min, max)</code></pre>
 <span id="cb11-2"><a href=""></a><span class="fu">library</span>( tidyverse )</span>
 <span id="cb11-3"><a href=""></a>beetle_url <span class="ot">&lt;-</span> <span class="st">"https://dyerlabteaching.github.io/CourseData/Spatial/AraptusDispersalBias.csv"</span></span>
 <span id="cb11-4"><a href=""></a></span>
-<span id="cb11-5"><a href=""></a><span class="fu">read_csv</span>( beetle_url ) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-5"><a href=""></a><span class="fu">read_csv</span>( beetle_url ) <span class="sc">|&gt;</span> </span>
 <span id="cb11-6"><a href=""></a>  <span class="fu">st_as_sf</span>( <span class="at">coords=</span><span class="fu">c</span>(<span class="st">"Longitude"</span>,<span class="st">"Latitude"</span>), <span class="at">crs=</span><span class="dv">4326</span> ) <span class="ot">-&gt;</span> beetles</span>
 <span id="cb11-7"><a href=""></a></span>
-<span id="cb11-8"><a href=""></a>beetles <span class="sc">%&gt;%</span> </span>
+<span id="cb11-8"><a href=""></a>beetles <span class="sc">|&gt;</span> </span>
 <span id="cb11-9"><a href=""></a>  <span class="fu">st_bbox</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      xmin       ymin       xmax       ymax 
@@ -433,7 +433,7 @@ values     : -202, 5469  (min, max)</code></pre>
 <div class="column" style="width:50%;">
 <h3 id="option-1-eyeball-it">Option 1: Eyeball it!</h3>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href=""></a>beetles <span class="sc">%&gt;%</span> </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href=""></a>beetles <span class="sc">|&gt;</span> </span>
 <span id="cb13-2"><a href=""></a>  <span class="fu">st_bbox</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      xmin       ymin       xmax       ymax 
@@ -448,9 +448,9 @@ values     : -202, 5469  (min, max)</code></pre>
 <div class="fragment">
 <h3 id="option-2-use-buffer">Option 2: Use Buffer</h3>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href=""></a>beetles <span class="sc">%&gt;%</span></span>
-<span id="cb16-2"><a href=""></a>  <span class="fu">st_union</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb16-3"><a href=""></a>  <span class="fu">st_buffer</span>( <span class="at">dist =</span> <span class="fl">0.5</span> ) <span class="sc">%&gt;%</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href=""></a>beetles <span class="sc">|&gt;</span></span>
+<span id="cb16-2"><a href=""></a>  <span class="fu">st_union</span>() <span class="sc">|&gt;</span></span>
+<span id="cb16-3"><a href=""></a>  <span class="fu">st_buffer</span>( <span class="at">dist =</span> <span class="fl">0.5</span> ) <span class="sc">|&gt;</span></span>
 <span id="cb16-4"><a href=""></a>  <span class="fu">st_bbox</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      xmin       ymin       xmax       ymax 
@@ -514,8 +514,8 @@ values     : -202, 2263  (min, max)</code></pre>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href=""></a>alt <span class="sc">%&gt;%</span></span>
-<span id="cb23-2"><a href=""></a>  <span class="fu">rasterToPoints</span>() <span class="sc">%&gt;%</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href=""></a>alt <span class="sc">|&gt;</span></span>
+<span id="cb23-2"><a href=""></a>  <span class="fu">rasterToPoints</span>() <span class="sc">|&gt;</span></span>
 <span id="cb23-3"><a href=""></a>  <span class="fu">head</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>             x        y alt_22
@@ -530,8 +530,8 @@ values     : -202, 2263  (min, max)</code></pre>
 </div><div class="column" style="width:50%;">
 <div class="fragment">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href=""></a>alt <span class="sc">%&gt;%</span></span>
-<span id="cb25-2"><a href=""></a>  <span class="fu">rasterToPoints</span>() <span class="sc">%&gt;%</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href=""></a>alt <span class="sc">|&gt;</span></span>
+<span id="cb25-2"><a href=""></a>  <span class="fu">rasterToPoints</span>() <span class="sc">|&gt;</span></span>
 <span id="cb25-3"><a href=""></a>  <span class="fu">class</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "matrix" "array" </code></pre>
@@ -542,11 +542,11 @@ values     : -202, 2263  (min, max)</code></pre>
 </section>
 <section id="converting-a-raster-to-a-data.frame" class="slide level2 smaller">
 <h2>Converting A <code>raster</code> to a <code>data.frame</code></h2>
-<p>A little coercion to move <code>matrix</code> into <code>as.data.frame()</code> is necessary. I also use the <code>transmute()</code> function which does in-place renaming (rather than <code>mutate( X=y ) %&gt;% select( -y )</code>)</p>
+<p>A little coercion to move <code>matrix</code> into <code>as.data.frame()</code> is necessary. I also use the <code>transmute()</code> function which does in-place renaming (rather than <code>mutate( X=y ) |&gt; select( -y )</code>)</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href=""></a>alt <span class="sc">%&gt;%</span></span>
-<span id="cb27-2"><a href=""></a>  <span class="fu">rasterToPoints</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb27-3"><a href=""></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span> </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href=""></a>alt <span class="sc">|&gt;</span></span>
+<span id="cb27-2"><a href=""></a>  <span class="fu">rasterToPoints</span>() <span class="sc">|&gt;</span></span>
+<span id="cb27-3"><a href=""></a>  <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span> </span>
 <span id="cb27-4"><a href=""></a>  <span class="fu">transmute</span>(<span class="at">Longitude=</span>x,</span>
 <span id="cb27-5"><a href=""></a>            <span class="at">Latitude=</span>y,</span>
 <span id="cb27-6"><a href=""></a>            <span class="at">Elevation=</span>alt_22)  <span class="ot">-&gt;</span> alt.df</span>
@@ -573,7 +573,7 @@ values     : -202, 2263  (min, max)</code></pre>
 &nbsp;
 </p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href=""></a>alt.df <span class="sc">%&gt;%</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href=""></a>alt.df <span class="sc">|&gt;</span></span>
 <span id="cb29-2"><a href=""></a>  <span class="fu">ggplot</span>()  <span class="sc">+</span> </span>
 <span id="cb29-3"><a href=""></a>  <span class="fu">geom_raster</span>( <span class="fu">aes</span>( <span class="at">x =</span> Longitude, </span>
 <span id="cb29-4"><a href=""></a>                    <span class="at">y =</span> Latitude, </span>
@@ -787,9 +787,9 @@ Geodetic CRS:  WGS 84</code></pre>
 <div class="column" style="width:50%;">
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href=""></a><span class="fu">library</span>( ggrepel )</span>
-<span id="cb43-2"><a href=""></a>alt.df <span class="sc">%&gt;%</span></span>
+<span id="cb43-2"><a href=""></a>alt.df <span class="sc">|&gt;</span></span>
 <span id="cb43-3"><a href=""></a>  <span class="fu">filter</span>( Elevation <span class="sc">&gt;=</span> <span class="dv">205</span>,</span>
-<span id="cb43-4"><a href=""></a>          Elevation <span class="sc">&lt;=</span> <span class="dv">405</span> ) <span class="sc">%&gt;%</span></span>
+<span id="cb43-4"><a href=""></a>          Elevation <span class="sc">&lt;=</span> <span class="dv">405</span> ) <span class="sc">|&gt;</span></span>
 <span id="cb43-5"><a href=""></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> </span>
 <span id="cb43-6"><a href=""></a>  <span class="fu">geom_raster</span>( <span class="fu">aes</span>( <span class="at">x =</span> Longitude,</span>
 <span id="cb43-7"><a href=""></a>                    <span class="at">y =</span> Latitude),</span>
