@@ -17,7 +17,7 @@ For continuously distributed data, the raster data structure is a much more effi
 > Learners will describe the raster data structure used for continuously distributed spatial data, and manipulate and transform raster objects in R.
 
 - **Bloom's Levels:** Understand, Apply
-- **Reinforces:** Contrasts with the vector (point/line/polygon) data covered in Spatial Points and Shapefiles, completing the two core spatial data models used in the course.
+- **Reinforces:** Contrasts with the vector (point/line/polygon) data covered in Spatial Points and Vector Data, completing the two core spatial data models used in the course.
 - **Notes:** Framed around efficiency — rasters are introduced as the appropriate structure specifically for continuous, not discrete, spatial data.
 
 ### Visualize and Extract Information from Raster Data
