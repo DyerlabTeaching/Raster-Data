@@ -5,6 +5,7 @@ project:
   resources:
     - media/
     - data/
+    - "!data/climate/"
 
 format:
   dyerlab-narrative-html: default

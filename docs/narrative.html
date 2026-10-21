@@ -136,14 +136,11 @@ window.Quarto = {
 <p>Raster data is good for representing continuous surfaces and performing fast analyses on large areas, such as calculating a surface temperature map or a land-cover classification.</p>
 </blockquote>
 <!-- END module:header -->
-<p>All raster operations in this topic are accomplished using the <code>raster</code> library.</p>
+<p>All raster operations in this topic are accomplished using the <code>terra</code> library, the modern replacement for the older <code>raster</code> library. If you run across older code online that uses <code>raster()</code>, <code>extent()</code>, or <code>projectRaster()</code>, the <code>terra</code> equivalents are <code>rast()</code>, <code>ext()</code>, and <code>project()</code>.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(raster)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Loading required package: sp</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: package 'sp' was built under R version 4.6.1</code></pre>
+<pre><code>terra 1.9.46</code></pre>
 </div>
 </div>
 <p>Rasters are representations of continuous, or semi-continuous, data. You can envision a raster just like an image. <mark>When me make a <code>leaflet()</code> map and how the tiles, each pixel is colored a particular value representing elevation, temperature, precipitation, habitat type, or whatever.</mark> This is exactly the same for rasters. The <em>key point</em> here is that each pixel represents some defined region on the earth and as such the raster itself is georeferenced. It has a coordinate reference system (CRS), boundaries, etc.</p>
@@ -152,71 +149,71 @@ window.Quarto = {
 <p>A raster is simply a matrix with rows and columns and each element has a value associated with it. You can create a raster <em>de novo</em> by making a matrix of data and filling it with values, then turning it into a raster.</p>
 <p>Here I make a raster with random numbers selected from the Poisson Distribution (fishy, I know) using the <code>rpois()</code> function. I then turn it into a matrix with 7 rows (and 7 columns).</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>vals <span class="ot">&lt;-</span> <span class="fu">rpois</span>(<span class="dv">49</span>, <span class="at">lambda=</span><span class="dv">12</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">matrix</span>( vals, <span class="at">nrow=</span><span class="dv">7</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>x</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>vals <span class="ot">&lt;-</span> <span class="fu">rpois</span>(<span class="dv">49</span>, <span class="at">lambda=</span><span class="dv">12</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">matrix</span>( vals, <span class="at">nrow=</span><span class="dv">7</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>x</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2] [,3] [,4] [,5] [,6] [,7]
-[1,]   12   14   10    9   16    9    9
-[2,]   14   17   12   17    8    7    8
-[3,]   13    7    5   12    7   10   15
-[4,]   13   10    7   11   12   18   10
-[5,]   17   10   17   11   13   15   12
-[6,]   13   13    9   11    9   13   15
-[7,]   15   12    9   12    7    8    9</code></pre>
+[1,]   15   12    7   16    7   14   13
+[2,]   18   16   11    7   20   13    6
+[3,]   15   11   14   13   17   11   10
+[4,]   14   14   10   17   11   13   13
+[5,]   12   11   15   15   12   17   13
+[6,]   10   22   11   11   10   12   18
+[7,]   14   10    7    6   21    7   14</code></pre>
 </div>
 </div>
 <p>While we haven’t used matrices much thus far, it is a lot like a <code>data.frame</code> with respect to getting and setting values using numerical indices. For example, the value of the 3rd row and 5th column is:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>x[<span class="dv">3</span>,<span class="dv">5</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>x[<span class="dv">3</span>,<span class="dv">5</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 7</code></pre>
+<pre><code>[1] 17</code></pre>
 </div>
 </div>
-<p>To convert this set of data, as a matrix, into a geospatially referenced <code>raster()</code> object we do the following:</p>
+<p>To convert this set of data, as a matrix, into a geospatially referenced <code>SpatRaster</code> object we pass it to the <code>rast()</code> function:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">raster</span>( x )</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>r</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">rast</span>( x )</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>r</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>class      : RasterLayer 
-dimensions : 7, 7, 49  (nrow, ncol, ncell)
-resolution : 0.1428571, 0.1428571  (x, y)
-extent     : 0, 1, 0, 1  (xmin, xmax, ymin, ymax)
-crs        : NA 
-source     : memory
-names      : layer 
-values     : 5, 18  (min, max)</code></pre>
+<pre><code>class       : SpatRaster
+size        : 7, 7, 1  (nrow, ncol, nlyr)
+resolution  : 1, 1  (x, y)
+extent      : 0, 7, 0, 7  (xmin, xmax, ymin, ymax)
+coord. ref. : 
+source(s)   : memory
+name        : lyr.1
+min value   :     6
+max value   :    22</code></pre>
 </div>
 </div>
 <p>Notice that when I plot it out, it does not show the data, but a summary of the data along with some key data about the contents, including:<br>
-- A class definition<br>
-- The dimensions of the underlying data matrix,<br>
-- The resolution (e.g., the spatial extent of the sides of each pixel). Since we have no CRS here, it is equal to <span class="math inline">\(nrow(x)^{-1}\)</span> and <span class="math inline">\(ncol(x)^{-1}\)</span>.<br>
-- The extent (the bounding box) and again since we do not have a CRS defined it just goes from <span class="math inline">\(0\)</span> to <span class="math inline">\(1\)</span>. - The <code>crs</code> (missing) - The source can be either <code>memory</code> if the raster is not that big or <code>out of memory</code> if it is just referencing.</p>
+- A class definition (<code>SpatRaster</code>) - The size of the underlying data matrix (rows, columns, and the number of layers), - The resolution (e.g., the spatial extent of the sides of each pixel). Since we have no CRS here, it is equal to <span class="math inline">\(nrow(x)^{-1}\)</span> and <span class="math inline">\(ncol(x)^{-1}\)</span>.<br>
+- The extent (the bounding box) and again since we do not have a CRS defined it just goes from <span class="math inline">\(0\)</span> to <span class="math inline">\(1\)</span>. - The <code>coord. ref.</code> (missing) - The source, which is <code>memory</code> if the values are held in R or the name of the file the values are read from.</p>
 <p>If these data represent something on the planet, we can assign the dimensions and <code>CRS</code> values to it and use it in our normal day-to-day operations.</p>
 </section>
 <section id="loading-rasters-from-files-or-urls" class="level2">
 <h2 class="anchored" data-anchor-id="loading-rasters-from-files-or-urls">Loading Rasters from Files or URLs</h2>
-<p>We can also grab a raster object from the filesystem or from some online repository by passing the link to the <code>raster()</code> function. Here is the elevation, in meters, of the region in which Mexico is found. To load it in, pass the url.</p>
+<p>We can also grab a raster object from the filesystem or from some online repository by passing the link to the <code>rast()</code> function. Here is the elevation, in meters, of the region in which Mexico is found. To load it in, pass the url.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">"https://dyerlabteaching.github.io/CourseData/Spatial/alt_22.tif"</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">raster</span>( url )</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>r</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">"https://dyerlabteaching.github.io/CourseData/Spatial/alt_22.tif"</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">rast</span>( url )</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>r</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>class      : RasterLayer 
-dimensions : 3600, 3600, 12960000  (nrow, ncol, ncell)
-resolution : 0.008333333, 0.008333333  (x, y)
-extent     : -120, -90, 4.163336e-16, 30  (xmin, xmax, ymin, ymax)
-crs        : +proj=longlat +datum=WGS84 +no_defs 
-source     : alt_22.tif 
-names      : alt_22 
-values     : -202, 5469  (min, max)</code></pre>
+<pre><code>class       : SpatRaster
+size        : 3600, 3600, 1  (nrow, ncol, nlyr)
+resolution  : 0.008333333, 0.008333333  (x, y)
+extent      : -120, -90, 4.163336e-16, 30  (xmin, xmax, ymin, ymax)
+coord. ref. : lon/lat WGS 84 (EPSG:4326)
+source      : alt_22.tif
+name        : alt_22
+min value   :   -202
+max value   :   5469</code></pre>
 </div>
 </div>
 <p>Notice that this raster has a defined CRS and as such it is projected and the extent relates to the units of the datum (e.g., from -120 to -90 degrees longitude and 0 to 30 degrees latitude).</p>
 <p>If we plot it, we can see the whole raster.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(r)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(r)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -227,7 +224,7 @@ values     : -202, 5469  (min, max)</code></pre>
 </div>
 <p>Now, this raster is elevation where there is land but where there is no land, it is full of <code>NA</code> values. As such, there is a ton of them.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">format</span>( <span class="fu">sum</span>( <span class="fu">is.na</span>( <span class="fu">values</span>(r) ) ), <span class="at">big.mark =</span> <span class="st">","</span> )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">format</span>( <span class="fu">sum</span>( <span class="fu">is.na</span>( <span class="fu">values</span>(r) ) ), <span class="at">big.mark =</span> <span class="st">","</span> )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "10,490,650"</code></pre>
 </div>
@@ -238,14 +235,11 @@ values     : -202, 5469  (min, max)</code></pre>
 <p>One of the first things to do is to crop the data down to represent the size and extent of our study area. If we have over 10 million missing data points (the ocean) and most of Mexico in this raster above but we are only working with sites in Baja California (Norte y Sur), we would do well to excise (or crop) the raster to only include the area we are interested in working with.</p>
 <p>To do this, we need to figure out a bounding box (e.g., the minimum and maximum values of longitude and latitude that enclose our data). Let’s assume we are working with the Beetle Data from the <a href="https://dyerlabteaching.github.io/Spatial-Points/slides.html">Spatial Points Slides</a> and load in the Sex-biased dispersal data set and use those points as a starting estimate of the bounding box.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>( sf )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: package 'sf' was built under R version 4.6.1</code></pre>
-</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>( sf )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Linking to GEOS 3.13.0, GDAL 3.8.5, PROJ 9.5.1; sf_use_s2() is TRUE</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>( tidyverse )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>( tidyverse )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
 ✔ dplyr     1.2.1     ✔ readr     2.2.0
@@ -256,16 +250,15 @@ values     : -202, 5469  (min, max)</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-✖ tidyr::extract() masks raster::extract()
+✖ tidyr::extract() masks terra::extract()
 ✖ dplyr::filter()  masks stats::filter()
 ✖ dplyr::lag()     masks stats::lag()
-✖ dplyr::select()  masks raster::select()
 ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>beetle_url <span class="ot">&lt;-</span> <span class="st">"https://dyerlabteaching.github.io/CourseData/Spatial/AraptusDispersalBias.csv"</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="fu">read_csv</span>( beetle_url ) <span class="sc">|&gt;</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>( <span class="at">coords=</span><span class="fu">c</span>(<span class="st">"Longitude"</span>,<span class="st">"Latitude"</span>), <span class="at">crs=</span><span class="dv">4326</span> ) <span class="ot">-&gt;</span> beetles</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>beetle_url <span class="ot">&lt;-</span> <span class="st">"https://dyerlabteaching.github.io/CourseData/Spatial/AraptusDispersalBias.csv"</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">read_csv</span>( beetle_url ) <span class="sc">|&gt;</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>( <span class="at">coords=</span><span class="fu">c</span>(<span class="st">"Longitude"</span>,<span class="st">"Latitude"</span>), <span class="at">crs=</span><span class="dv">4326</span> ) <span class="ot">-&gt;</span> beetles</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 31 Columns: 9
 ── Column specification ────────────────────────────────────────────────────────
@@ -276,15 +269,15 @@ dbl (8): Males, Females, Suitability, MFRatio, GenVarArapat, GenVarEuphli, L...
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>( beetles )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>( beetles )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>        Site        Males          Females       Suitability    
- Length   :31   Min.   : 9.00   Min.   : 5.00   Min.   :0.0563  
- N.unique :31   1st Qu.:16.00   1st Qu.:15.50   1st Qu.:0.2732  
- N.blank  : 0   Median :21.00   Median :21.00   Median :0.3975  
- Min.nchar: 1   Mean   :25.68   Mean   :23.52   Mean   :0.4276  
- Max.nchar: 5   3rd Qu.:31.50   3rd Qu.:29.00   3rd Qu.:0.5442  
-                Max.   :64.00   Max.   :63.00   Max.   :0.9019  
+<pre><code>     Site               Males          Females       Suitability    
+ Length:31          Min.   : 9.00   Min.   : 5.00   Min.   :0.0563  
+ Class :character   1st Qu.:16.00   1st Qu.:15.50   1st Qu.:0.2732  
+ Mode  :character   Median :21.00   Median :21.00   Median :0.3975  
+                    Mean   :25.68   Mean   :23.52   Mean   :0.4276  
+                    3rd Qu.:31.50   3rd Qu.:29.00   3rd Qu.:0.5442  
+                    Max.   :64.00   Max.   :63.00   Max.   :0.9019  
     MFRatio        GenVarArapat     GenVarEuphli             geometry 
  Min.   :0.5938   Min.   :0.0500   Min.   :0.0500   POINT        :31  
  1st Qu.:0.8778   1st Qu.:0.1392   1st Qu.:0.1777   epsg:4326    : 0  
@@ -296,29 +289,25 @@ dbl (8): Males, Females, Suitability, MFRatio, GenVarArapat, GenVarEuphli, L...
 </div>
 <p>Now, we can take the bounding box of these points and get a first approximation.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>beetles <span class="sc">|&gt;</span> <span class="fu">st_bbox</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>beetles <span class="sc">|&gt;</span> <span class="fu">st_bbox</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      xmin       ymin       xmax       ymax 
 -114.29353   23.28550 -109.32700   29.32541 </code></pre>
 </div>
 </div>
-<p>OK, so this is the strict bounding box for these points. This means that the minimum and maximum values for these points are defined by the original locations—for both the latitude and longitude (both minimum and maximum)—we have sites on each of the edges. This is fine here but we could probably add a little bit of a <em>buffer</em> around that bounding box so that we do not have our sites on the very edge of the plot. We can do this by either <em>eyeballing-it</em> to round up to some reasonable area around the points <em>or</em> apply a buffer (<code>st_buffer</code>) to the union of all the points with some distance and then take the bounding box. I’ll go for the former and make it into an <code>extent</code> object.</p>
+<p>OK, so this is the strict bounding box for these points. This means that the minimum and maximum values for these points are defined by the original locations—for both the latitude and longitude (both minimum and maximum)—we have sites on each of the edges. This is fine here but we could probably add a little bit of a <em>buffer</em> around that bounding box so that we do not have our sites on the very edge of the plot. We can do this by either <em>eyeballing-it</em> to round up to some reasonable area around the points <em>or</em> apply a buffer (<code>st_buffer</code>) to the union of all the points with some distance and then take the bounding box. I’ll go for the former and make it into an extent object (a <code>SpatExtent</code>) using the <code>ext()</code> function.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>baja_extent <span class="ot">&lt;-</span> <span class="fu">extent</span>( <span class="fu">c</span>(<span class="sc">-</span><span class="dv">116</span>, <span class="sc">-</span><span class="dv">109</span>, <span class="dv">22</span>, <span class="dv">30</span> ) )</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>baja_extent</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>baja_extent <span class="ot">&lt;-</span> <span class="fu">ext</span>( <span class="fu">c</span>(<span class="sc">-</span><span class="dv">116</span>, <span class="sc">-</span><span class="dv">109</span>, <span class="dv">22</span>, <span class="dv">30</span> ) )</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>baja_extent</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>class      : Extent 
-xmin       : -116 
-xmax       : -109 
-ymin       : 22 
-ymax       : 30 </code></pre>
+<pre><code>SpatExtent : -116, -109, 22, 30 (xmin, xmax, ymin, ymax)</code></pre>
 </div>
 </div>
 <p>Then we can <code>crop()</code> the original raster using this extent object to create our working raster. I can then dump my points onto the same raster plot by indicating <code>add=TRUE</code>.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>alt <span class="ot">&lt;-</span> <span class="fu">crop</span>( r, baja_extent )</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(alt)</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>( beetles[<span class="st">"Suitability"</span>], <span class="at">pch=</span><span class="dv">16</span>, <span class="at">add=</span><span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>alt <span class="ot">&lt;-</span> <span class="fu">crop</span>( r, baja_extent )</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(alt)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>( beetles[<span class="st">"Suitability"</span>], <span class="at">pch=</span><span class="dv">16</span>, <span class="at">add=</span><span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -327,50 +316,48 @@ ymax       : 30 </code></pre>
 </div>
 </div>
 </div>
-<div class="box-red">
-<table>
-<tbody><tr>
-<td>
-<h1>
-⚠️
-</h1>
-</td>
-<td>
-&nbsp; &nbsp;
-</td>
-<td>
-You need to be careful here. When you use built-in graphics processes in a markdown document such as this and intend to add subsequent plots to an existing plot you <strong>cannot</strong> run the lines individually. They <strong>must</strong> be all executed as the whole chunk. So there is no <tt>CTRL/CMD + RETURN</tt> action here, it will plot the first one and then complain throughout the remaining ones saying something like <code>plot.new has not been called yet</code>. So you have to either knit the whole document or just run the whole chunk to get them to overlay.
-</td>
-</tr>
-</tbody></table>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>You need to be careful here. When you use built-in graphics processes in a markdown document such as this and intend to add subsequent plots to an existing plot you <strong>cannot</strong> run the lines individually. They <strong>must</strong> be all executed as the whole chunk. So there is no <code>CTRL/CMD + RETURN</code> action here, it will plot the first one and then complain throughout the remaining ones saying something like <code>plot.new has not been called yet</code>. So you have to either render the whole document or just run the whole chunk to get them to overlay.</p>
+</div>
 </div>
 </section>
 <section id="masking" class="level2">
 <h2 class="anchored" data-anchor-id="masking">Masking</h2>
-<p>There is another way to grab just a portion of the raster—similar to cropping—which is to mask. A mask will not change the size of the raster but just put <code>NA</code> values in the cells that are not in the area of interest. So if we were to just mask above, it would never actually reduce the size of the raster, just add a lot more <code>NA</code> values. However, the setup is the same.</p>
+<p>There is another way to grab just a portion of the raster—similar to cropping—which is to mask. A mask will not change the size of the raster but just put <code>NA</code> values in the cells that are not in the area of interest. So if we were to just mask above, it would never actually reduce the size of the raster, just add a lot more <code>NA</code> values. However, the setup is the same. The one difference is that <code>terra</code> functions want their vector data as a <code>terra</code> vector object (a <code>SpatVector</code>) rather than an <code>sf</code> object, so we convert the hull with <code>vect()</code><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>beetles <span class="sc">|&gt;</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>( Site <span class="sc">!=</span> <span class="dv">32</span> ) <span class="sc">|&gt;</span></span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_union</span>() <span class="sc">|&gt;</span></span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_buffer</span>( <span class="at">dist =</span> <span class="dv">1</span> ) <span class="sc">|&gt;</span></span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_convex_hull</span>() <span class="ot">-&gt;</span> hull</span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>baja <span class="ot">&lt;-</span> <span class="fu">mask</span>( alt, <span class="fu">as</span>(hull, <span class="st">"Spatial"</span>))</span>
-<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>baja</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>beetles <span class="sc">|&gt;</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>( Site <span class="sc">!=</span> <span class="dv">32</span> ) <span class="sc">|&gt;</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_union</span>() <span class="sc">|&gt;</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_buffer</span>( <span class="at">dist =</span> <span class="dv">1</span> ) <span class="sc">|&gt;</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_convex_hull</span>() <span class="ot">-&gt;</span> hull</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>baja <span class="ot">&lt;-</span> <span class="fu">mask</span>( alt, <span class="fu">vect</span>(hull) )</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>baja</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>class      : RasterLayer 
-dimensions : 960, 840, 806400  (nrow, ncol, ncell)
-resolution : 0.008333333, 0.008333333  (x, y)
-extent     : -116, -109, 22, 30  (xmin, xmax, ymin, ymax)
-crs        : +proj=longlat +datum=WGS84 +no_defs 
-source     : memory
-names      : alt_22 
-values     : -202, 1838  (min, max)</code></pre>
+<pre><code>class       : SpatRaster
+size        : 960, 840, 1  (nrow, ncol, nlyr)
+resolution  : 0.008333333, 0.008333333  (x, y)
+extent      : -116, -109, 22, 30  (xmin, xmax, ymin, ymax)
+coord. ref. : lon/lat WGS 84 (EPSG:4326)
+source(s)   : memory
+varname     : alt_22
+name        : alt_22
+min value   :   -202
+max value   :   1875</code></pre>
 </div>
 </div>
 <p>And it looks like.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(baja)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(baja)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -382,64 +369,60 @@ values     : -202, 1838  (min, max)</code></pre>
 </section>
 <section id="plotting-with-ggplot" class="level2">
 <h2 class="anchored" data-anchor-id="plotting-with-ggplot">Plotting with GGPlot</h2>
-<p>As you may suspect, our old friend <code>ggplot</code> has some tricks up its sleeve for us. The main thing here is that <code>ggplot</code> requires a <code>data.frame</code> object and a raster is not a <code>data.frame</code> — Unless we turn it into one (hehehe) using a cool function called <code>rasterToPoints()</code>. This takes the cells of the raster (and underlying matrix) and makes points from it.</p>
+<p>As you may suspect, our old friend <code>ggplot</code> has some tricks up its sleeve for us. The main thing here is that <code>ggplot</code> requires a <code>data.frame</code> object and a raster is not a <code>data.frame</code> — Unless we turn it into one (hehehe). Remember from the <a href="https://dyerlabteaching.github.io/Data-Containers/narrative.html">lecture on <code>data.frame</code> objects</a> that we can coerce other data containers into a <code>data.frame</code> using the <code>as.data.frame()</code> function. The same works for a raster. If we pass <code>xy=TRUE</code> it takes each cell of the raster (and underlying matrix), makes a row from it, and includes the coordinates of the center of that cell as the <code>x</code> and <code>y</code> columns. By default, cells that are <code>NA</code> (the ocean) are dropped.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>alt <span class="sc">|&gt;</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>( <span class="at">xy =</span> <span class="cn">TRUE</span> ) <span class="sc">|&gt;</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           x        y alt_22
+25 -115.7958 29.99583     55
+26 -115.7875 29.99583    126
+27 -115.7792 29.99583     94
+28 -115.7708 29.99583     99
+29 -115.7625 29.99583    106
+30 -115.7542 29.99583    120</code></pre>
+</div>
+</div>
+<p>And this time it really is a <code>data.frame</code>.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>alt <span class="sc">|&gt;</span></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rasterToPoints</span>() <span class="sc">|&gt;</span></span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>( <span class="at">xy =</span> <span class="cn">TRUE</span> ) <span class="sc">|&gt;</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">class</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>             x        y alt_22
-[1,] -115.7958 29.99583     55
-[2,] -115.7875 29.99583    126
-[3,] -115.7792 29.99583     94
-[4,] -115.7708 29.99583     99
-[5,] -115.7625 29.99583    106
-[6,] -115.7542 29.99583    120</code></pre>
+<pre><code>[1] "data.frame"</code></pre>
 </div>
 </div>
-<p>However, they are not a <code>data.frame</code> but a matrix.</p>
+<p>So here it is in one pipe, using the following tricks: - Converting the raster to a <code>data.frame</code> so it will go into <code>ggplot</code> - Renaming the columns of data I am going to keep so I don’t have to make <code>xlab</code> and <code>ylab</code></p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>alt <span class="sc">|&gt;</span></span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rasterToPoints</span>() <span class="sc">|&gt;</span></span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">class</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>( <span class="at">xy =</span> <span class="cn">TRUE</span> ) <span class="sc">|&gt;</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(<span class="at">Longitude=</span>x,</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">Latitude=</span>y,</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">Elevation=</span>alt_22)  <span class="ot">-&gt;</span> alt.df</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>( alt.df )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "matrix" "array" </code></pre>
-</div>
-</div>
-<p>So, if we are going to use this, we need to transform it from a <code>matrix</code> object into a <code>data.frame</code> object. We can do this using the <code>as.data.frame()</code> function. Remember from the <a href="https://dyerlabteaching.github.io/Data-Containers/narrative.html">lecture on <code>data.frame</code> objects</a> that we can coerce columns of data (either <code>matrix</code> or <code>array</code>) into a <code>data.frame</code> this way.</p>
-<p>So here it is in one pipe, using the following tricks:<br>
-- Converting raster to points and then to <code>data.frame</code> so it will go into <code>ggplot</code><br>
-- Renaming the columns of data I am going to keep so I don’t have to make <code>xlab</code> and <code>ylab</code></p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>alt <span class="sc">|&gt;</span></span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rasterToPoints</span>() <span class="sc">|&gt;</span></span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(<span class="at">Longitude=</span>x,</span>
-<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">Latitude=</span>y,</span>
-<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">Elevation=</span>alt_22)  <span class="ot">-&gt;</span> alt.df</span>
-<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>( alt.df )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>  Longitude Latitude Elevation
-1 -115.7958 29.99583        55
-2 -115.7875 29.99583       126
-3 -115.7792 29.99583        94
-4 -115.7708 29.99583        99
-5 -115.7625 29.99583       106
-6 -115.7542 29.99583       120</code></pre>
+<pre><code>   Longitude Latitude Elevation
+25 -115.7958 29.99583        55
+26 -115.7875 29.99583       126
+27 -115.7792 29.99583        94
+28 -115.7708 29.99583        99
+29 -115.7625 29.99583       106
+30 -115.7542 29.99583       120</code></pre>
 </div>
 </div>
 <p>Then we can plot it by:<br>
 - Plotting it using <code>geom_raster()</code> and setting the fill color to the value of elevation. - Making the coordinates equal (e.g., roughly equal in area for longitude and latitude), and - Applying only a minimal theme.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>alt.df <span class="sc">|&gt;</span></span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>()  <span class="sc">+</span> </span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_raster</span>( <span class="fu">aes</span>( <span class="at">x =</span> Longitude, </span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y =</span> Latitude, </span>
-<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">fill =</span> Elevation) ) <span class="sc">+</span> </span>
-<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_equal</span>() <span class="sc">+</span></span>
-<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="ot">-&gt;</span> baja_elevation</span>
-<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>baja_elevation</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>alt.df <span class="sc">|&gt;</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>()  <span class="sc">+</span> </span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_raster</span>( <span class="fu">aes</span>( <span class="at">x =</span> Longitude, </span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y =</span> Latitude, </span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">fill =</span> Elevation) ) <span class="sc">+</span> </span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_equal</span>() <span class="sc">+</span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="ot">-&gt;</span> baja_elevation</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>baja_elevation</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -448,10 +431,10 @@ values     : -202, 1838  (min, max)</code></pre>
 </div>
 </div>
 </div>
-<p>That looks good but we should probably do something with the colors. There is a built-in <code>terrain.colors()</code> and tell <code>ggplot</code> to use this for the fill gradient.</p>
+<p>That looks good but we should probably do something with the colors. The default dark-to-light blue gradient makes it hard to see differences in elevation and, as we will see below, blue usually means water on a map. There is a built-in <code>terrain.colors()</code> function and we can tell <code>ggplot</code> to use it for the fill gradient.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>baja_elevation <span class="sc">+</span> </span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradientn</span>( <span class="at">colors=</span><span class="fu">terrain.colors</span>(<span class="dv">100</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>baja_elevation <span class="sc">+</span> </span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradientn</span>( <span class="at">colors=</span><span class="fu">terrain.colors</span>(<span class="dv">100</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -460,14 +443,28 @@ values     : -202, 1838  (min, max)</code></pre>
 </div>
 </div>
 </div>
-<p>Or you can go dive into colors and set your own, you can set up your own gradient for <code>ggplot</code> using independent colors and then tell it where the midpoint is along that gradient and it will <em>do the right thing<sup>©</sup></em>.</p>
+<p>Better, but is it <em>good</em>? Look at the yellow band in the middle. It jumps out as if something important happens at that elevation, when it is really just where the palette changes hue. The choice of palette changes what a reader sees in the data, so it is worth a few minutes of thought.</p>
+<section id="choosing-a-color-palette" class="level3">
+<h3 class="anchored" data-anchor-id="choosing-a-color-palette">Choosing a Color Palette</h3>
+<p>When we map a continuous value to color, we are asking the reader to translate color back into a number. A good palette makes that translation easy and honest. There are three things to look for.</p>
+<ul>
+<li><strong>Perceptual uniformity.</strong> Equal steps in the data should <em>look</em> like equal steps in color. Palettes that pass through many hues (rainbows, and to a lesser extent <code>terrain.colors()</code>) have bright bands where the color seems to change quickly and muddy regions where it hardly seems to change at all. Readers see boundaries in the bright bands that are not in the data.</li>
+<li><strong>Color vision deficiency.</strong> About 1 in 12 men and 1 in 200 women have some form of color blindness, most commonly difficulty separating red from green. A palette that relies on red vs.&nbsp;green to show high vs.&nbsp;low is unreadable to them.</li>
+<li><strong>Grayscale.</strong> If someone prints your map in black and white, it should still go from dark to light (or light to dark) in order.</li>
+</ul>
+<p>The kind of palette also needs to match the kind of data.</p>
+<ul>
+<li><strong>Sequential</strong> palettes run from low to high in one direction (light to dark). Use them for values with a natural order and no special middle, like elevation, precipitation, or population density.</li>
+<li><strong>Diverging</strong> palettes run out in two directions from a neutral middle color. Use them only when the middle <em>means</em> something, like zero change, an average, or sea level.</li>
+<li><strong>Qualitative</strong> palettes are a set of distinct colors with no order. Use them for categories like habitat type.</li>
+</ul>
+<p>Elevation is sequential, so that is what we want here. Fortunately, several palette families have been designed with all of this in mind, and they work with any <code>ggplot</code> (not just maps).</p>
+<section id="viridis" class="level4">
+<h4 class="anchored" data-anchor-id="viridis">Viridis</h4>
+<p>The <code>viridis</code> palettes are built into <code>ggplot2</code>. They are perceptually uniform, readable with the common forms of color blindness, and go from dark to light so they print well in grayscale. The <code>_c</code> at the end of <code>scale_fill_viridis_c()</code> means <em>continuous</em> (there is also <code>_d</code> for discrete values and <code>_b</code> for binned ones).</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>baja_elevation <span class="sc">+</span> </span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradient2</span>( <span class="at">low =</span> <span class="st">"darkolivegreen"</span>,</span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">mid =</span> <span class="st">"yellow"</span>,</span>
-<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>                        <span class="at">high =</span> <span class="st">"brown"</span>, </span>
-<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>                        <span class="at">midpoint =</span> <span class="dv">1000</span> ) <span class="ot">-&gt;</span> baja_map</span>
-<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>baja_map</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>baja_elevation <span class="sc">+</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -476,13 +473,10 @@ values     : -202, 1838  (min, max)</code></pre>
 </div>
 </div>
 </div>
-<p>Now that looks great. Now, how about overlaying the points onto the plot and indicating the size of the point by the <strong>♂♀</strong> ratio.</p>
+<p>The <code>option</code> argument picks among several versions (<code>"viridis"</code>, <code>"magma"</code>, <code>"inferno"</code>, <code>"plasma"</code>, <code>"cividis"</code>, and a few more).</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>baja_map <span class="sc">+</span> </span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>( <span class="fu">aes</span>(<span class="at">size =</span> MFRatio ), </span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">data =</span> beetles, </span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">color =</span> <span class="st">"dodgerblue2"</span>,</span>
-<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">alpha =</span> <span class="fl">0.75</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>baja_elevation <span class="sc">+</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>( <span class="at">option =</span> <span class="st">"magma"</span> )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -491,15 +485,257 @@ values     : -202, 1838  (min, max)</code></pre>
 </div>
 </div>
 </div>
+</section>
+<section id="colorbrewer" class="level4">
+<h4 class="anchored" data-anchor-id="colorbrewer">ColorBrewer</h4>
+<p><a href="https://colorbrewer2.org/">ColorBrewer</a> is a set of palettes designed by the cartographer Cynthia Brewer specifically for maps. The website lets you filter palettes by type (sequential, diverging, qualitative) and by whether they are colorblind safe or print friendly. In <code>ggplot</code> the palettes come in three versions: <code>scale_fill_brewer()</code> for discrete values, <code>scale_fill_distiller()</code> for continuous values, and <code>scale_fill_fermenter()</code> for binned values.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>baja_elevation <span class="sc">+</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_distiller</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="narrative_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The default is the sequential <code>"Blues"</code> palette (which, again, reads as water). Pick another by name with the <code>palette</code> argument. The <code>direction</code> argument (<code>1</code> or <code>-1</code>) flips which end of the palette goes with the low values.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>baja_elevation <span class="sc">+</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_distiller</span>( <span class="at">palette =</span> <span class="st">"YlOrBr"</span> )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="narrative_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="scientific-colour-maps" class="level4">
+<h4 class="anchored" data-anchor-id="scientific-colour-maps">Scientific Colour Maps</h4>
+<p>The <code>scico</code> library provides the <a href="https://www.fabiocrameri.ch/colourmaps/">Scientific Colour Maps</a> designed by Fabio Crameri. They were made in response to how often misleading palettes show up in published figures, and every one of them is perceptually uniform and readable with color vision deficiency.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>( scico )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>baja_elevation <span class="sc">+</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_scico</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="narrative_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The <code>palette</code> argument picks among several dozen palettes, including diverging ones like <code>"vik"</code>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>baja_elevation <span class="sc">+</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_scico</span>( <span class="at">palette =</span> <span class="st">"vik"</span> )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="narrative_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This is a good example of a technically nice palette used for the wrong kind of data. <code>"vik"</code> is diverging, so the neutral middle color lands on whatever elevation is halfway between the minimum and maximum (about 1000m here) and the map suggests that elevations are <em>above</em> or <em>below</em> something. Nothing special happens at 1000m. If we were mapping elevation relative to sea level (with <code>midpoint = 0</code>) or the change in temperature since 1950, a diverging palette would be just right.</p>
+</section>
+<section id="rolling-your-own" class="level4">
+<h4 class="anchored" data-anchor-id="rolling-your-own">Rolling Your Own</h4>
+<p>You can also build a gradient from colors you choose. <code>scale_fill_steps()</code> goes from a <code>low</code> to a <code>high</code> color but bins the values into a handful of classes. Binning gives up some detail, but it makes it much easier to read an actual value off the map, much like the contour bands on a topographic map.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>baja_elevation <span class="sc">+</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_steps</span>( <span class="at">low =</span> <span class="st">"springgreen4"</span>,</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">high =</span> <span class="st">"yellow"</span> )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="narrative_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Or, you can set up your own diverging gradient using <code>low</code>, <code>mid</code>, and <code>high</code> colors and then tell it where the midpoint is along that gradient and it will <em>do the right thing<sup>©</sup></em>. Here I am not claiming that 1000m is special; I am mimicking the green-lowland, brown-mountain convention of a topographic map.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>baja_elevation <span class="sc">+</span> </span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradient2</span>( <span class="at">low =</span> <span class="st">"darkolivegreen"</span>,</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">mid =</span> <span class="st">"yellow"</span>,</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>                        <span class="at">high =</span> <span class="st">"brown"</span>, </span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>                        <span class="at">midpoint =</span> <span class="dv">1000</span> ) <span class="ot">-&gt;</span> baja_map</span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>baja_map</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="narrative_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Now that looks great. Now, how about overlaying the points onto the plot and indicating the size of the point by the <strong>♂♀</strong> ratio.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>baja_map <span class="sc">+</span> </span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>( <span class="fu">aes</span>(<span class="at">size =</span> MFRatio ), </span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">data =</span> beetles, </span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">color =</span> <span class="st">"dodgerblue2"</span>,</span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">alpha =</span> <span class="fl">0.75</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="narrative_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 <p>Now that looks nice.</p>
+</section>
+</section>
+</section>
+<section id="plotting-with-tidyterra" class="level2">
+<h2 class="anchored" data-anchor-id="plotting-with-tidyterra">Plotting with <code>tidyterra</code></h2>
+<p>Converting the raster into a <code>data.frame</code> works, and it is worth knowing how to do because it shows exactly what <code>ggplot</code> needs. It is, however, a bit clunky. We had to make a second copy of the data (<code>alt.df</code>), rename the columns by hand, and remember to add <code>coord_equal()</code>. The <code>tidyterra</code> library is a bridge between <code>terra</code> and the <code>tidyverse</code> that takes care of all of this for us.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>( tidyterra )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'tidyterra'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:stats':
+
+    filter</code></pre>
+</div>
+</div>
+<p>It helps in three main ways.</p>
+<section id="geom_spatraster-plots-the-raster-directly" class="level3">
+<h3 class="anchored" data-anchor-id="geom_spatraster-plots-the-raster-directly">1. <code>geom_spatraster()</code> plots the raster directly</h3>
+<p>Instead of converting to a <code>data.frame</code> and using <code>geom_raster()</code>, we hand the <code>SpatRaster</code> itself to <code>geom_spatraster()</code>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>( <span class="at">data =</span> alt ) <span class="sc">+</span></span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>&lt;SpatRaster&gt; resampled to 500472 cells.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="narrative_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Notice what we did <em>not</em> have to do:</p>
+<ul>
+<li>No <code>as.data.frame()</code> and no extra copy of the data.</li>
+<li>No <code>coord_equal()</code>. Since the raster knows its CRS, <code>geom_spatraster()</code> uses <code>coord_sf()</code> and we get proper longitude and latitude labels on the axes, just like <code>geom_sf()</code>.</li>
+<li>No worrying about size. This raster has over 800,000 cells, and <code>geom_spatraster()</code> automatically resampled it down to about 500,000 for drawing (that is the <code>resampled to ... cells</code> message) so that plotting does not take forever. The raster itself is not changed.</li>
+</ul>
+<p>The ocean cells are <code>NA</code> and get plotted as gray by default. Every <code>scale_fill_*()</code> function takes a <code>na.value</code> argument and setting <code>na.value = NA</code> makes them transparent.</p>
+</section>
+<section id="color-scales-made-for-maps" class="level3">
+<h3 class="anchored" data-anchor-id="color-scales-made-for-maps">2. Color scales made for maps</h3>
+<p>The default blue gradient in that plot is not wrong, but it does not <em>read</em> as elevation. Low and high ground are just darker and lighter blue, and blue usually means water on a map. Readers of maps already know a convention for elevation—greens for lowlands, tans and browns for hills and mountains, white for the peaks—and using it lets them read the terrain without studying the legend.</p>
+<p><code>tidyterra</code> comes with color scales designed for maps that follow these conventions. For elevation, the hypsometric scales (<code>scale_fill_hypso_c()</code>) use the colors you see on printed topographic maps, and the <code>scale_fill_whitebox_c()</code> and <code>scale_fill_wiki_c()</code> scales have several more. Here I set the legend title with <code>labs()</code> since the raster layer is still named <code>alt_22</code>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>( <span class="at">data =</span> alt ) <span class="sc">+</span></span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_hypso_c</span>( <span class="at">palette =</span> <span class="st">"etopo1_hypso"</span>,</span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>                      <span class="at">na.value =</span> <span class="cn">NA</span> ) <span class="sc">+</span></span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>( <span class="at">fill =</span> <span class="st">"Elevation (m)"</span> ) <span class="sc">+</span></span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="ot">-&gt;</span> baja_hypso</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>&lt;SpatRaster&gt; resampled to 500472 cells.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>baja_hypso</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="narrative_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Because this is just a <code>ggplot</code> object, we can overlay the beetle data exactly the same way as before.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>baja_hypso <span class="sc">+</span></span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>( <span class="fu">aes</span>(<span class="at">size =</span> MFRatio ),</span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">data =</span> beetles,</span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">color =</span> <span class="st">"dodgerblue4"</span>,</span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">alpha =</span> <span class="fl">0.75</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="narrative_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="dplyr-verbs-work-on-rasters" class="level3">
+<h3 class="anchored" data-anchor-id="dplyr-verbs-work-on-rasters">3. <code>dplyr</code> verbs work on rasters</h3>
+<p>This is the big one. Look back at what we have had to do to change anything about the raster’s data. Its single layer is still named <code>alt_22</code> (the name of the file, not a description), so we renamed it inside <code>transmute()</code> when making <code>alt.df</code> and again with <code>labs()</code> for the legend. Without <code>tidyterra</code>, renaming the layer itself means <code>names(alt) &lt;- ...</code>, computing a new layer means raster algebra, and picking out cells means indexing into <code>values()</code> (we will see that in the <em>Applications</em> section). Those are three different idioms, none of which look like the <code>dplyr</code> code we write for everything else.</p>
+<p>With <code>tidyterra</code> loaded, many of the <code>dplyr</code> verbs we already know—<code>rename()</code>, <code>select()</code>, <code>mutate()</code>, <code>filter()</code>—work directly on a <code>SpatRaster</code>, treating each layer as a column and each cell as a row. <em>And they give back a <code>SpatRaster</code></em>, so we never leave the raster world.</p>
+<p>For example, let’s give that layer a better name than <code>alt_22</code> once, so every later plot and filter can just say <code>Elevation</code>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>alt <span class="sc">|&gt;</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>( <span class="at">Elevation =</span> alt_22 ) <span class="ot">-&gt;</span> baja_elev</span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>baja_elev</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>class       : SpatRaster
+size        : 960, 840, 1  (nrow, ncol, nlyr)
+resolution  : 0.008333333, 0.008333333  (x, y)
+extent      : -116, -109, 22, 30  (xmin, xmax, ymin, ymax)
+coord. ref. : lon/lat WGS 84 (EPSG:4326)
+source(s)   : memory
+varname     : alt_22
+name        : Elevation
+min value   :      -202
+max value   :      2263</code></pre>
+</div>
+</div>
+<p>Or, if we needed to share a map with a collaborator (or a U.S. agency) that works in feet rather than meters, make a new layer with the elevation in feet.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>baja_elev <span class="sc">|&gt;</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>( <span class="at">Feet =</span> Elevation <span class="sc">*</span> <span class="fl">3.28084</span> )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>class       : SpatRaster
+size        : 960, 840, 2  (nrow, ncol, nlyr)
+resolution  : 0.008333333, 0.008333333  (x, y)
+extent      : -116, -109, 22, 30  (xmin, xmax, ymin, ymax)
+coord. ref. : lon/lat WGS 84 (EPSG:4326)
+source(s)   : memory
+names       : Elevation,       Feet
+min values  :      -202, -662.72968
+max values  :      2263, 7424.54092</code></pre>
+</div>
+</div>
+<p>Notice that the result has two layers now (<code>nlyr</code> is 2), one for each “column”. A single <code>SpatRaster</code> can hold many layers that share the same grid, such as elevation, temperature, and precipitation for the same cells, or the same variable measured in different years. Base <code>plot()</code> draws one panel per layer.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>baja_elev <span class="sc">|&gt;</span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>( <span class="at">Feet =</span> Elevation <span class="sc">*</span> <span class="fl">3.28084</span> ) <span class="sc">|&gt;</span></span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="narrative_files/figure-html/unnamed-chunk-35-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We will put <code>filter()</code> to work in the <em>Applications</em> section below.</p>
+</section>
 </section>
 <section id="identifying-points" class="level2">
 <h2 class="anchored" data-anchor-id="identifying-points">Identifying Points</h2>
 <p>You can get some information from a raster plot interactively by using the <code>click</code> function. This <strong>must</strong> be done with an active raster plot. After that, you use the <code>click()</code> function to grab what you need. Your mouse will turn from an arrow into a cross hair and you can position it where you like and get information such as the coordinates (spatial) of the point and the value of the raster pixel at that location.</p>
-<p>If you do not specify <code>n=</code> in the function then it will continue to collect data until you click outside the graphing area. If you set <code>id=TRUE</code> it will plot the number of the point onto the map so you can see where you had clicked. Since this is interactive, you will not see the process when you execute the code below, but it will look like this:</p>
+<p>The <code>n=</code> argument sets how many points to collect (it defaults to 10); you can stop early by pressing <code>ESC</code>. If you set <code>id=TRUE</code> it will plot the number of the point onto the map so you can see where you had clicked. Since this is interactive, you will not see the process when you execute the code below, but it will look like this:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>( alt )</span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">click</span>(alt, <span class="at">xy=</span><span class="cn">TRUE</span>, <span class="at">value=</span><span class="cn">TRUE</span>, <span class="at">n=</span><span class="dv">3</span> ) <span class="ot">-&gt;</span> points</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>( alt )</span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a><span class="fu">click</span>(alt, <span class="at">xy=</span><span class="cn">TRUE</span>, <span class="at">n=</span><span class="dv">3</span> ) <span class="ot">-&gt;</span> points</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -509,32 +745,32 @@ values     : -202, 1838  (min, max)</code></pre>
 </div>
 <p>Here is what the points look like.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>points</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>points</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>          x        y value
-1 -113.6292 28.45417   870
-2 -112.4792 26.85417  1185
-3 -111.2458 24.83750   135
-4 -109.9958 23.48750  1145</code></pre>
+<pre><code>          x        y alt_22
+1 -113.6292 28.45417    870
+2 -112.4792 26.85417   1185
+3 -111.2458 24.83750    135
+4 -109.9958 23.48750   1145</code></pre>
 </div>
 </div>
 <p>I’m going to rename the column names.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>points <span class="sc">|&gt;</span></span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>( <span class="at">Longitude =</span> x,</span>
-<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">Latitude =</span> y,</span>
-<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">Value =</span> value) <span class="ot">-&gt;</span> sites</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>points <span class="sc">|&gt;</span></span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>( <span class="at">Longitude =</span> x,</span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">Latitude =</span> y,</span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">Value =</span> alt_22) <span class="ot">-&gt;</span> sites</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>And then I can plot those points (using <code>geom_point()</code>) onto our background map.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>baja_map <span class="sc">+</span> </span>
-<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>( <span class="fu">aes</span>(<span class="at">x =</span> Longitude,</span>
-<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">y =</span> Latitude, </span>
-<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">size =</span> Value), <span class="at">data=</span>sites, <span class="at">color=</span><span class="st">"red"</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>baja_map <span class="sc">+</span> </span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>( <span class="fu">aes</span>(<span class="at">x =</span> Longitude,</span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">y =</span> Latitude, </span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">size =</span> Value), <span class="at">data=</span>sites, <span class="at">color=</span><span class="st">"red"</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="narrative_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="narrative_files/figure-html/unnamed-chunk-40-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -543,29 +779,246 @@ values     : -202, 1838  (min, max)</code></pre>
 </section>
 <section id="reprojecting-rasters" class="level2">
 <h2 class="anchored" data-anchor-id="reprojecting-rasters">Reprojecting Rasters</h2>
-<p>Just like points, we can reproject the entire raster using the <code>projectRaster</code> function. Here I am going to project the raster into UTM Zone 12N, a common projection for this part of <a href="https://epsg.io/6367">Mexico from epsg.io</a>.</p>
-<p>Unfortunately, the <code>raster</code> library does not use epsg codes so we’ll have to use the large description of that projection. See the <a href="https://epsg.io/6367">page</a> for this projection and scroll down to the proj.4 definition.</p>
+<p>Our raster is in longitude and latitude, whose units are degrees. Degrees are fine for saying <em>where</em> something is, but they are a poor ruler: a degree of longitude is about 111 km wide at the equator and shrinks to nothing at the poles. If we want to measure distances or areas (e.g., how much land lies within an elevation band), we want a projected coordinate system whose units are meters.</p>
+<p>Just like points, we can reproject the entire raster using the <code>project()</code> function. Here I am going to project the raster into UTM Zone 12N, a common projection for this part of <a href="https://epsg.io/6367">Mexico from epsg.io</a>.</p>
+<p>The <code>terra</code> library understands EPSG codes, so all we need is the code for that projection (6367) written as a character string.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>new.proj <span class="ot">&lt;-</span> <span class="st">"+proj=utm +zone=12 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs "</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>new.proj <span class="ot">&lt;-</span> <span class="st">"EPSG:6367"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>Copy this into a character variable and then use the <code>projectRaster()</code> function and assign that new value as the <code>CRS</code>.</p>
+<p>Then we pass it to the <code>project()</code> function as the new <code>CRS</code>.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>alt.utm <span class="ot">&lt;-</span> <span class="fu">projectRaster</span>( alt, <span class="at">crs=</span>new.proj)</span>
-<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>( alt.utm, <span class="at">xlab=</span><span class="st">"Easting"</span>, <span class="at">ylab=</span><span class="st">"Northing"</span> )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>alt.utm <span class="ot">&lt;-</span> <span class="fu">project</span>( alt, new.proj )</span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>( alt.utm, <span class="at">xlab=</span><span class="st">"Easting"</span>, <span class="at">ylab=</span><span class="st">"Northing"</span> )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="narrative_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="narrative_files/figure-html/unnamed-chunk-42-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>Easy.</p>
+<p>Notice that the axes are now Easting and Northing in meters. That raises a problem as soon as we want to put the beetles back on the map: the beetle points are still in longitude and latitude (EPSG:4326), but the raster is now in UTM (EPSG:6367).</p>
+<div class="callout callout-style-default callout-note callout-titled" title="ggplot aligns coordinate systems automatically; base `plot()` does not">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>ggplot aligns coordinate systems automatically; base <code>plot()</code> does not
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Base <code>plot()</code> with <code>add=TRUE</code> does not work here.</strong> It does not look at the CRS of either object, it just draws numbers. A beetle at longitude -113, latitude 27 gets drawn at 27 meters north of the equator, far below the bottom of this map (which starts around 2,400,000 m). There is no error and no warning; the points silently disappear (left panel). To make it work, you have to reproject the points to match the raster yourself with <code>st_transform()</code> <em>before</em> adding them (right panel).</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>( alt.utm, <span class="at">main =</span> <span class="st">"Without reprojecting"</span> )</span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>( <span class="fu">st_geometry</span>(beetles), <span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">pch =</span> <span class="dv">16</span> )</span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>( alt.utm, <span class="at">main =</span> <span class="st">"After st_transform()"</span> )</span>
+<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a>beetles <span class="sc">|&gt;</span></span>
+<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>( <span class="at">crs =</span> <span class="dv">6367</span> ) <span class="sc">|&gt;</span></span>
+<span id="cb70-6"><a href="#cb70-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_geometry</span>() <span class="sc">|&gt;</span></span>
+<span id="cb70-7"><a href="#cb70-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>( <span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">pch =</span> <span class="dv">16</span> )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="narrative_files/figure-html/unnamed-chunk-43-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="narrative_files/figure-html/unnamed-chunk-43-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+<p><strong><code>ggplot</code> does this for you.</strong> Every layer that knows its CRS (<code>geom_sf()</code>, <code>geom_spatraster()</code>, <code>geom_spatvector()</code>) is reprojected on the fly to match the CRS of the first layer. We can stack the UTM raster and the longitude/latitude beetles as-is, with no <code>st_transform()</code> and nothing to remember.</p>
+</div>
+</div>
+<p>Here is the <code>ggplot</code> version, with the beetles left in longitude and latitude.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>( <span class="at">data =</span> alt.utm ) <span class="sc">+</span></span>
+<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>( <span class="at">data =</span> beetles,</span>
+<span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">color =</span> <span class="st">"red"</span> ) <span class="sc">+</span></span>
+<span id="cb71-5"><a href="#cb71-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_hypso_c</span>( <span class="at">na.value =</span> <span class="cn">NA</span> ) <span class="sc">+</span></span>
+<span id="cb71-6"><a href="#cb71-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>( <span class="at">fill =</span> <span class="st">"Elevation (m)"</span> ) <span class="sc">+</span></span>
+<span id="cb71-7"><a href="#cb71-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="narrative_files/figure-html/unnamed-chunk-44-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The beetles land exactly where they should. Notice also the slight tilt in the grid lines. <code>ggplot</code> labels the graticule in degrees, but lines of longitude are not parallel in UTM, which is exactly what we would expect.</p>
 </section>
-<section id="raster-operations" class="level2">
-<h2 class="anchored" data-anchor-id="raster-operations">Raster Operations</h2>
-<p>OK, so now we can make and show a raster but what about doing some operations? A raster is just a matrix <em>decorated</em> with more geospatial information. This allows us to do normal <code>R</code> like data manipulations on the underlying data.</p>
-<p>Consider the following question.</p>
+<section id="applications" class="level2">
+<h2 class="anchored" data-anchor-id="applications">Applications</h2>
+<p>OK, so now we can make and show a raster but what about doing some operations? A raster is just a matrix <em>decorated</em> with more geospatial information. This allows us to do normal <code>R</code> like data manipulations on the underlying data. Let’s put that to work on two research questions from the Baja California data.</p>
+<section id="research-question-1-the-elevation-envelope-of-araptus-attenuatus" class="level3">
+<h3 class="anchored" data-anchor-id="research-question-1-the-elevation-envelope-of-araptus-attenuatus">Research Question 1: The Elevation Envelope of <em>Araptus attenuatus</em></h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="media/arapat.jpg" class="img-fluid figure-img" style="width:50.0%" alt="The bark beetle Araptus attenuatus."></p>
+<figcaption><em>Araptus attenuatus</em></figcaption>
+</figure>
+</div>
+<p>The beetle data we have been plotting come from 31 sites sampled for the bark beetle <em>Araptus attenuatus</em>, and <code>MFRatio</code> is the ratio of males to females at each site. Two questions we might ask are:</p>
+<ol type="1">
+<li>What is the elevation <em>envelope</em> for this species? That is, over what range of elevations do we find it, and how does that compare to the elevations available on the landscape?<br>
+</li>
+<li>Is there any indication that elevation is related to sex bias (<code>MFRatio</code>)?</li>
+</ol>
+<p>The beetle data do not include elevation, but the raster does. So the general outline is:</p>
+<ol type="1">
+<li>Extract the elevation from the raster at each of the sites.<br>
+</li>
+<li>Compare the elevations at the sites to the elevations across the whole landscape.<br>
+</li>
+<li>Test for a relationship between <code>MFRatio</code> and elevation.</li>
+</ol>
+<section id="extracting-values-at-the-sites" class="level4">
+<h4 class="anchored" data-anchor-id="extracting-values-at-the-sites">Extracting Values at the Sites</h4>
+<p>Pulling the value of a raster out at a set of points is done with the <code>extract()</code> function from the <code>terra</code> library. Just like masking, this function wants a <code>SpatVector</code> rather than an <code>sf</code> object, so we convert the points with <code>vect()</code>. It returns a <code>data.frame</code> with one row per point (in the same order as the points) and a column for the value of each raster layer at that point. By default it also adds an <code>ID</code> column numbering the points; since we just want the values, <code>ID = FALSE</code> drops it.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>site_elev <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">extract</span>( baja_elev, <span class="fu">vect</span>(beetles), <span class="at">ID =</span> <span class="cn">FALSE</span> )</span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>( site_elev )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Elevation
+1        18
+2       103
+3        66
+4        50
+5        87
+6       681</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled" title="Watch for masked functions">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Watch for masked functions
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In the above code, I used the function <code>extract()</code> to extract the data from the <code>baja_elev</code> raster at the beetle sites. However, there is also an <code>extract()</code> function that has been brought in from the <code>tidyr</code> library (as part of <code>tidyverse</code>). In this file, I loaded <code>library(terra)</code> before <code>library(tidyverse)</code> and as such the <code>tidyr::extract()</code> function has overridden the one from <code>terra</code>—they cannot <em>both</em> be available. As a consequence, I use the full name of the function with <code>package::function</code> when I call it as <code>terra::extract()</code> to remove all ambiguity. If I had not, I got a message saying something like, <code>Error in UseMethod("extract") : no applicable method for 'extract' applied to an object of class "SpatRaster"</code>. Now, I know there is an <code>extract()</code> function in <code>terra</code> so this is the <strong>dead giveaway</strong> that it has been overwritten by a subsequent library call.</p>
+</div>
+</div>
+<p>Because the rows are in the same order as the beetle sites, we can add the elevation to the beetle data as a new column.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>beetles <span class="sc">|&gt;</span></span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>( <span class="at">Elevation =</span> site_elev<span class="sc">$</span>Elevation ) <span class="ot">-&gt;</span> beetles</span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a>beetles <span class="sc">|&gt;</span></span>
+<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>( Site, MFRatio, Elevation )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Simple feature collection with 31 features and 3 fields
+Geometry type: POINT
+Dimension:     XY
+Bounding box:  xmin: -114.2935 ymin: 23.2855 xmax: -109.327 ymax: 29.32541
+Geodetic CRS:  WGS 84
+# A tibble: 31 × 4
+   Site  MFRatio Elevation             geometry
+   &lt;chr&gt;   &lt;dbl&gt;     &lt;dbl&gt;          &lt;POINT [°]&gt;
+ 1 32      1.48         18  (-109.327 26.63783)
+ 2 73      2.2         103 (-109.8507 24.00789)
+ 3 93      1.19         66 (-112.0461 26.94589)
+ 4 const   1.64         50   (-111.675 25.0247)
+ 5 159     1.47         87 (-113.3161 27.52944)
+ 6 88      1.28        681 (-114.2935 29.32541)
+ 7 177     0.98        177 (-113.9914 28.66056)
+ 8 166     0.731        70 (-112.0806 25.91409)
+ 9 161     1.02         29   (-112.986 27.0367)
+10 64      0.842       397 (-111.3264 25.60521)
+# ℹ 21 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="visualizing-the-elevation-envelope" class="level4">
+<h4 class="anchored" data-anchor-id="visualizing-the-elevation-envelope">Visualizing the Elevation Envelope</h4>
+<p>The simplest description of the envelope is the range of elevations at the sites.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>( beetles<span class="sc">$</span>Elevation )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    6.0    51.0   142.0   210.2   357.5   681.0 </code></pre>
+</div>
+</div>
+<p>So the beetles were found from 6m to 681m. On its own, though, that range does not tell us much. If most of the peninsula were below 681m, the beetles would just be living where the land is. To see whether the species occupies a <em>subset</em> of what is available, we need to compare the sites to the landscape as a whole. We can get every land cell as a <code>data.frame</code> with <code>as.data.frame()</code> and overlay the density of elevations across the landscape with the density at the beetle sites (the rug along the bottom marks each site).</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>baja_elev <span class="sc">|&gt;</span></span>
+<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="ot">-&gt;</span> landscape</span>
+<span id="cb78-3"><a href="#cb78-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb78-4"><a href="#cb78-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb78-5"><a href="#cb78-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>( <span class="fu">aes</span>( <span class="at">x =</span> Elevation, <span class="at">fill =</span> <span class="st">"Landscape"</span> ),</span>
+<span id="cb78-6"><a href="#cb78-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> landscape,</span>
+<span id="cb78-7"><a href="#cb78-7" aria-hidden="true" tabindex="-1"></a>                <span class="at">alpha =</span> <span class="fl">0.5</span> ) <span class="sc">+</span></span>
+<span id="cb78-8"><a href="#cb78-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>( <span class="fu">aes</span>( <span class="at">x =</span> Elevation, <span class="at">fill =</span> <span class="st">"Beetle Sites"</span> ),</span>
+<span id="cb78-9"><a href="#cb78-9" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> beetles,</span>
+<span id="cb78-10"><a href="#cb78-10" aria-hidden="true" tabindex="-1"></a>                <span class="at">alpha =</span> <span class="fl">0.5</span> ) <span class="sc">+</span></span>
+<span id="cb78-11"><a href="#cb78-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_rug</span>( <span class="fu">aes</span>( <span class="at">x =</span> Elevation ),</span>
+<span id="cb78-12"><a href="#cb78-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> beetles ) <span class="sc">+</span></span>
+<span id="cb78-13"><a href="#cb78-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>( <span class="at">fill =</span> <span class="cn">NULL</span>,</span>
+<span id="cb78-14"><a href="#cb78-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">x =</span> <span class="st">"Elevation (m)"</span>,</span>
+<span id="cb78-15"><a href="#cb78-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">y =</span> <span class="st">"Density"</span> ) <span class="sc">+</span></span>
+<span id="cb78-16"><a href="#cb78-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="narrative_files/figure-html/unnamed-chunk-48-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The two distributions overlap through the lowlands, but the landscape has a long tail of higher elevations that the beetles never reach. About 15% of the land in this area is higher than the highest beetle site, reaching up to 2263m. So the envelope for <em>A. attenuatus</em> is the lowland and mid-elevation part of the peninsula.</p>
+</section>
+<section id="elevation-and-sex-ratio" class="level4">
+<h4 class="anchored" data-anchor-id="elevation-and-sex-ratio">Elevation and Sex Ratio</h4>
+<p>For the second question, a scatter plot is the place to start.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a>beetles <span class="sc">|&gt;</span></span>
+<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>( <span class="fu">aes</span>( <span class="at">x =</span> Elevation, <span class="at">y =</span> MFRatio ) ) <span class="sc">+</span></span>
+<span id="cb79-3"><a href="#cb79-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>( <span class="at">size =</span> <span class="dv">3</span> ) <span class="sc">+</span></span>
+<span id="cb79-4"><a href="#cb79-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>( <span class="at">x =</span> <span class="st">"Elevation (m)"</span>,</span>
+<span id="cb79-5"><a href="#cb79-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">y =</span> <span class="st">"Male:Female Ratio"</span> ) <span class="sc">+</span></span>
+<span id="cb79-6"><a href="#cb79-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="narrative_files/figure-html/unnamed-chunk-49-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>There is no obvious trend. We can quantify that with a correlation test (we will go into correlation in much more depth in a later topic).</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">cor.test</span>( beetles<span class="sc">$</span>MFRatio, beetles<span class="sc">$</span>Elevation )</span>
+<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a>fit</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Pearson's product-moment correlation
+
+data:  beetles$MFRatio and beetles$Elevation
+t = -0.55949, df = 29, p-value = 0.5801
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ -0.4415112  0.2605426
+sample estimates:
+       cor 
+-0.1033377 </code></pre>
+</div>
+</div>
+<p>The correlation between sex ratio and elevation is weak (<span class="math inline">\(\rho =\)</span> -0.1) and not significant (<span class="math inline">\(P =\)</span> 0.58), so there is no evidence that sex bias in this species is related to elevation.</p>
+</section>
+</section>
+<section id="research-question-2-connectivity-in-euphorbia-lomelii" class="level3">
+<h3 class="anchored" data-anchor-id="research-question-2-connectivity-in-euphorbia-lomelii">Research Question 2: Connectivity in <em>Euphorbia lomelii</em></h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="media/pedima.jpg" class="img-fluid figure-img" style="width:50.0%" alt="Flowers of Euphorbia lomelii."></p>
+<figcaption><em>Euphorbia lomelii</em></figcaption>
+</figure>
+</div>
+<p><em>Euphorbia lomelii</em> is pollinated by hummingbirds, and when it flowers is driven by elevation: plants within about 100m of each other in elevation flower at about the same time. Pollen can only move between plants that are in flower at the same time, so the elevation band around any one population marks out which other parts of the landscape it can be connected to.</p>
 <blockquote class="blockquote">
 <p>What are the parts of Baja California that are within 100m of the elevation of site named <em>San Francisquito</em> (<code>sfran</code>)?</p>
 </blockquote>
@@ -581,8 +1034,8 @@ values     : -202, 1838  (min, max)</code></pre>
 <p>To do this we will use both the <code>alt</code> and the <code>beetles</code> data objects.</p>
 <p>First, we find out the coordinates of the site.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>sfran <span class="ot">&lt;-</span> beetles<span class="sc">$</span>geometry[ beetles<span class="sc">$</span>Site <span class="sc">==</span> <span class="st">"sfran"</span>]</span>
-<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>sfran</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a>sfran <span class="ot">&lt;-</span> beetles<span class="sc">$</span>geometry[ beetles<span class="sc">$</span>Site <span class="sc">==</span> <span class="st">"sfran"</span>]</span>
+<span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a>sfran</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Geometry set for 1 feature 
 Geometry type: POINT
@@ -594,82 +1047,82 @@ Geodetic CRS:  WGS 84</code></pre>
 <pre><code>POINT (-112.964 27.3632)</code></pre>
 </div>
 </div>
-<p>Now, we need to figure out what the value of elevation in the <code>alt</code> raster is at this site. This can be done with the <code>extract()</code> function from the <code>raster</code> library.</p>
-<p><strong>However</strong>, this function doesn’t work directly with <code>sf</code> objects so we need to cast it into a <code>Spatial</code> object<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. Fortunately, that is a pretty easy coercion.</p>
+<p>Then we extract the elevation at that one point, exactly as we did for all of the sites above.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>raster<span class="sc">::</span><span class="fu">extract</span>(alt, <span class="fu">as</span>(sfran,<span class="st">"Spatial"</span>) ) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a>terra<span class="sc">::</span><span class="fu">extract</span>(alt, <span class="fu">vect</span>(sfran) )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 305</code></pre>
+<pre><code>  ID alt_22
+1  1    305</code></pre>
 </div>
 </div>
-<div class="box-yellow">
-<p><strong>Warning:</strong> in the above code, I used the function <code>extract()</code> to extract the data from the <code>alt</code> raster for the coordinate of the target locale. However, there is also an <code>extract()</code> function that has been brought in from the <code>dplyr</code> library (as part of <code>tidyverse</code>). In this file, I loaded <code>library(raster)</code> before <code>library(tidyverse)</code> and as such the <code>dplyr::extract()</code> function has overridden the one from <code>raster</code>—they cannot <em>both</em> be available. As a consequence, I use the full name of the function with <code>package::function</code> when I call it as <code>raster::extract()</code> to remove all ambiguity. If I had not, I got a message saying something like, <code>Error in UseMethod("extract_") : no applicable method for 'extract_' applied to an object of class "c('RasterLayer', 'Raster', 'BasicRaster')"</code>. Now, I know there is an <code>extract()</code> function in <code>raster</code> so this is the <strong>dead giveaway</strong> that it has been overwritten by a subsequent library call.</p>
-</div>
-<section id="option-1---manipulate-the-raster" class="level3">
-<h3 class="anchored" data-anchor-id="option-1---manipulate-the-raster">Option 1 - Manipulate the Raster</h3>
+<p>So <code>sfran</code> is at 305m, and the band we are interested in runs from 205m to 405m.</p>
+<section id="option-1---manipulate-the-raster" class="level4">
+<h4 class="anchored" data-anchor-id="option-1---manipulate-the-raster">Option 1 - Manipulate the Raster</h4>
 <p>To work on a raster directly, we can access the values within it using the <code>values()</code> function (I know, these statisticians/programmers are quite clever).</p>
 <p>So, to make a copy and make only the values that are +/- 100m of <code>sfran</code> we can.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>alt_band <span class="ot">&lt;-</span> alt</span>
-<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a><span class="fu">values</span>( alt_band )[ <span class="fu">values</span>(alt_band) <span class="sc">&lt;=</span> <span class="dv">205</span> ] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
-<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a><span class="fu">values</span>( alt_band )[ <span class="fu">values</span>(alt_band) <span class="sc">&gt;=</span> <span class="dv">405</span> ] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
-<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>alt_band</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a>alt_band <span class="ot">&lt;-</span> alt</span>
+<span id="cb87-2"><a href="#cb87-2" aria-hidden="true" tabindex="-1"></a><span class="fu">values</span>( alt_band )[ <span class="fu">values</span>(alt_band) <span class="sc">&lt;=</span> <span class="dv">205</span> ] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb87-3"><a href="#cb87-3" aria-hidden="true" tabindex="-1"></a><span class="fu">values</span>( alt_band )[ <span class="fu">values</span>(alt_band) <span class="sc">&gt;=</span> <span class="dv">405</span> ] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb87-4"><a href="#cb87-4" aria-hidden="true" tabindex="-1"></a>alt_band</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>class      : RasterLayer 
-dimensions : 960, 840, 806400  (nrow, ncol, ncell)
-resolution : 0.008333333, 0.008333333  (x, y)
-extent     : -116, -109, 22, 30  (xmin, xmax, ymin, ymax)
-crs        : +proj=longlat +datum=WGS84 +no_defs 
-source     : memory
-names      : alt_22 
-values     : 206, 404  (min, max)</code></pre>
+<pre><code>class       : SpatRaster
+size        : 960, 840, 1  (nrow, ncol, nlyr)
+resolution  : 0.008333333, 0.008333333  (x, y)
+extent      : -116, -109, 22, 30  (xmin, xmax, ymin, ymax)
+coord. ref. : lon/lat WGS 84 (EPSG:4326)
+source(s)   : memory
+varname     : alt_22
+name        : alt_22
+min value   :    206
+max value   :    404</code></pre>
 </div>
 </div>
 <p>Then we can plot overlay plots of each (notice how I hid the legend for the first <code>alt</code> raster).</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>( alt, <span class="at">col=</span><span class="st">"gray"</span>, <span class="at">legend=</span><span class="cn">FALSE</span>, <span class="at">xlab=</span><span class="st">"Longitude"</span>, <span class="at">ylab=</span><span class="st">"Latitude"</span>)</span>
-<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>( alt_band, <span class="at">add=</span><span class="cn">TRUE</span> )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>( alt, <span class="at">col=</span><span class="st">"gray"</span>, <span class="at">legend=</span><span class="cn">FALSE</span>, <span class="at">xlab=</span><span class="st">"Longitude"</span>, <span class="at">ylab=</span><span class="st">"Latitude"</span>)</span>
+<span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>( alt_band, <span class="at">add=</span><span class="cn">TRUE</span> )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="narrative_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="narrative_files/figure-html/unnamed-chunk-54-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 </section>
-<section id="option-2---manipulate-the-data-frames" class="level3">
-<h3 class="anchored" data-anchor-id="option-2---manipulate-the-data-frames">Option 2 - Manipulate the Data Frames</h3>
+<section id="option-2---manipulate-the-data-frames" class="level4">
+<h4 class="anchored" data-anchor-id="option-2---manipulate-the-data-frames">Option 2 - Manipulate the Data Frames</h4>
 <p>We can also proceed by relying upon the <code>data.frame</code> objects representing the elevation. So let’s go back to our <code>alt.df</code> object and use that in combination with a <code>filter</code> and plot both <code>data.frame</code> objects (the outline of the landscape in gray and the elevation range as a gradient). I then overlay the beetle data with the ratios as sizes and label the locales with <code>ggrepel</code>. Notice here that you can use the <code>sf::geometry</code> object from <code>beetles</code> if you pass it through the <code>st_coordinates</code> function as a statistical tranform making it regular coordinates and not <code>sf</code> objects (yes this is kind of a trick and hack but KEEP IT HANDY!).</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>( ggrepel )</span>
-<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>alt.df <span class="sc">|&gt;</span></span>
-<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>( Elevation <span class="sc">&gt;=</span> <span class="dv">205</span>,</span>
-<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>          Elevation <span class="sc">&lt;=</span> <span class="dv">405</span>) <span class="sc">|&gt;</span></span>
-<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> </span>
-<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_raster</span>( <span class="fu">aes</span>( <span class="at">x =</span> Longitude,</span>
-<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y =</span> Latitude),</span>
-<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a>               <span class="at">fill =</span> <span class="st">"gray80"</span>, </span>
-<span id="cb58-9"><a href="#cb58-9" aria-hidden="true" tabindex="-1"></a>               <span class="at">data=</span>alt.df ) <span class="sc">+</span> </span>
-<span id="cb58-10"><a href="#cb58-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_raster</span>( <span class="fu">aes</span>( <span class="at">x =</span> Longitude,</span>
-<span id="cb58-11"><a href="#cb58-11" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y =</span> Latitude, </span>
-<span id="cb58-12"><a href="#cb58-12" aria-hidden="true" tabindex="-1"></a>                    <span class="at">fill =</span> Elevation ) ) <span class="sc">+</span> </span>
-<span id="cb58-13"><a href="#cb58-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradient2</span>( <span class="at">low =</span> <span class="st">"darkolivegreen"</span>,</span>
-<span id="cb58-14"><a href="#cb58-14" aria-hidden="true" tabindex="-1"></a>                        <span class="at">mid =</span> <span class="st">"yellow"</span>,</span>
-<span id="cb58-15"><a href="#cb58-15" aria-hidden="true" tabindex="-1"></a>                        <span class="at">high =</span> <span class="st">"brown"</span>, </span>
-<span id="cb58-16"><a href="#cb58-16" aria-hidden="true" tabindex="-1"></a>                        <span class="at">midpoint =</span> <span class="dv">305</span> ) <span class="sc">+</span></span>
-<span id="cb58-17"><a href="#cb58-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>( <span class="fu">aes</span>(<span class="at">size=</span>MFRatio), </span>
-<span id="cb58-18"><a href="#cb58-18" aria-hidden="true" tabindex="-1"></a>           <span class="at">alpha=</span><span class="fl">0.5</span>, </span>
-<span id="cb58-19"><a href="#cb58-19" aria-hidden="true" tabindex="-1"></a>           <span class="at">color=</span><span class="st">"dodgerblue3"</span>, </span>
-<span id="cb58-20"><a href="#cb58-20" aria-hidden="true" tabindex="-1"></a>           <span class="at">data=</span>beetles) <span class="sc">+</span></span>
-<span id="cb58-21"><a href="#cb58-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>( <span class="fu">aes</span>( <span class="at">label =</span> Site,</span>
-<span id="cb58-22"><a href="#cb58-22" aria-hidden="true" tabindex="-1"></a>                        <span class="at">geometry =</span> geometry),</span>
-<span id="cb58-23"><a href="#cb58-23" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> beetles,</span>
-<span id="cb58-24"><a href="#cb58-24" aria-hidden="true" tabindex="-1"></a>                   <span class="at">stat =</span> <span class="st">"sf_coordinates"</span>, </span>
-<span id="cb58-25"><a href="#cb58-25" aria-hidden="true" tabindex="-1"></a>                   <span class="at">size =</span> <span class="dv">4</span>, </span>
-<span id="cb58-26"><a href="#cb58-26" aria-hidden="true" tabindex="-1"></a>                   <span class="at">color =</span> <span class="st">"dodgerblue4"</span>) <span class="sc">+</span> </span>
-<span id="cb58-27"><a href="#cb58-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_sf</span>() <span class="sc">+</span> </span>
-<span id="cb58-28"><a href="#cb58-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>( ggrepel )</span>
+<span id="cb90-2"><a href="#cb90-2" aria-hidden="true" tabindex="-1"></a>alt.df <span class="sc">|&gt;</span></span>
+<span id="cb90-3"><a href="#cb90-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>( Elevation <span class="sc">&gt;=</span> <span class="dv">205</span>,</span>
+<span id="cb90-4"><a href="#cb90-4" aria-hidden="true" tabindex="-1"></a>          Elevation <span class="sc">&lt;=</span> <span class="dv">405</span>) <span class="sc">|&gt;</span></span>
+<span id="cb90-5"><a href="#cb90-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb90-6"><a href="#cb90-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_raster</span>( <span class="fu">aes</span>( <span class="at">x =</span> Longitude,</span>
+<span id="cb90-7"><a href="#cb90-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y =</span> Latitude),</span>
+<span id="cb90-8"><a href="#cb90-8" aria-hidden="true" tabindex="-1"></a>               <span class="at">fill =</span> <span class="st">"gray80"</span>, </span>
+<span id="cb90-9"><a href="#cb90-9" aria-hidden="true" tabindex="-1"></a>               <span class="at">data=</span>alt.df ) <span class="sc">+</span> </span>
+<span id="cb90-10"><a href="#cb90-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_raster</span>( <span class="fu">aes</span>( <span class="at">x =</span> Longitude,</span>
+<span id="cb90-11"><a href="#cb90-11" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y =</span> Latitude, </span>
+<span id="cb90-12"><a href="#cb90-12" aria-hidden="true" tabindex="-1"></a>                    <span class="at">fill =</span> Elevation ) ) <span class="sc">+</span> </span>
+<span id="cb90-13"><a href="#cb90-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradient2</span>( <span class="at">low =</span> <span class="st">"darkolivegreen"</span>,</span>
+<span id="cb90-14"><a href="#cb90-14" aria-hidden="true" tabindex="-1"></a>                        <span class="at">mid =</span> <span class="st">"yellow"</span>,</span>
+<span id="cb90-15"><a href="#cb90-15" aria-hidden="true" tabindex="-1"></a>                        <span class="at">high =</span> <span class="st">"brown"</span>, </span>
+<span id="cb90-16"><a href="#cb90-16" aria-hidden="true" tabindex="-1"></a>                        <span class="at">midpoint =</span> <span class="dv">305</span> ) <span class="sc">+</span></span>
+<span id="cb90-17"><a href="#cb90-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>( <span class="fu">aes</span>(<span class="at">size=</span>MFRatio), </span>
+<span id="cb90-18"><a href="#cb90-18" aria-hidden="true" tabindex="-1"></a>           <span class="at">alpha=</span><span class="fl">0.5</span>, </span>
+<span id="cb90-19"><a href="#cb90-19" aria-hidden="true" tabindex="-1"></a>           <span class="at">color=</span><span class="st">"dodgerblue3"</span>, </span>
+<span id="cb90-20"><a href="#cb90-20" aria-hidden="true" tabindex="-1"></a>           <span class="at">data=</span>beetles) <span class="sc">+</span></span>
+<span id="cb90-21"><a href="#cb90-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>( <span class="fu">aes</span>( <span class="at">label =</span> Site,</span>
+<span id="cb90-22"><a href="#cb90-22" aria-hidden="true" tabindex="-1"></a>                        <span class="at">geometry =</span> geometry),</span>
+<span id="cb90-23"><a href="#cb90-23" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> beetles,</span>
+<span id="cb90-24"><a href="#cb90-24" aria-hidden="true" tabindex="-1"></a>                   <span class="at">stat =</span> <span class="st">"sf_coordinates"</span>, </span>
+<span id="cb90-25"><a href="#cb90-25" aria-hidden="true" tabindex="-1"></a>                   <span class="at">size =</span> <span class="dv">4</span>, </span>
+<span id="cb90-26"><a href="#cb90-26" aria-hidden="true" tabindex="-1"></a>                   <span class="at">color =</span> <span class="st">"dodgerblue4"</span>) <span class="sc">+</span> </span>
+<span id="cb90-27"><a href="#cb90-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_sf</span>() <span class="sc">+</span> </span>
+<span id="cb90-28"><a href="#cb90-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning in st_point_on_surface.sfc(sf::st_zm(x)): st_point_on_surface may not
 give correct results for longitude/latitude data</code></pre>
@@ -677,12 +1130,74 @@ give correct results for longitude/latitude data</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="narrative_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="narrative_files/figure-html/unnamed-chunk-55-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>Very nice indeed.</p>
+</section>
+<section id="option-3---use-tidyterra-verbs-on-the-raster" class="level4">
+<h4 class="anchored" data-anchor-id="option-3---use-tidyterra-verbs-on-the-raster">Option 3 - Use <code>tidyterra</code> Verbs on the Raster</h4>
+<p>Option 1 kept the data as a raster but had us poking at <code>values()</code> with indices. Option 2 let us use <code>filter()</code> but only after making a whole <code>data.frame</code> copy of the raster. With <code>tidyterra</code>, we can get the best of both and <code>filter()</code> the raster itself. Cells that do not meet the criteria are set to <code>NA</code> and the result is still a <code>SpatRaster</code>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a>baja_elev <span class="sc">|&gt;</span></span>
+<span id="cb92-2"><a href="#cb92-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>( Elevation <span class="sc">&gt;=</span> <span class="dv">205</span>,</span>
+<span id="cb92-3"><a href="#cb92-3" aria-hidden="true" tabindex="-1"></a>          Elevation <span class="sc">&lt;=</span> <span class="dv">405</span> ) <span class="ot">-&gt;</span> elev_band</span>
+<span id="cb92-4"><a href="#cb92-4" aria-hidden="true" tabindex="-1"></a>elev_band</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>class       : SpatRaster
+size        : 960, 840, 1  (nrow, ncol, nlyr)
+resolution  : 0.008333333, 0.008333333  (x, y)
+extent      : -116, -109, 22, 30  (xmin, xmax, ymin, ymax)
+coord. ref. : lon/lat WGS 84 (EPSG:4326)
+source(s)   : memory
+name        : Elevation
+min value   :       205
+max value   :       405</code></pre>
+</div>
+</div>
+<p>If we plot only <code>elev_band</code>, the band floats in empty space and it is hard to tell where the coastline is or how the band sits on the peninsula. Like Option 2, we want the rest of the land drawn in gray underneath as context. We cannot just plot <code>baja_elev</code> with <code>fill = "gray80"</code>, though, because a constant fill colors the <code>NA</code> (ocean) cells as well and the whole map turns gray. Instead, we turn the land into a polygon: <code>not.na()</code> makes a raster that is <code>1</code> on land and <code>0</code> in the ocean, <code>as.polygons()</code> turns each of those values into a polygon (a <code>SpatVector</code>), and <code>filter()</code> keeps the land one. <code>tidyterra</code> provides <code>geom_spatvector()</code> to plot it.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a>baja_elev <span class="sc">|&gt;</span></span>
+<span id="cb94-2"><a href="#cb94-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">not.na</span>() <span class="sc">|&gt;</span></span>
+<span id="cb94-3"><a href="#cb94-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.polygons</span>() <span class="sc">|&gt;</span></span>
+<span id="cb94-4"><a href="#cb94-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>( Elevation <span class="sc">==</span> <span class="dv">1</span> ) <span class="ot">-&gt;</span> land</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Then it is the same plot as Option 2, without the <code>data.frame</code>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb95-2"><a href="#cb95-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatvector</span>( <span class="at">data =</span> land,</span>
+<span id="cb95-3"><a href="#cb95-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">fill =</span> <span class="st">"gray80"</span>,</span>
+<span id="cb95-4"><a href="#cb95-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">color =</span> <span class="cn">NA</span> ) <span class="sc">+</span></span>
+<span id="cb95-5"><a href="#cb95-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>( <span class="at">data =</span> elev_band ) <span class="sc">+</span></span>
+<span id="cb95-6"><a href="#cb95-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradient2</span>( <span class="at">low =</span> <span class="st">"darkolivegreen"</span>,</span>
+<span id="cb95-7"><a href="#cb95-7" aria-hidden="true" tabindex="-1"></a>                        <span class="at">mid =</span> <span class="st">"yellow"</span>,</span>
+<span id="cb95-8"><a href="#cb95-8" aria-hidden="true" tabindex="-1"></a>                        <span class="at">high =</span> <span class="st">"brown"</span>,</span>
+<span id="cb95-9"><a href="#cb95-9" aria-hidden="true" tabindex="-1"></a>                        <span class="at">midpoint =</span> <span class="dv">305</span>,</span>
+<span id="cb95-10"><a href="#cb95-10" aria-hidden="true" tabindex="-1"></a>                        <span class="at">na.value =</span> <span class="cn">NA</span> ) <span class="sc">+</span></span>
+<span id="cb95-11"><a href="#cb95-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>( <span class="fu">aes</span>(<span class="at">size=</span>MFRatio),</span>
+<span id="cb95-12"><a href="#cb95-12" aria-hidden="true" tabindex="-1"></a>           <span class="at">alpha=</span><span class="fl">0.5</span>,</span>
+<span id="cb95-13"><a href="#cb95-13" aria-hidden="true" tabindex="-1"></a>           <span class="at">color=</span><span class="st">"dodgerblue3"</span>,</span>
+<span id="cb95-14"><a href="#cb95-14" aria-hidden="true" tabindex="-1"></a>           <span class="at">data=</span>beetles) <span class="sc">+</span></span>
+<span id="cb95-15"><a href="#cb95-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>( <span class="fu">aes</span>( <span class="at">label =</span> Site,</span>
+<span id="cb95-16"><a href="#cb95-16" aria-hidden="true" tabindex="-1"></a>                        <span class="at">geometry =</span> geometry),</span>
+<span id="cb95-17"><a href="#cb95-17" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> beetles,</span>
+<span id="cb95-18"><a href="#cb95-18" aria-hidden="true" tabindex="-1"></a>                   <span class="at">stat =</span> <span class="st">"sf_coordinates"</span>,</span>
+<span id="cb95-19"><a href="#cb95-19" aria-hidden="true" tabindex="-1"></a>                   <span class="at">size =</span> <span class="dv">4</span>,</span>
+<span id="cb95-20"><a href="#cb95-20" aria-hidden="true" tabindex="-1"></a>                   <span class="at">color =</span> <span class="st">"dodgerblue4"</span>) <span class="sc">+</span></span>
+<span id="cb95-21"><a href="#cb95-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>( <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="cn">NULL</span> ) <span class="sc">+</span></span>
+<span id="cb95-22"><a href="#cb95-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="narrative_files/figure-html/unnamed-chunk-58-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Which approach you use is up to you. For quick looks, base <code>plot()</code> is hard to beat. When you want a publication-quality map, <code>ggplot</code> with <code>tidyterra</code> lets you use everything you already know about the <code>tidyverse</code> and <code>ggplot</code> without converting your rasters into something else.</p>
+</section>
 </section>
 </section>
 
@@ -690,7 +1205,7 @@ give correct results for longitude/latitude data</code></pre>
 <div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
 
 <ol>
-<li id="fn1"><p>A <code>Spatial</code> object is from the <code>sp</code> library. This is an older library that is still used by some. It is a robust library <em>but</em> it is put together in a slightly different way that complicates situations a bit, which is not why we are covering it in this topic.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>A <code>SpatVector</code> is how <code>terra</code> represents points, lines, and polygons. It holds the same kind of information as an <code>sf</code> object but is put together in a slightly different way. We use <code>sf</code> for vector data in this course and convert with <code>vect()</code> only when handing something to a <code>terra</code> function.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section></div></main>
 <!-- /main column -->

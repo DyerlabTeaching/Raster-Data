@@ -2,35 +2,42 @@
 title: "Raster Data"
 subtitle: "&nbsp;"
 author: Rodney Dyer, PhD
-format: dyerlab-revealjs
+format:
+  dyerlab-revealjs:
+    fig-align: center
 execute:
   echo: true
+  warning: false
+  message: false
+knitr:
+  opts_chunk:
+    fig.retina: 3
 ---
 
 
+# Rasters {background-color="black" background-image="media/contour.png" background-size="initial" background-position="right"}
 
 
 
 
 ## Rasters
 
-```{r setup, include=FALSE}
-library( sf )
-library( raster )
-library( ggplot2 )
-library( tidyverse )
-library( fontawesome )
-knitr::opts_chunk$set( fig.retina = 3, 
-                       warning = FALSE, 
-                       message = FALSE,
-                       fig.align="center")
+```{r}
+#| label: setup
+#| include: false
+library(sf)
+library(terra)
+library(ggplot2)
+library(tidyverse)
+library(tidyterra)
+library(fontawesome)
 
-theme_set( theme_minimal( base_size = 22) )
+theme_set(theme_minimal(base_size = 22))
 ```
 
-<center>
+::: {style="text-align: center;"}
 Rasters represent data distributed continuously across a spatial extent
-</center>
+:::
 
 :::{.fragment}
 #### Examples:
@@ -48,14 +55,14 @@ Rasters represent data distributed continuously across a spatial extent
 A Raster is simply a `matrix` of values with some additional decorations on it that allow it to have a spatial context.  
 
 ```{r}
-values <- rpois( n = 36, lambda=12)
+values <- rpois(n = 36, lambda = 12)
 values
 ```
 
 
 :::{.fragment}
 ```{r}
-x <- matrix( values, nrow=6)
+x <- matrix(values, nrow = 6)
 x
 ```
 :::
@@ -81,43 +88,80 @@ For each value in the `matrix`, when it is turned into a `raster` object:
 ## Matrix $\to$ Raster
 
 ```{r}
-library( raster )
-r <- raster( x )
+library(terra)
+r <- rast(x)
 r
 ```
 
 
+## Plotting a Raster
+
+```{r}
+plot(r)
+```
+
+
+
+
+
 ## Matrix $\to$ Raster {.smaller}
-Notice that when I plot it out, it does not show the data, but a summary of the data along with some key data about the contents, including:  
+Notice that when I print it out, it does not show the data, but a summary of the data along with some key data about the contents, including:  
 
 :::{.incremental}
-- A class definition  
-- The dimensions of the underlying data matrix,  
-- The resolution (e.g., the spatial extent of the sides of each pixel).  Since we have no CRS here, it is equal to $nrows(x)^{-1}$ and $ncols(x)^{-1}$.  
+- A class definition (`SpatRaster`)
+- The size of the underlying data matrix (rows, columns, and layers),
+- The resolution (e.g., the spatial extent of the sides of each pixel).  Since we have no CRS here, it is equal to $nrow(x)^{-1}$ and $ncol(x)^{-1}$.
 - The extent (the bounding box) and again since we do not have a CRS defined it just goes from $0$ to $1$.
-- The `crs` (missing)
-- The source can be either `memory` if the raster is not that big or `out of memory` if it is just referencing.
+- The `coord. ref.` (missing)
+- The source, either `memory` or the name of the file the values are read from.
 :::
 
 
 
-## Loading A Raster
+## Getting Values from a Raster
 
-By far, you will most commonly working with pre-existing raster data.  
+You can grab data from a `SpatRaster` just like a `matrix`, though the output shows you which `layer` the data are being pulled from ([foreshadowing]{style="color: #cccccc;"}).
 
-- Several file formats including GeoTIFF, BIL, & ASC.  
-- All can be loaded from filesystem or internet with address.  
+```{r}
+c(x[1, 2], r[1, 2])
+```
+
+
+
+
+
+## Common File Types {.smaller}
+
+Format | Primary Use Case | Multi-band/3D+ Support | Cloud-Native Readiness
+-------|------------------|------------------------|------------------------
+GeoTIFF/COG | Orthoimagery, DEMs, land cover, satellite tiles | Multi-band 2D | Native (COG)
+NetCDF/HDF5 | Climate, atmospheric, oceanographic data grids | Multidimensional ($x$,$y$,$z$,$t$) | Moderate (moving to Zarr) 
+ERDAS Imagine (.img) | Desktop GIS workflows, local image analysis | Multi-band 2D | Low (file-based)
+
+
+:::{.notes}
+- **GeoTIFF (.tif, .tiff) / Cloud Optimized GeoTIFF (COG)**: The undisputed industry standard for distributing and analyzing 2D geospatial imagery, elevation models (DEMs), and derived analytical layers.
+- **NetCSF (.nc) / HDF5 (.h5/.hdf)**: The dominant standard for multidimensional, spatiotemporal scientific grids (e.g., climate projections, oceanographic data, weather models, and multi-band atmospheric sensor feeds).
+- **Esri Grid / ERDAS Imagine (.img)**: The most prevalent *legacy* propriatary format still seen in and enterprise desktop GIS uses.
+- **BIL/ASC**: A universal plain text format.
+:::
+
+
+
+
+
+
 
 
 ## Loading A Raster - Example
 
-```{r cache=TRUE}
+```{r}
 url <- "https://dyerlabteaching.github.io/CourseData/Spatial/alt_22.tif"
-r <- raster( url )
+r <- rast(url)
 r
 ```
 
-Notice that this raster has a defined CRS and as such it is projected and the extent relates to the units of the datum (e.g., from -120 to -90 degrees longitude and 0 to 30 degrees latitude).
+Notice that this raster has *a defined CRS* and the extent is in the units of the datum (e.g., from -120 to -90 degrees longitude and 0 to 30 degrees latitude).
 
 
 # Visualizing Rasters {background-color="black" background-image="media/contour.png" background-size="initial" background-position="right"}
@@ -125,28 +169,12 @@ Notice that this raster has a defined CRS and as such it is projected and the ex
 
 ## Built-in Plotting
 
-Just like all things in `R`, `raster` objects can be visualized using built-in functions as well as functions from external libraries.
+Just like all things in `R`, `SpatRaster` objects can be visualized using built-in functions as well as functions from external libraries.
 
-:::: {.columns}
-
-::: {.column width="50%"}
-<p>&nbsp;</p>
-
-<p>&nbsp;</p>
-
-<p>&nbsp;</p>
-```{r eval=FALSE}
-plot( r, 
-      xlab="Longitude", 
-      ylab="Latitude" )
+```{r}
+plot(r, xlab = "Longitude", ylab = "Latitude")
 ```
-:::
 
-::: {.column width="50%"}
-![](media/flickr_50510331198.jpg)
-:::
-
-::::
 
 
 ## Raster Sizes {.smaller}
@@ -156,7 +184,8 @@ This particular raster is quite large (in terms of the number of cells)
 :::: {.columns}
 
 ::: {.column width="50%"}
-```{r echo=FALSE}
+```{r}
+#| echo: false
 r
 ```
 :::
@@ -185,8 +214,8 @@ One of the first things to do is to crop the data down to represent the size and
 
 1. Define a bounding box (the spatial extent of the region of interest)  
 2. Expand it a bit so that points are not **on the edges** of the box.
-3. Create an `extent`
-4. Crop the original matrix to represent the boundaries defined in the `extent`
+3. Create an extent with `ext()`
+4. Crop the original matrix to represent the boundaries defined in the extent
 
 
 ## Cropping 1: Bounding Box {.smaller}
@@ -194,14 +223,14 @@ One of the first things to do is to crop the data down to represent the size and
 Let's use the beetle data from the [Spatial Points Lecture](https://dyerlabteaching.github.io/Spatial-Points/slides.html#/sampling-sites) as the data we will be working with.  
 
 ```{r}
-library( sf )
-library( tidyverse )
+library(sf)
+library(tidyverse)
 beetle_url <- "https://dyerlabteaching.github.io/CourseData/Spatial/AraptusDispersalBias.csv"
 
-read_csv( beetle_url ) |> 
-  st_as_sf( coords=c("Longitude","Latitude"), crs=4326 ) -> beetles
+read_csv(beetle_url) |>
+  st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326) -> beetles
 
-beetles |> 
+beetles |>
   st_bbox()
 ```
 
@@ -214,7 +243,7 @@ beetles |>
 ### Option 1: Eyeball it!
 
 ```{r}
-beetles |> 
+beetles |>
   st_bbox()
 ```
 
@@ -230,10 +259,11 @@ eyeball_bbox <- c(-116, -109, 22, 30)
 ::: {.fragment}
 ### Option 2: Use Buffer
 
-```{r message=FALSE}
+```{r}
+#| message: false
 beetles |>
   st_union() |>
-  st_buffer( dist = 0.5 ) |>
+  st_buffer(dist = 0.5) |>
   st_bbox()
 ```
 :::
@@ -248,7 +278,7 @@ beetles |>
 I'll just use the old `eyeball` test to make the numbers 'round'.
 
 ```{r}
-baja_extent <- extent( eyeball_bbox )
+baja_extent <- ext(eyeball_bbox)
 baja_extent
 ```
 
@@ -258,8 +288,8 @@ baja_extent
 To crop the raster, we use the `crop()` function and it makes a new raster (and I can throw the old big one away).
 
 ```{r}
-alt <- crop( r, baja_extent)
-rm( r ) # this deletes r from memory
+alt <- crop(r, baja_extent)
+rm(r) # this deletes r from memory
 alt
 ```
 
@@ -267,14 +297,13 @@ alt
 ##
 
 ```{r}
-plot( alt, xlab="Longitude", ylab="Latitude" )
-plot( beetles, add=TRUE, col="red", pch=16, cex=1.5)
+plot(alt, xlab = "Longitude", ylab = "Latitude")
+plot(beetles, add = TRUE, col = "red", pch = 16, cex = 1.5)
 ```
 
-&nbsp;
-
-&nbsp;
-<font size="-1">Notice the `add=TRUE` adds to the previous plot, and (2) Need to run whole chunk to see built-in plot overlays.</font>
+::: aside
+Notice the `add=TRUE` adds to the previous plot, and (2) Need to run whole chunk to see built-in plot overlays.
+:::
 
 
 
@@ -287,14 +316,14 @@ Masking is similar to cropping but with one main distinction.  When you mask a r
 
 ## Plotting Rasters with `ggplot`
 
-As you probably guessed, there is a `geom_raster()` available to us.  .redinline[However], we need to conver the data from a `raster` (`matrix`) to a `data.frame` object that `ggplot` can read.
+As you probably guessed, there is a `geom_raster()` available to us.  **However**, we need to convert the data from a `SpatRaster` (`matrix`) to a `data.frame` object that `ggplot` can read.
 
 :::: {.columns}
 
 ::: {.column width="50%"}
 ```{r}
 alt |>
-  rasterToPoints() |>
+  as.data.frame(xy = TRUE) |>
   head()
 ```
 :::
@@ -303,7 +332,7 @@ alt |>
 ::: {.fragment}
 ```{r}
 alt |>
-  rasterToPoints() |>
+  as.data.frame(xy = TRUE) |>
   class()
 ```
 :::
@@ -312,143 +341,366 @@ alt |>
 ::::
 
 
-## Converting A `raster` to a `data.frame` {.smaller}
+## Converting A `SpatRaster` to a `data.frame` {.smaller}
 
-A little coercion to move `matrix` into `as.data.frame()` is necessary.  I also use the `transmute()` function which does in-place renaming (rather than `mutate( X=y ) |> select( -y )`)
+`as.data.frame( xy = TRUE )` gives one row per (non-`NA`) cell with its coordinates.  I also use the `transmute()` function which does in-place renaming (rather than `mutate( X=y ) |> select( -y )`)
 
 ```{r}
 alt |>
-  rasterToPoints() |>
-  as.data.frame() |> 
-  transmute(Longitude=x,
-            Latitude=y,
-            Elevation=alt_22)  -> alt.df
-head( alt.df )
+  as.data.frame(xy = TRUE) |>
+  transmute(Longitude = x, Latitude = y, Elevation = alt_22) -> alt.df
+head(alt.df)
 ```
 
 ## `geom_raster()` {.smaller}
 
+```{r}
+alt.df |>
+  ggplot() +
+  geom_raster(aes(x = Longitude, y = Latitude, fill = Elevation)) +
+  coord_equal() +
+  theme_minimal() -> baja_elevation
+baja_elevation
+```
+
+
+## Playing with Colors {.smaller}
+
+```{r}
+baja_elevation +
+  scale_fill_gradientn(colors = terrain.colors(100))
+```
+
+
+
+## `veridis` Color Palettes
+
+
 :::: {.columns}
 
 ::: {.column width="50%"}
-<p>&nbsp;</p>
+
+```{r}
+baja_elevation +
+  scale_fill_viridis_c()
+```
+:::
+
+::: {.column width="50%"}
+
+```{r}
+baja_elevation +
+  scale_fill_viridis_c(
+    option = "magma"
+  )
+```
+:::
+
+::::
 
 
-<p>&nbsp;</p>
+## `distiller` Color Palettes 
 
-```{r eval=FALSE}
-alt.df |>
-  ggplot()  + 
-  geom_raster( aes( x = Longitude, 
-                    y = Latitude, 
-                    fill = Elevation) ) + 
-  coord_equal() +
-  theme_minimal() -> baja_elevation
+Associated with [ColorBrewer](https://colorbrewer2.org/) (the distiller is the *continuous* version).
 
-baja_elevation
+:::: {.columns}
+
+::: {.column width="50%"}
+
+```{r}
+baja_elevation +
+  scale_fill_distiller()
+```
+
+::: 
+
+::: {.column width="50%"}
+
+```{r}
+baja_elevation +
+  scale_fill_distiller(
+    palette = "YlOrBr"
+  )
+```
+
+::: 
+
+::::
+
+
+
+## `scico` Color Palettes 
+
+*Perceptually uniform* color ramps for scientific output.
+
+```{r}
+library(scico)
+```
+
+&nbsp;
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+```{r}
+baja_elevation +
+  scale_fill_scico()
+```
+
+::: 
+
+::: {.column width="50%"}
+
+```{r}
+baja_elevation +
+  scale_fill_scico(palette = "vik")
+```
+
+::: 
+
+::::
+
+
+
+
+
+## Manual Color Gradients
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+```{r}
+baja_elevation +
+  scale_fill_steps(
+    low = "springgreen4",
+    high = "yellow"
+  )
+```
+:::
+
+::: {.column width="50%"}
+
+```{r}
+baja_elevation +
+  scale_fill_gradient2(
+    low = "darkolivegreen",
+    mid = "yellow",
+    high = "brown",
+    midpoint = 750
+  ) -> baja_map
+baja_map
+```
+:::
+
+::::
+
+
+
+
+
+## Overlay Data {.smaller}
+
+```{r}
+baja_map +
+  geom_sf(
+    aes(size = MFRatio),
+    data = beetles,
+    color = "dodgerblue2",
+    alpha = 0.75
+  )
+```
+
+
+## A Shortcut: `tidyterra` {.smaller}
+
+The `data.frame` route works, but it costs us a second copy of the data, hand-renamed columns, and remembering `coord_equal()`.  The `tidyterra` library bridges `terra` and the `tidyverse` so we can skip all that.
+
+```{r}
+#| eval: false
+library(tidyterra)
+```
+
+:::{.incremental}
+- `geom_spatraster()` plots a `SpatRaster` directly: no `as.data.frame()`, no extra copy, no `coord_equal()`.
+- Uses the raster's CRS, so axes get proper °N / °W labels (just like `geom_sf()`).
+- Large rasters are resampled for drawing (~500,000 cells) so plots stay fast.
+- [Map-ready](https://en.wikipedia.org/wiki/Wikipedia:WikiProject_Maps/Conventions/Topographic_mapss) color scales: `scale_fill_hypso_c()`, `scale_fill_whitebox_c()`, `scale_fill_wiki_c()`.
+- `dplyr` verbs (`rename()`, `mutate()`, `filter()`, `select()`) work *on the raster* and return a raster.
+:::
+
+
+## `geom_spatraster()` {.smaller}
+
+```{r}
+ggplot() +
+  geom_spatraster(data = alt) +
+  scale_fill_hypso_c(na.value = NA) +
+  geom_sf(
+    aes(size = MFRatio),
+    data = beetles,
+    color = "dodgerblue4",
+    alpha = 0.75
+  ) +
+  labs(fill = "Elevation (m)")
+```
+
+
+
+## `dplyr` Verbs on Rasters {.smaller}
+
+Without `tidyterra`: `names(alt) <- ...` to rename, indexing `values()` to subset.  With it, the `dplyr` verbs we already know work on the raster: each layer acts like a column and each cell like a row.
+
+:::: {.columns}
+
+::: {.column width="50%"}
+```{r}
+alt |>
+  rename(Elevation = alt_22) -> baja_elev
+baja_elev
+```
+:::
+
+::: {.column width="50%"}
+::: {.fragment}
+```{r}
+baja_elev |>
+  mutate(Feet = Elevation * 3.28084) -> baja_ft
+baja_ft
+```
+:::
+:::
+
+::::
+
+
+## Multiple Layers in 1 Raster
+
+```{r}
+plot(baja_ft)
+```
+
+
+
+## Getting Rasters with `geodata` {.smaller}
+
+So far our raster came from a URL.  The `geodata` library downloads many *global* data sets directly into `SpatRaster` (or `SpatVector`) objects.
+
+```{r}
+library(geodata)
+```
+
+| Data | Functions |
+|---|---|
+| Current climate (WorldClim) | `worldclim_global()`, `worldclim_country()`, `worldclim_tile()` |
+| Future climate (CMIP6) | `cmip6_world()`, `cmip6_tile()` |
+| Elevation | `elevation_global()`, `elevation_30s()` |
+| Land cover, soils, human footprint | `landcover()`, `soil_world()`, `footprint()` |
+| Political boundaries (vector) | `gadm()` |
+
+
+## The Bioclim Variables {.smaller}
+
+[WorldClim 2.1](https://www.worldclim.org/data/bioclim.html) (Fick & Hijmans 2017): 19 *bioclimatic* variables derived from monthly temperature and precipitation (1970–2000 averages).  They capture annual trends, seasonality, and extremes, which is why they are a staple of species distribution modeling.
+
+:::: {.columns}
+
+::: {.column width="50%"}
+**Temperature (°C)**
+
+- BIO1 Annual Mean Temperature
+- BIO2 Mean Diurnal Range
+- BIO3 Isothermality (BIO2/BIO7 ×100)
+- BIO4 Temperature Seasonality (SD ×100)
+- BIO5 Max Temp of Warmest Month
+- BIO6 Min Temp of Coldest Month
+- BIO7 Temperature Annual Range
+- BIO8 Mean Temp of Wettest Quarter
+- BIO9 Mean Temp of Driest Quarter
+- BIO10 Mean Temp of Warmest Quarter
+- BIO11 Mean Temp of Coldest Quarter
+:::
+
+::: {.column width="50%"}
+**Precipitation (mm)**
+
+- BIO12 Annual Precipitation
+- BIO13 Precip of Wettest Month
+- BIO14 Precip of Driest Month
+- BIO15 Precip Seasonality (CV)
+- BIO16 Precip of Wettest Quarter
+- BIO17 Precip of Driest Quarter
+- BIO18 Precip of Warmest Quarter
+- BIO19 Precip of Coldest Quarter
+:::
+
+::::
+
+
+## Downloading a 30 arc-second Tile {.smaller}
+
+30 arc-seconds is 1/120° (about 1km).  At that resolution the world comes in 30° × 30° tiles: give any longitude and latitude inside the tile you want.
+
+```{r}
+bio <- worldclim_tile(var = "bio", lon = -112, lat = 26, path = "cache")
+bio
+```
+
+::: aside
+The tile is 126 MB.  `geodata` only downloads it if it is not already in `path`; on your machine use a `data/` folder in your project.  WorldClim does not allow redistribution, so do not commit it to GitHub.
+:::
+
+
+## Bioclim for Baja {.smaller}
+
+Same tile, same grid as `alt_22`, so the same `baja_extent` crops it.  `select()` picks layers by name.
+
+```{r}
+bio |>
+  crop(baja_extent) |>
+  select(bio_1, bio_12) -> baja_bio
+plot(baja_bio)
+```
+
+
+## Annual Precipitation {.smaller}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+Precipitation is *sequential*, and blue reads as "wet".
+
+```{r}
+#| eval: false
+ggplot() +
+  geom_spatraster(
+    data = baja_bio,
+    aes(fill = bio_12)
+  ) +
+  scale_fill_distiller(
+    palette = "YlGnBu",
+    direction = 1,
+    na.value = NA
+  ) +
+  labs(fill = "Annual\nPrecip (mm)")
 ```
 :::
 
 ::: {.column width="50%"}
 ```{r}
-#| echo: false 
-alt.df |>
-  ggplot()  + 
-  geom_raster( aes( x = Longitude, 
-                    y = Latitude, 
-                    fill = Elevation) ) + 
-  coord_equal() -> baja_elevation
-baja_elevation
-```
-:::
-
-::::
-
-
-## Playing with Colors {.smaller}
-
-:::: {.columns}
-
-::: {.column width="50%"}
-
-&nbsp;
-
-```{r echo=FALSE}
-baja_elevation + 
-  scale_fill_gradientn( colors=terrain.colors(100))
-```
-:::
-
-::: {.column width="50%"}
-### Using Color Gradients
-
-There is a built-in `terrain.colors()` function that estimates a set of colors that look somewhat topologically orientated.
-
-```{r eval=FALSE}
-baja_elevation + 
-  scale_fill_gradientn( colors=terrain.colors(100))
-```
-:::
-
-::::
-
-
-
-## Custome Color Gradients  {.smaller}
-
-:::: {.columns}
-
-::: {.column width="50%"}
-Set up a custom gradient with a `low`, `mid`, and `high` color and define the value of the elevation that represents the middle of the range.
-
-```{r eval=FALSE}
-baja_elevation + 
-  scale_fill_gradient2( low = "darkolivegreen",
-                        mid = "yellow",
-                        high = "brown", 
-                        midpoint = 1000 ) -> baja_map
-baja_map
-```
-:::
-
-::: {.column width="50%"}
-```{r echo=FALSE}
-baja_elevation + 
-  scale_fill_gradient2( low = "darkolivegreen",
-                        mid = "yellow",
-                        high = "brown", 
-                        midpoint = 1000 ) -> baja_map
-baja_map
-```
-:::
-
-::::
-
-
-## Overlay Data {.smaller}
-
-:::: {.columns}
-
-::: {.column width="50%"}
-```{r echo=FALSE}
-baja_map + 
-  geom_sf( aes(size = MFRatio ), 
-           data = beetles, 
-           color = "dodgerblue2",
-           alpha = 0.75) 
-```
-:::
-
-::: {.column width="50%"}
-
-Map the `sf` object *over* the background raster and pull it all together.
-
-```{r eval=FALSE}
-baja_map + 
-  geom_sf( aes(size = MFRatio ), 
-           data = beetles, 
-           color = "dodgerblue2",
-           alpha = 0.75) 
+#| echo: false
+ggplot() +
+  geom_spatraster(
+    data = baja_bio,
+    aes(fill = bio_12)
+  ) +
+  scale_fill_distiller(
+    palette = "YlGnBu",
+    direction = 1,
+    na.value = NA
+  ) +
+  labs(fill = "Annual\nPrecip (mm)")
 ```
 :::
 
@@ -467,12 +719,14 @@ You can work with raster data interactively (I just cannot do it here on this pr
 :::: {.columns}
 
 ::: {.column width="50%"}
-```{r, eval=FALSE}
-plot( alt )
-click( alt, 
-       xy=TRUE, 
-       value=TRUE, 
-       n=3 ) -> points
+```{r}
+#| eval: false
+plot(alt)
+click(
+  alt,
+  xy = TRUE,
+  n = 3
+) -> points
 ```
 :::
 
@@ -486,10 +740,13 @@ click( alt,
 
 ## Points from `click()`
 
-```{r echo=FALSE}
-points <- data.frame( x = c(-113.6292, -112.4792, -111.2458, -109.9958),
-                      y = c(28.45417, 26.85417, 24.83750, 23.48750),
-                      value = c(870, 1185, 135, 1145) )
+```{r}
+#| echo: false
+points <- data.frame(
+  x = c(-113.6292, -112.4792, -111.2458, -109.9958),
+  y = c(28.45417, 26.85417, 24.83750, 23.48750),
+  alt_22 = c(870, 1185, 135, 1145)
+)
 ```
 
 Here are what the points look like.  
@@ -502,12 +759,12 @@ points
 
 ## Reprojecting Rasters
 
-Just like points, we can reproject the entire raster using the `projectRaster` function.  Here I am going to project the raster into UTM Zone 12N, a common projection for this part of [Mexico from epsg.io](https://epsg.io/6367).  
+Just like points, we can reproject the entire raster using the `project()` function.  Here I am going to project the raster into UTM Zone 12N, a common projection for this part of [Mexico from epsg.io](https://epsg.io/6367).
 
-Unfortunately, the `raster` library does not use epsg codes so we'll have to use the large description of that projection.  See the [page](https://epsg.io/6367) for this projection and scroll down to the proj.4 definition.  
+The `terra` library understands EPSG codes, so all we need is the code for that projection.
 
 ```{r}
-new.proj <- "+proj=utm +zone=12 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs "
+new.proj <- "EPSG:6367"
 ```
 
 ## Visualizing {.smaller}
@@ -516,19 +773,379 @@ new.proj <- "+proj=utm +zone=12 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no
 
 ::: {.column width="50%"}
 ```{r}
-alt.utm <- projectRaster( alt, 
-                          crs = new.proj )
+alt.utm <- project(alt, new.proj)
 alt.utm
 ```
 :::
 
 ::: {.column width="50%"}
-```{r echo=FALSE}
-plot( alt.utm, xlab="Easting", ylab="Northing")
+```{r}
+#| echo: false
+plot(alt.utm, xlab = "Easting", ylab = "Northing")
 ```
 :::
 
 ::::
+
+
+## Mixing Projections: The Problem {.smaller}
+
+The raster is now in UTM (EPSG:6367, meters) but the beetles are still lon/lat (EPSG:4326, degrees).
+
+:::: {.columns}
+
+::: {.incremental}
+
+::: {.column width="50%"}
+```{r}
+plot(alt.utm)
+plot(
+  st_geometry(beetles),
+  add = TRUE,
+  col = "red",
+  pch = 16
+)
+```
+
+Base `plot( add=TRUE )` **does not work**: (-113, 27) is drawn at 27 m north, off the map.  No error, no warning.
+:::
+
+::: {.column width="50%"}
+```{r}
+plot(alt.utm)
+beetles |>
+  st_transform(crs = 6367) |>
+  st_geometry() |>
+  plot(
+    add = TRUE,
+    col = "red",
+    pch = 16
+  )
+```
+
+You must reproject the points *manually* with `st_transform()` first.
+:::
+
+:::
+
+::::
+
+
+## Mixing Projections with `ggplot` {.smaller}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+::: {.callout-note title="Automatic alignment"}
+`ggplot` reprojects every layer that knows its CRS (`geom_sf()`, `geom_spatraster()`) on the fly to match the first one. No `st_transform()` needed.
+:::
+
+```{r}
+#| eval: false
+ggplot() +
+  geom_spatraster(data = alt.utm) +
+  geom_sf(data = beetles, color = "red") +
+  scale_fill_hypso_c(na.value = NA)
+```
+
+:::
+
+::: {.column width="50%"}
+```{r}
+#| echo: false
+ggplot() +
+  geom_spatraster(data = alt.utm) +
+  geom_sf(data = beetles, color = "red") +
+  scale_fill_hypso_c(na.value = NA) +
+  labs(fill = "Elevation (m)")
+```
+:::
+
+::::
+
+
+# Applications {background-color="black" background-image="media/contour.png" background-size="initial" background-position="right"}
+
+
+## Research Question 1 - Elevation Envelope
+
+
+:::: {.columns}
+
+::: {.column width="50%"}
+![*Araptus attenuatus*](media/arapat.jpg)
+:::
+
+::: {.column width="50%"}
+- What is the elevation *niche* envelope for this species?
+
+- Is there any indication that elevation is related to sex-bias?
+:::
+
+
+
+::::
+
+
+## Extracting Raster Data {.smaller}
+
+`extract()` takes *all* the sites at once (as a `SpatVector`) and returns one row per site, in order.  `ID = FALSE` drops the point-number column.
+
+```{r}
+site_elev <- terra::extract(baja_elev, vect(beetles), ID = FALSE)
+
+beetles |>
+  mutate(Elevation = site_elev$Elevation) -> beetles
+
+beetles |>
+  select(Site, MFRatio, Elevation) |>
+  head()
+```
+
+
+## Visualizing Elevation Envelope {.smaller}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+The sites span `r min(beetles$Elevation)`m to `r max(beetles$Elevation)`m, but is that a *subset* of the landscape?
+
+```{r}
+#| eval: false
+baja_elev |>
+  as.data.frame() -> landscape
+
+ggplot() +
+  geom_density(
+    aes(x = Elevation, fill = "Landscape"),
+    data = landscape,
+    alpha = 0.5
+  ) +
+  geom_density(
+    aes(x = Elevation, fill = "Beetle Sites"),
+    data = beetles,
+    alpha = 0.5
+  ) +
+  geom_rug(aes(x = Elevation), data = beetles) +
+  labs(fill = NULL)
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| echo: false
+baja_elev |>
+  as.data.frame() -> landscape
+
+ggplot() +
+  geom_density(
+    aes(x = Elevation, fill = "Landscape"),
+    data = landscape,
+    alpha = 0.5
+  ) +
+  geom_density(
+    aes(x = Elevation, fill = "Beetle Sites"),
+    data = beetles,
+    alpha = 0.5
+  ) +
+  geom_rug(aes(x = Elevation), data = beetles) +
+  labs(fill = NULL, y = "Density") +
+  theme(legend.position = "bottom")
+```
+
+`r round(100 * mean(landscape$Elevation > max(beetles$Elevation)))`% of the land is above the highest site.
+:::
+
+::::
+
+
+## Testing for `MFRatio` and Elevation Relationship {.smaller}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+```{r}
+beetles |>
+  ggplot(aes(Elevation, MFRatio)) +
+  geom_point(size = 3)
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+fit <- cor.test(beetles$MFRatio, beetles$Elevation)
+fit
+```
+:::
+
+::::
+
+No evidence of a relationship ($\rho =$ `r format(fit$estimate, digits = 2)`, $P =$ `r format(fit$p.value, digits = 2)`).
+
+
+## Research Question 2 - Elevation Transect
+
+`const` is on the Pacific-side plain; `169` is on the Gulf coast.  The Sierra de la Giganta is in between.
+
+> Does the terrain between `const` and `169` rise above the beetle's elevation envelope (`r max(beetles$Elevation)`m), and for how far?
+
+:::{.incremental}
+1. Connect the two sites with a line (the *transect*).
+2. Put evenly spaced points along the line.
+3. Extract elevation at each point & its distance from the start.
+4. Plot elevation vs. distance.
+:::
+
+
+## Building the Transect 
+
+Order matters (the profile starts at the first site), so make it explicit with a `factor`.
+
+```{r}
+beetles |>
+  filter(Site %in% c("const", "169")) |>
+  arrange(desc(Site)) -> ends
+ends
+```
+
+
+## Building the Transect 
+
+`st_union()` keeps the points in order; `st_cast()` turns them into a line.
+
+```{r}
+ends |>
+  st_union() |>
+  st_cast("LINESTRING") -> transect
+transect
+```
+
+
+
+
+## Building the Transect
+
+
+```{r}
+#| echo: false
+ggplot() +
+  geom_spatraster(data = baja_elev) +
+  scale_fill_hypso_c(na.value = NA) +
+  geom_sf(data = transect, color = "red", linewidth = 1) +
+  geom_sf_label(aes(label = Site), data = ends, nudge_x = 0.3) +
+  coord_sf(xlim = c(-113, -110), ylim = c(24, 27.5)) +
+  labs(x = NULL, y = NULL, fill = "Elevation (m)")
+```
+
+
+
+## Sampling Along the Transect {.smaller}
+
+A point every 500m needs *meters*, so project to UTM first.  Cells are just under 1km, so 500m steps skip none.
+
+```{r}
+transect |>
+  st_transform(crs = 6367) |>
+  st_line_sample(n = 100) |>
+  st_cast("POINT") -> transect_pts
+transect_pts
+```
+
+## Data for Plotting
+
+Extract from the UTM raster (`alt.utm`) so the CRSs match; distance is measured from the first point.
+
+```{r}
+kmDistFromConst <- st_distance(transect_pts, transect_pts[1]) / 1000
+class(kmDistFromConst)
+head(kmDistFromConst)
+```
+
+## Data for Plotting
+
+```{r}
+elevationExtract <- terra::extract(alt.utm, vect(transect_pts), ID = FALSE)
+class(elevationExtract)
+head(elevationExtract)
+```
+
+
+
+
+## Put them into a `data.frame`
+
+```{r}
+data.frame(
+  Distance = kmDistFromConst,
+  Elevation = elevationExtract$alt_22
+) -> profile
+head(profile, 3)
+```
+
+## The Elevation Profile {.smaller}
+
+:::: {.columns}
+
+::: {.column width="40%"}
+```{r}
+#| eval: false
+profile |>
+  ggplot(aes(Distance, Elevation)) +
+  geom_area(fill = "tan", alpha = 0.6) +
+  geom_line() +
+  geom_hline(
+    yintercept = max(beetles$Elevation),
+    linetype = "dashed",
+    color = "red"
+  ) +
+  labs(x = "Distance from const (km)")
+```
+
+&nbsp;
+
+About `r sum(profile$Elevation > max(beetles$Elevation)) * 0.5`km of the direct route is above every sampled beetle site (peak: `r round(max(profile$Elevation))`m).
+:::
+
+::: {.column width="60%"}
+```{r}
+#| echo: false
+library(units)
+profile |>
+  ggplot(aes(Distance, Elevation)) +
+  geom_area(fill = "tan", alpha = 0.6) +
+  geom_line() +
+  geom_hline(
+    yintercept = max(beetles$Elevation),
+    linetype = "dashed",
+    color = "red"
+  ) +
+  labs(x = "Distance from const (km)")
+```
+:::
+
+::::
+
+
+## Research Question 3 - Connectivity in *Euphorbia lomelii*
+
+:::: {.columns}
+
+
+::: {.column width="50%"}
+![*Euphorbia lomelii*](media/pedima.jpg)
+:::
+
+
+::: {.column width="50%"}
+- Hummingbird Pollinated 
+
+- Elevation-driven Flowering Phenology (+/- 100m synchrony)
+:::
+
+::::
+
+How can we find the locations that share an elevational 'band' with any one target locale?
+
 
 ## Extracting Data From Rasters  {.smaller}
 
@@ -547,7 +1164,8 @@ To do this we will use both the `alt` and the `beetles` data objects.
 ## Isolating the Point
 
 ```{r}
-sfran <- beetles$geometry[ beetles$Site == "sfran"]
+beetles |>
+  filter(Site == "sfran") -> sfran
 sfran
 ```
 
@@ -555,57 +1173,112 @@ sfran
 
 ## Extracting Data at a Point
 
-To extract data from `raster` objects, we need to coerce and specify.
+To extract data from `SpatRaster` objects, we need to coerce (`sf` $\to$ `SpatVector` with `vect()`).
 
 ```{r}
-raster::extract( alt, as(sfran,"Spatial") )
+alt |>
+  terra::extract(vect(sfran))
 ```
-
-
-##  {.smaller}
-
-:::: {.columns}
-
-::: {.column width="50%"}
-```{r eval=FALSE}
-library( ggrepel )
-alt.df |>
-  filter( Elevation >= 205,
-          Elevation <= 405 ) |>
-  ggplot() + 
-  geom_raster( aes( x = Longitude,
-                    y = Latitude),
-               fill = "gray80",
-               data = alt.df ) + 
-  geom_raster( aes( x = Longitude,
-                    y = Latitude,
-                    fill = Elevation) ) +
-  scale_fill_gradient2( low = "darkolivegreen",
-                        mid = "yellow",
-                        high = "brown", 
-                        midpoint = 305 ) +
-  geom_sf( aes(size=MFRatio), 
-           alpha=0.5, 
-           color="dodgerblue3", 
-           data=beetles) +
-  geom_text_repel( aes( label = Site,
-                        geometry = geometry),
-                   data = beetles,
-                   stat = "sf_coordinates", 
-                   size = 4, 
-                   color = "dodgerblue4") + 
-  coord_sf()
-```
-:::
-
-::: {.column width="50%"}
 
 &nbsp;
 
-![](media/rasters.jpg)
+::: {.callout-warning title="Namespace Collisions"}
+The function `extract()` is defined in the libraries `terra`, `tidyr`, `R.utils`, and `magrittr`, causing an issue for `R`.  It is not smart enough to know which to use, so the version in the *last* library that was pulled in will be used.  To *ensure* you have the correct one, you can use `package_name::function()` notation.
 :::
 
-::::
+
+
+## Filter the Raster based on Elevation Similarity
+
+`filter()` the raster itself: cells outside the band become `NA` and the result is still a `SpatRaster`.
+
+```{r}
+baja_elev |>
+  filter(Elevation >= 205, Elevation <= 405) -> elev_band
+
+elev_band
+```
+
+
+
+## Make a *Background*.
+
+The land underneath is for context (`fill = "gray80"`) and we omit the ocean (the non-`NA` cells) and convert this layer into a polygon (a `SpatVector`).
+
+```{r}
+baja_elev |>
+  not.na() |>
+  as.polygons() |>
+  filter(Elevation == 1) -> land
+land
+```
+
+
+##  Pulling It Together {.smaller}
+
+```{r}
+#| eval: false
+library(ggrepel)
+ggplot() +
+  geom_spatvector(data = land, fill = "gray80", color = NA) +
+  geom_spatraster(data = elev_band) +
+  scale_fill_gradient2(
+    low = "darkolivegreen",
+    mid = "yellow",
+    high = "brown",
+    midpoint = 305,
+    na.value = NA
+  ) +
+  geom_sf(
+    aes(size = MFRatio),
+    alpha = 0.5,
+    color = "dodgerblue3",
+    data = beetles
+  ) +
+  geom_text_repel(
+    aes(label = Site, geometry = geometry),
+    data = beetles,
+    stat = "sf_coordinates",
+    size = 4,
+    color = "dodgerblue4"
+  )
+```
+
+## &nbsp; 
+
+```{r}
+#| echo: false
+library(ggrepel)
+ggplot() +
+  geom_spatvector(data = land, fill = "gray80", color = NA) +
+  geom_spatraster(data = elev_band) +
+  scale_fill_gradient2(
+    low = "darkolivegreen",
+    mid = "yellow",
+    high = "darkolivegreen",
+    midpoint = 305,
+    na.value = NA
+  ) +
+  geom_sf(
+    aes(size = MFRatio),
+    alpha = 0.5,
+    color = "dodgerblue3",
+    data = beetles
+  ) +
+  geom_text_repel(
+    aes(label = Site, geometry = geometry),
+    data = beetles,
+    stat = "sf_coordinates",
+    size = 4,
+    color = "dodgerblue4"
+  ) +
+  labs(x = NULL, y = NULL)
+```
+
+
+
+
+
 
 
 

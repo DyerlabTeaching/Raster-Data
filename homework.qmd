@@ -4,6 +4,17 @@ author: "YOUR NAME HERE"
 format: dyerlab-html
 ---
 
+## Libraries
+
+This assignment uses `terra` for the raster data, `sf` for the point data, and `tidyterra` so that rasters work with `ggplot` and the `dplyr` verbs.  If any of these are not yet installed, RStudio will offer to install them when you open this file.
+
+```{r}
+library( tidyverse )
+library( terra )
+library( tidyterra )
+library( sf )
+```
+
 ## Homework
 
 Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.

@@ -3,7 +3,7 @@ title: "In Class Activity - Raster Data"
 format: dyerlab-html
 ---
 
-Rasters are spatial continuous distributions of geospatial data.  We have been shown that we an work with data in raster format using either `raster` and working on object directly, or via `dplyr` and using the normal data manipulation routines that we've learned for non-spatial data.  In this *in class* exercise, you may use both of these techniques to load, manipulate, and display geospatial data.
+Rasters are spatial continuous distributions of geospatial data.  We have been shown that we an work with data in raster format using either `terra` and working on object directly, or via `dplyr` and using the normal data manipulation routines that we've learned for non-spatial data.  In this *in class* exercise, you may use both of these techniques to load, manipulate, and display geospatial data.
 
 ## The Raw Data
 
@@ -21,10 +21,11 @@ beetle_url <- "https://dyerlabteaching.github.io/CourseData/Spatial/AraptusDispe
 
 ```{r}
 library( tidyverse )
-library( raster )
-library( sf ) 
+library( terra )
+library( tidyterra )
+library( sf )
 
-elev <- raster( raster_url )
+elev <- rast( raster_url )
 
 read_csv( beetle_url )  |> 
   st_as_sf( coords = c("Longitude","Latitude"), 
@@ -46,7 +47,7 @@ beetles |>
   st_buffer( dist = 1 ) |>
   st_bbox() 
 
-baja_extent <- extent( c(-115.29354,-108,22,30))
+baja_extent <- ext( c(-115.29354,-108,22,30))
 
 baja_elev <- crop( elev, baja_extent )
 baja_elev
@@ -63,14 +64,11 @@ text( beetles,  pch=16, col="red" )
 
 ```{r}
 library( ggrepel )
-baja_elev |>
-  rasterToPoints() |>
-  as.data.frame() |> 
-  ggplot() +
-  geom_raster( aes(x,y,fill=alt_22) ) +
+ggplot() +
+  geom_spatraster( data = baja_elev ) +
+  scale_fill_hypso_c( na.value = NA ) +
   geom_sf_label( aes(label=Site), 
-                 data = beetles) +
-  coord_equal()
+                 data = beetles)
 ```
 
 
