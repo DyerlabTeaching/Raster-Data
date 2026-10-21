@@ -648,7 +648,7 @@ bio
 ```
 
 ::: aside
-The tile is 126 MB.  `geodata` only downloads it if it is not already in `path`; on your machine use a `data/` folder in your project.  WorldClim does not allow redistribution, so do not commit it to GitHub.
+The tile is 126 MB.  `geodata` only downloads it if it is not already in `path`; on your machine use a `data/` folder in your project.
 :::
 
 

@@ -459,7 +459,6 @@ A few things to notice:
 
 - The result is a single `SpatRaster` with 19 layers, named `bio_1` through `bio_19`.
 - The tile is about 126 MB, so the first download takes a while.  `geodata` checks `path` first and only downloads the file if it is not already there, so after the first time it loads instantly.  On your own machine, use a `data/` folder in your project for `path`.
-- WorldClim's terms of use do not allow redistributing the data, so do not commit those files to GitHub.  Add the folder to your `.gitignore` and let `geodata` download them for anyone who runs your code.
 - The extent and resolution are exactly the same as `alt_22`, so the cells line up one-to-one.
 
 Because the grids match, we can use the same `baja_extent` from before to crop it, and `select()` from `tidyterra` to keep just the layers we want: annual mean temperature (`bio_1`) and annual precipitation (`bio_12`).

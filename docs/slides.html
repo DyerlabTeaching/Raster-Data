@@ -238,8 +238,8 @@ Rodney Dyer, PhD
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a>values <span class="ot">&lt;-</span> <span class="fu">rpois</span>(<span class="at">n =</span> <span class="dv">36</span>, <span class="at">lambda =</span> <span class="dv">12</span>)</span>
 <span id="cb1-2"><a href=""></a>values</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] 13  9 13  5 12 11 11 14 13 17 14 10  8 11 12  8 12 14 17  8 12 16  6 19  7
-[26] 14 12 12 10  8 15  6 10 11 11 16</code></pre>
+<pre><code> [1] 12 10 15 11 15 17 12 13 12 16  9 14 12 12  9 10 10 14  9 13 10 11 10 14 13
+[26] 15  9 13 11  9 16 11  9 15 12 15</code></pre>
 </div>
 </div>
 <div class="fragment">
@@ -248,12 +248,12 @@ Rodney Dyer, PhD
 <span id="cb3-2"><a href=""></a>x</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2] [,3] [,4] [,5] [,6]
-[1,]   13   11    8   17    7   15
-[2,]    9   14   11    8   14    6
-[3,]   13   13   12   12   12   10
-[4,]    5   17    8   16   12   11
-[5,]   12   14   12    6   10   11
-[6,]   11   10   14   19    8   16</code></pre>
+[1,]   12   12   12    9   13   16
+[2,]   10   13   12   13   15   11
+[3,]   15   12    9   10    9    9
+[4,]   11   16   10   11   13   15
+[5,]   15    9   10   10   11   12
+[6,]   17   14   14   14    9   15</code></pre>
 </div>
 </div>
 </div>
@@ -285,8 +285,8 @@ extent      : 0, 6, 0, 6  (xmin, xmax, ymin, ymax)
 coord. ref. : 
 source(s)   : memory
 name        : lyr.1
-min value   :     5
-max value   :    19</code></pre>
+min value   :     9
+max value   :    17</code></pre>
 </div>
 </div>
 </section>
@@ -316,10 +316,10 @@ max value   :    19</code></pre>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href=""></a><span class="fu">c</span>(x[<span class="dv">1</span>, <span class="dv">2</span>], r[<span class="dv">1</span>, <span class="dv">2</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[[1]]
-[1] 11
+[1] 12
 
 $lyr.1
-[1] 11</code></pre>
+[1] 12</code></pre>
 </div>
 </div>
 </section>
@@ -870,7 +870,144 @@ max values  :      2263, 7424.54092</code></pre>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href=""></a><span class="fu">plot</span>(baja_ft)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 
 </div>
-<img data-src="slides_files/figure-revealjs/unnamed-chunk-35-1.png" width="960" class="r-stretch"></section></section>
+<img data-src="slides_files/figure-revealjs/unnamed-chunk-35-1.png" width="960" class="r-stretch"></section>
+<section id="getting-rasters-with-geodata" class="slide level2 smaller">
+<h2>Getting Rasters with <code>geodata</code></h2>
+<p>So far our raster came from a URL. The <code>geodata</code> library downloads many <em>global</em> data sets directly into <code>SpatRaster</code> (or <code>SpatVector</code>) objects.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href=""></a><span class="fu">library</span>(geodata)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<table class="caption-top">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Data</th>
+<th>Functions</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Current climate (WorldClim)</td>
+<td><code>worldclim_global()</code>, <code>worldclim_country()</code>, <code>worldclim_tile()</code></td>
+</tr>
+<tr class="even">
+<td>Future climate (CMIP6)</td>
+<td><code>cmip6_world()</code>, <code>cmip6_tile()</code></td>
+</tr>
+<tr class="odd">
+<td>Elevation</td>
+<td><code>elevation_global()</code>, <code>elevation_30s()</code></td>
+</tr>
+<tr class="even">
+<td>Land cover, soils, human footprint</td>
+<td><code>landcover()</code>, <code>soil_world()</code>, <code>footprint()</code></td>
+</tr>
+<tr class="odd">
+<td>Political boundaries (vector)</td>
+<td><code>gadm()</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="the-bioclim-variables" class="slide level2 smaller">
+<h2>The Bioclim Variables</h2>
+<p><a href="https://www.worldclim.org/data/bioclim.html">WorldClim 2.1</a> (Fick &amp; Hijmans 2017): 19 <em>bioclimatic</em> variables derived from monthly temperature and precipitation (1970–2000 averages). They capture annual trends, seasonality, and extremes, which is why they are a staple of species distribution modeling.</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><strong>Temperature (°C)</strong></p>
+<ul>
+<li>BIO1 Annual Mean Temperature</li>
+<li>BIO2 Mean Diurnal Range</li>
+<li>BIO3 Isothermality (BIO2/BIO7 ×100)</li>
+<li>BIO4 Temperature Seasonality (SD ×100)</li>
+<li>BIO5 Max Temp of Warmest Month</li>
+<li>BIO6 Min Temp of Coldest Month</li>
+<li>BIO7 Temperature Annual Range</li>
+<li>BIO8 Mean Temp of Wettest Quarter</li>
+<li>BIO9 Mean Temp of Driest Quarter</li>
+<li>BIO10 Mean Temp of Warmest Quarter</li>
+<li>BIO11 Mean Temp of Coldest Quarter</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<p><strong>Precipitation (mm)</strong></p>
+<ul>
+<li>BIO12 Annual Precipitation</li>
+<li>BIO13 Precip of Wettest Month</li>
+<li>BIO14 Precip of Driest Month</li>
+<li>BIO15 Precip Seasonality (CV)</li>
+<li>BIO16 Precip of Wettest Quarter</li>
+<li>BIO17 Precip of Driest Quarter</li>
+<li>BIO18 Precip of Warmest Quarter</li>
+<li>BIO19 Precip of Coldest Quarter</li>
+</ul>
+</div></div>
+</section>
+<section id="downloading-a-30-arc-second-tile" class="slide level2 smaller">
+<h2>Downloading a 30 arc-second Tile</h2>
+<p>30 arc-seconds is 1/120° (about 1km). At that resolution the world comes in 30° × 30° tiles: give any longitude and latitude inside the tile you want.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href=""></a>bio <span class="ot">&lt;-</span> <span class="fu">worldclim_tile</span>(<span class="at">var =</span> <span class="st">"bio"</span>, <span class="at">lon =</span> <span class="sc">-</span><span class="dv">112</span>, <span class="at">lat =</span> <span class="dv">26</span>, <span class="at">path =</span> <span class="st">"cache"</span>)</span>
+<span id="cb52-2"><a href=""></a>bio</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>class       : SpatRaster
+size        : 3600, 3600, 19  (nrow, ncol, nlyr)
+resolution  : 0.008333333, 0.008333333  (x, y)
+extent      : -120, -90, 4.163336e-16, 30  (xmin, xmax, ymin, ymax)
+coord. ref. : lon/lat WGS 84 (EPSG:4326)
+source      : tile_27_wc2.1_30s_bio.tif
+names       :     bio_1,    bio_2,     bio_3,      bio_4, bio_5, bio_6, ...
+min values  :      2.05, 3.741667, 25.904978,  33.650963,   9.4,  -5.8, ...
+max values  : 28.754168,   20.975, 88.148148, 786.332458,  42.5,  22.4, ...</code></pre>
+</div>
+</div>
+
+<aside><div>
+<p>The tile is 126 MB. <code>geodata</code> only downloads it if it is not already in <code>path</code>; on your machine use a <code>data/</code> folder in your project. WorldClim does not allow redistribution, so do not commit it to GitHub.</p>
+</div></aside></section>
+<section id="bioclim-for-baja" class="slide level2 smaller">
+<h2>Bioclim for Baja</h2>
+<p>Same tile, same grid as <code>alt_22</code>, so the same <code>baja_extent</code> crops it. <code>select()</code> picks layers by name.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href=""></a>bio <span class="sc">|&gt;</span></span>
+<span id="cb54-2"><a href=""></a>  <span class="fu">crop</span>(baja_extent) <span class="sc">|&gt;</span></span>
+<span id="cb54-3"><a href=""></a>  <span class="fu">select</span>(bio_1, bio_12) <span class="ot">-&gt;</span> baja_bio</span>
+<span id="cb54-4"><a href=""></a><span class="fu">plot</span>(baja_bio)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="slides_files/figure-revealjs/unnamed-chunk-38-1.png" width="960" class="r-stretch"></section>
+<section id="annual-precipitation" class="slide level2 smaller">
+<h2>Annual Precipitation</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>Precipitation is <em>sequential</em>, and blue reads as “wet”.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href=""></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb55-2"><a href=""></a>  <span class="fu">geom_spatraster</span>(</span>
+<span id="cb55-3"><a href=""></a>    <span class="at">data =</span> baja_bio,</span>
+<span id="cb55-4"><a href=""></a>    <span class="fu">aes</span>(<span class="at">fill =</span> bio_12)</span>
+<span id="cb55-5"><a href=""></a>  ) <span class="sc">+</span></span>
+<span id="cb55-6"><a href=""></a>  <span class="fu">scale_fill_distiller</span>(</span>
+<span id="cb55-7"><a href=""></a>    <span class="at">palette =</span> <span class="st">"YlGnBu"</span>,</span>
+<span id="cb55-8"><a href=""></a>    <span class="at">direction =</span> <span class="dv">1</span>,</span>
+<span id="cb55-9"><a href=""></a>    <span class="at">na.value =</span> <span class="cn">NA</span></span>
+<span id="cb55-10"><a href=""></a>  ) <span class="sc">+</span></span>
+<span id="cb55-11"><a href=""></a>  <span class="fu">labs</span>(<span class="at">fill =</span> <span class="st">"Annual</span><span class="sc">\n</span><span class="st">Precip (mm)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="slides_files/figure-revealjs/unnamed-chunk-40-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section></section>
 <section>
 <section id="raster-manipulations" class="title-slide slide level1 center" data-background-color="black" data-background-image="media/contour.png" data-background-size="initial" data-background-position="right">
 <h1>Raster Manipulations</h1>
@@ -882,12 +1019,12 @@ max values  :      2263, 7424.54092</code></pre>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href=""></a><span class="fu">plot</span>(alt)</span>
-<span id="cb51-2"><a href=""></a><span class="fu">click</span>(</span>
-<span id="cb51-3"><a href=""></a>  alt,</span>
-<span id="cb51-4"><a href=""></a>  <span class="at">xy =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb51-5"><a href=""></a>  <span class="at">n =</span> <span class="dv">3</span></span>
-<span id="cb51-6"><a href=""></a>) <span class="ot">-&gt;</span> points</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href=""></a><span class="fu">plot</span>(alt)</span>
+<span id="cb56-2"><a href=""></a><span class="fu">click</span>(</span>
+<span id="cb56-3"><a href=""></a>  alt,</span>
+<span id="cb56-4"><a href=""></a>  <span class="at">xy =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb56-5"><a href=""></a>  <span class="at">n =</span> <span class="dv">3</span></span>
+<span id="cb56-6"><a href=""></a>) <span class="ot">-&gt;</span> points</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div><div class="column" style="width:50%;">
 <p><img data-src="media/map_with_points.jpg"></p>
@@ -897,7 +1034,7 @@ max values  :      2263, 7424.54092</code></pre>
 <h2>Points from <code>click()</code></h2>
 <p>Here are what the points look like.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href=""></a>points</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href=""></a>points</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>          x        y alt_22
 1 -113.6292 28.45417    870
@@ -912,7 +1049,7 @@ max values  :      2263, 7424.54092</code></pre>
 <p>Just like points, we can reproject the entire raster using the <code>project()</code> function. Here I am going to project the raster into UTM Zone 12N, a common projection for this part of <a href="https://epsg.io/6367">Mexico from epsg.io</a>.</p>
 <p>The <code>terra</code> library understands EPSG codes, so all we need is the code for that projection.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href=""></a>new.proj <span class="ot">&lt;-</span> <span class="st">"EPSG:6367"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href=""></a>new.proj <span class="ot">&lt;-</span> <span class="st">"EPSG:6367"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="visualizing" class="slide level2 smaller">
@@ -920,8 +1057,8 @@ max values  :      2263, 7424.54092</code></pre>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href=""></a>alt.utm <span class="ot">&lt;-</span> <span class="fu">project</span>(alt, new.proj)</span>
-<span id="cb55-2"><a href=""></a>alt.utm</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href=""></a>alt.utm <span class="ot">&lt;-</span> <span class="fu">project</span>(alt, new.proj)</span>
+<span id="cb60-2"><a href=""></a>alt.utm</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>class       : SpatRaster
 size        : 1012, 817, 1  (nrow, ncol, nlyr)
@@ -939,7 +1076,7 @@ max value   : 2207.08374</code></pre>
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="slides_files/figure-revealjs/unnamed-chunk-41-1.png" width="960"></p>
+<p><img data-src="slides_files/figure-revealjs/unnamed-chunk-46-1.png" width="960"></p>
 </figure>
 </div>
 </div>
@@ -952,17 +1089,17 @@ max value   : 2207.08374</code></pre>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href=""></a><span class="fu">plot</span>(alt.utm)</span>
-<span id="cb57-2"><a href=""></a><span class="fu">plot</span>(</span>
-<span id="cb57-3"><a href=""></a>  <span class="fu">st_geometry</span>(beetles),</span>
-<span id="cb57-4"><a href=""></a>  <span class="at">add =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb57-5"><a href=""></a>  <span class="at">col =</span> <span class="st">"red"</span>,</span>
-<span id="cb57-6"><a href=""></a>  <span class="at">pch =</span> <span class="dv">16</span></span>
-<span id="cb57-7"><a href=""></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href=""></a><span class="fu">plot</span>(alt.utm)</span>
+<span id="cb62-2"><a href=""></a><span class="fu">plot</span>(</span>
+<span id="cb62-3"><a href=""></a>  <span class="fu">st_geometry</span>(beetles),</span>
+<span id="cb62-4"><a href=""></a>  <span class="at">add =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb62-5"><a href=""></a>  <span class="at">col =</span> <span class="st">"red"</span>,</span>
+<span id="cb62-6"><a href=""></a>  <span class="at">pch =</span> <span class="dv">16</span></span>
+<span id="cb62-7"><a href=""></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="slides_files/figure-revealjs/unnamed-chunk-42-1.png" width="960"></p>
+<p><img data-src="slides_files/figure-revealjs/unnamed-chunk-47-1.png" width="960"></p>
 </figure>
 </div>
 </div>
@@ -970,19 +1107,19 @@ max value   : 2207.08374</code></pre>
 <p>Base <code>plot( add=TRUE )</code> <strong>does not work</strong>: (-113, 27) is drawn at 27 m north, off the map. No error, no warning.</p>
 </div><div class="column" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href=""></a><span class="fu">plot</span>(alt.utm)</span>
-<span id="cb58-2"><a href=""></a>beetles <span class="sc">|&gt;</span></span>
-<span id="cb58-3"><a href=""></a>  <span class="fu">st_transform</span>(<span class="at">crs =</span> <span class="dv">6367</span>) <span class="sc">|&gt;</span></span>
-<span id="cb58-4"><a href=""></a>  <span class="fu">st_geometry</span>() <span class="sc">|&gt;</span></span>
-<span id="cb58-5"><a href=""></a>  <span class="fu">plot</span>(</span>
-<span id="cb58-6"><a href=""></a>    <span class="at">add =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb58-7"><a href=""></a>    <span class="at">col =</span> <span class="st">"red"</span>,</span>
-<span id="cb58-8"><a href=""></a>    <span class="at">pch =</span> <span class="dv">16</span></span>
-<span id="cb58-9"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href=""></a><span class="fu">plot</span>(alt.utm)</span>
+<span id="cb63-2"><a href=""></a>beetles <span class="sc">|&gt;</span></span>
+<span id="cb63-3"><a href=""></a>  <span class="fu">st_transform</span>(<span class="at">crs =</span> <span class="dv">6367</span>) <span class="sc">|&gt;</span></span>
+<span id="cb63-4"><a href=""></a>  <span class="fu">st_geometry</span>() <span class="sc">|&gt;</span></span>
+<span id="cb63-5"><a href=""></a>  <span class="fu">plot</span>(</span>
+<span id="cb63-6"><a href=""></a>    <span class="at">add =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb63-7"><a href=""></a>    <span class="at">col =</span> <span class="st">"red"</span>,</span>
+<span id="cb63-8"><a href=""></a>    <span class="at">pch =</span> <span class="dv">16</span></span>
+<span id="cb63-9"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="slides_files/figure-revealjs/unnamed-chunk-43-1.png" width="960"></p>
+<p><img data-src="slides_files/figure-revealjs/unnamed-chunk-48-1.png" width="960"></p>
 </figure>
 </div>
 </div>
@@ -1010,17 +1147,17 @@ max value   : 2207.08374</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href=""></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb59-2"><a href=""></a>  <span class="fu">geom_spatraster</span>(<span class="at">data =</span> alt.utm) <span class="sc">+</span></span>
-<span id="cb59-3"><a href=""></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> beetles, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
-<span id="cb59-4"><a href=""></a>  <span class="fu">scale_fill_hypso_c</span>(<span class="at">na.value =</span> <span class="cn">NA</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href=""></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb64-2"><a href=""></a>  <span class="fu">geom_spatraster</span>(<span class="at">data =</span> alt.utm) <span class="sc">+</span></span>
+<span id="cb64-3"><a href=""></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> beetles, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb64-4"><a href=""></a>  <span class="fu">scale_fill_hypso_c</span>(<span class="at">na.value =</span> <span class="cn">NA</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div><div class="column" style="width:50%;">
 <div class="cell">
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="slides_files/figure-revealjs/unnamed-chunk-45-1.png" width="960"></p>
+<p><img data-src="slides_files/figure-revealjs/unnamed-chunk-50-1.png" width="960"></p>
 </figure>
 </div>
 </div>
@@ -1053,14 +1190,14 @@ max value   : 2207.08374</code></pre>
 <h2>Extracting Raster Data</h2>
 <p><code>extract()</code> takes <em>all</em> the sites at once (as a <code>SpatVector</code>) and returns one row per site, in order. <code>ID = FALSE</code> drops the point-number column.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href=""></a>site_elev <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">extract</span>(baja_elev, <span class="fu">vect</span>(beetles), <span class="at">ID =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb60-2"><a href=""></a></span>
-<span id="cb60-3"><a href=""></a>beetles <span class="sc">|&gt;</span></span>
-<span id="cb60-4"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">Elevation =</span> site_elev<span class="sc">$</span>Elevation) <span class="ot">-&gt;</span> beetles</span>
-<span id="cb60-5"><a href=""></a></span>
-<span id="cb60-6"><a href=""></a>beetles <span class="sc">|&gt;</span></span>
-<span id="cb60-7"><a href=""></a>  <span class="fu">select</span>(Site, MFRatio, Elevation) <span class="sc">|&gt;</span></span>
-<span id="cb60-8"><a href=""></a>  <span class="fu">head</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href=""></a>site_elev <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">extract</span>(baja_elev, <span class="fu">vect</span>(beetles), <span class="at">ID =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb65-2"><a href=""></a></span>
+<span id="cb65-3"><a href=""></a>beetles <span class="sc">|&gt;</span></span>
+<span id="cb65-4"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">Elevation =</span> site_elev<span class="sc">$</span>Elevation) <span class="ot">-&gt;</span> beetles</span>
+<span id="cb65-5"><a href=""></a></span>
+<span id="cb65-6"><a href=""></a>beetles <span class="sc">|&gt;</span></span>
+<span id="cb65-7"><a href=""></a>  <span class="fu">select</span>(Site, MFRatio, Elevation) <span class="sc">|&gt;</span></span>
+<span id="cb65-8"><a href=""></a>  <span class="fu">head</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Simple feature collection with 6 features and 3 fields
 Geometry type: POINT
@@ -1085,29 +1222,29 @@ Geodetic CRS:  WGS 84
 <div class="column" style="width:50%;">
 <p>The sites span 6m to 681m, but is that a <em>subset</em> of the landscape?</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href=""></a>baja_elev <span class="sc">|&gt;</span></span>
-<span id="cb62-2"><a href=""></a>  <span class="fu">as.data.frame</span>() <span class="ot">-&gt;</span> landscape</span>
-<span id="cb62-3"><a href=""></a></span>
-<span id="cb62-4"><a href=""></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb62-5"><a href=""></a>  <span class="fu">geom_density</span>(</span>
-<span id="cb62-6"><a href=""></a>    <span class="fu">aes</span>(<span class="at">x =</span> Elevation, <span class="at">fill =</span> <span class="st">"Landscape"</span>),</span>
-<span id="cb62-7"><a href=""></a>    <span class="at">data =</span> landscape,</span>
-<span id="cb62-8"><a href=""></a>    <span class="at">alpha =</span> <span class="fl">0.5</span></span>
-<span id="cb62-9"><a href=""></a>  ) <span class="sc">+</span></span>
-<span id="cb62-10"><a href=""></a>  <span class="fu">geom_density</span>(</span>
-<span id="cb62-11"><a href=""></a>    <span class="fu">aes</span>(<span class="at">x =</span> Elevation, <span class="at">fill =</span> <span class="st">"Beetle Sites"</span>),</span>
-<span id="cb62-12"><a href=""></a>    <span class="at">data =</span> beetles,</span>
-<span id="cb62-13"><a href=""></a>    <span class="at">alpha =</span> <span class="fl">0.5</span></span>
-<span id="cb62-14"><a href=""></a>  ) <span class="sc">+</span></span>
-<span id="cb62-15"><a href=""></a>  <span class="fu">geom_rug</span>(<span class="fu">aes</span>(<span class="at">x =</span> Elevation), <span class="at">data =</span> beetles) <span class="sc">+</span></span>
-<span id="cb62-16"><a href=""></a>  <span class="fu">labs</span>(<span class="at">fill =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href=""></a>baja_elev <span class="sc">|&gt;</span></span>
+<span id="cb67-2"><a href=""></a>  <span class="fu">as.data.frame</span>() <span class="ot">-&gt;</span> landscape</span>
+<span id="cb67-3"><a href=""></a></span>
+<span id="cb67-4"><a href=""></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb67-5"><a href=""></a>  <span class="fu">geom_density</span>(</span>
+<span id="cb67-6"><a href=""></a>    <span class="fu">aes</span>(<span class="at">x =</span> Elevation, <span class="at">fill =</span> <span class="st">"Landscape"</span>),</span>
+<span id="cb67-7"><a href=""></a>    <span class="at">data =</span> landscape,</span>
+<span id="cb67-8"><a href=""></a>    <span class="at">alpha =</span> <span class="fl">0.5</span></span>
+<span id="cb67-9"><a href=""></a>  ) <span class="sc">+</span></span>
+<span id="cb67-10"><a href=""></a>  <span class="fu">geom_density</span>(</span>
+<span id="cb67-11"><a href=""></a>    <span class="fu">aes</span>(<span class="at">x =</span> Elevation, <span class="at">fill =</span> <span class="st">"Beetle Sites"</span>),</span>
+<span id="cb67-12"><a href=""></a>    <span class="at">data =</span> beetles,</span>
+<span id="cb67-13"><a href=""></a>    <span class="at">alpha =</span> <span class="fl">0.5</span></span>
+<span id="cb67-14"><a href=""></a>  ) <span class="sc">+</span></span>
+<span id="cb67-15"><a href=""></a>  <span class="fu">geom_rug</span>(<span class="fu">aes</span>(<span class="at">x =</span> Elevation), <span class="at">data =</span> beetles) <span class="sc">+</span></span>
+<span id="cb67-16"><a href=""></a>  <span class="fu">labs</span>(<span class="at">fill =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div><div class="column" style="width:50%;">
 <div class="cell">
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="slides_files/figure-revealjs/unnamed-chunk-48-1.png" width="960"></p>
+<p><img data-src="slides_files/figure-revealjs/unnamed-chunk-53-1.png" width="960"></p>
 </figure>
 </div>
 </div>
@@ -1120,21 +1257,21 @@ Geodetic CRS:  WGS 84
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href=""></a>beetles <span class="sc">|&gt;</span></span>
-<span id="cb63-2"><a href=""></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(Elevation, MFRatio)) <span class="sc">+</span></span>
-<span id="cb63-3"><a href=""></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href=""></a>beetles <span class="sc">|&gt;</span></span>
+<span id="cb68-2"><a href=""></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(Elevation, MFRatio)) <span class="sc">+</span></span>
+<span id="cb68-3"><a href=""></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="slides_files/figure-revealjs/unnamed-chunk-49-1.png" width="960"></p>
+<p><img data-src="slides_files/figure-revealjs/unnamed-chunk-54-1.png" width="960"></p>
 </figure>
 </div>
 </div>
 </div>
 </div><div class="column" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href=""></a>fit <span class="ot">&lt;-</span> <span class="fu">cor.test</span>(beetles<span class="sc">$</span>MFRatio, beetles<span class="sc">$</span>Elevation)</span>
-<span id="cb64-2"><a href=""></a>fit</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href=""></a>fit <span class="ot">&lt;-</span> <span class="fu">cor.test</span>(beetles<span class="sc">$</span>MFRatio, beetles<span class="sc">$</span>Elevation)</span>
+<span id="cb69-2"><a href=""></a>fit</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Pearson's product-moment correlation
@@ -1169,10 +1306,10 @@ sample estimates:
 <h2>Building the Transect</h2>
 <p>Order matters (the profile starts at the first site), so make it explicit with a <code>factor</code>.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href=""></a>beetles <span class="sc">|&gt;</span></span>
-<span id="cb66-2"><a href=""></a>  <span class="fu">filter</span>(Site <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"const"</span>, <span class="st">"169"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb66-3"><a href=""></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(Site)) <span class="ot">-&gt;</span> ends</span>
-<span id="cb66-4"><a href=""></a>ends</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href=""></a>beetles <span class="sc">|&gt;</span></span>
+<span id="cb71-2"><a href=""></a>  <span class="fu">filter</span>(Site <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"const"</span>, <span class="st">"169"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb71-3"><a href=""></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(Site)) <span class="ot">-&gt;</span> ends</span>
+<span id="cb71-4"><a href=""></a>ends</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Simple feature collection with 2 features and 8 fields
 Geometry type: POINT
@@ -1192,10 +1329,10 @@ Geodetic CRS:  WGS 84
 <h2>Building the Transect</h2>
 <p><code>st_union()</code> keeps the points in order; <code>st_cast()</code> turns them into a line.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href=""></a>ends <span class="sc">|&gt;</span></span>
-<span id="cb68-2"><a href=""></a>  <span class="fu">st_union</span>() <span class="sc">|&gt;</span></span>
-<span id="cb68-3"><a href=""></a>  <span class="fu">st_cast</span>(<span class="st">"LINESTRING"</span>) <span class="ot">-&gt;</span> transect</span>
-<span id="cb68-4"><a href=""></a>transect</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href=""></a>ends <span class="sc">|&gt;</span></span>
+<span id="cb73-2"><a href=""></a>  <span class="fu">st_union</span>() <span class="sc">|&gt;</span></span>
+<span id="cb73-3"><a href=""></a>  <span class="fu">st_cast</span>(<span class="st">"LINESTRING"</span>) <span class="ot">-&gt;</span> transect</span>
+<span id="cb73-4"><a href=""></a>transect</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Geometry set for 1 feature 
 Geometry type: LINESTRING
@@ -1208,16 +1345,16 @@ Geodetic CRS:  WGS 84</code></pre>
 <section id="building-the-transect-2" class="slide level2">
 <h2>Building the Transect</h2>
 
-<img data-src="slides_files/figure-revealjs/unnamed-chunk-53-1.png" width="960" class="r-stretch"></section>
+<img data-src="slides_files/figure-revealjs/unnamed-chunk-58-1.png" width="960" class="r-stretch"></section>
 <section id="sampling-along-the-transect" class="slide level2 smaller">
 <h2>Sampling Along the Transect</h2>
 <p>A point every 500m needs <em>meters</em>, so project to UTM first. Cells are just under 1km, so 500m steps skip none.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href=""></a>transect <span class="sc">|&gt;</span></span>
-<span id="cb70-2"><a href=""></a>  <span class="fu">st_transform</span>(<span class="at">crs =</span> <span class="dv">6367</span>) <span class="sc">|&gt;</span></span>
-<span id="cb70-3"><a href=""></a>  <span class="fu">st_line_sample</span>(<span class="at">n =</span> <span class="dv">100</span>) <span class="sc">|&gt;</span></span>
-<span id="cb70-4"><a href=""></a>  <span class="fu">st_cast</span>(<span class="st">"POINT"</span>) <span class="ot">-&gt;</span> transect_pts</span>
-<span id="cb70-5"><a href=""></a>transect_pts</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href=""></a>transect <span class="sc">|&gt;</span></span>
+<span id="cb75-2"><a href=""></a>  <span class="fu">st_transform</span>(<span class="at">crs =</span> <span class="dv">6367</span>) <span class="sc">|&gt;</span></span>
+<span id="cb75-3"><a href=""></a>  <span class="fu">st_line_sample</span>(<span class="at">n =</span> <span class="dv">100</span>) <span class="sc">|&gt;</span></span>
+<span id="cb75-4"><a href=""></a>  <span class="fu">st_cast</span>(<span class="st">"POINT"</span>) <span class="ot">-&gt;</span> transect_pts</span>
+<span id="cb75-5"><a href=""></a>transect_pts</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Geometry set for 100 features 
 Geometry type: POINT
@@ -1232,12 +1369,12 @@ First 5 geometries:</code></pre>
 <h2>Data for Plotting</h2>
 <p>Extract from the UTM raster (<code>alt.utm</code>) so the CRSs match; distance is measured from the first point.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb72"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href=""></a>kmDistFromConst <span class="ot">&lt;-</span> <span class="fu">st_distance</span>(transect_pts, transect_pts[<span class="dv">1</span>]) <span class="sc">/</span> <span class="dv">1000</span></span>
-<span id="cb72-2"><a href=""></a><span class="fu">class</span>(kmDistFromConst)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href=""></a>kmDistFromConst <span class="ot">&lt;-</span> <span class="fu">st_distance</span>(transect_pts, transect_pts[<span class="dv">1</span>]) <span class="sc">/</span> <span class="dv">1000</span></span>
+<span id="cb77-2"><a href=""></a><span class="fu">class</span>(kmDistFromConst)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "units"</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href=""></a><span class="fu">head</span>(kmDistFromConst)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb79"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href=""></a><span class="fu">head</span>(kmDistFromConst)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Units: [m]
          [,1]
@@ -1253,12 +1390,12 @@ First 5 geometries:</code></pre>
 <section id="data-for-plotting-1" class="slide level2">
 <h2>Data for Plotting</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb76"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href=""></a>elevationExtract <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">extract</span>(alt.utm, <span class="fu">vect</span>(transect_pts), <span class="at">ID =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb76-2"><a href=""></a><span class="fu">class</span>(elevationExtract)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb81"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href=""></a>elevationExtract <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">extract</span>(alt.utm, <span class="fu">vect</span>(transect_pts), <span class="at">ID =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb81-2"><a href=""></a><span class="fu">class</span>(elevationExtract)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "data.frame"</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb78"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href=""></a><span class="fu">head</span>(elevationExtract)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb83"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href=""></a><span class="fu">head</span>(elevationExtract)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    alt_22
 1 51.09939
@@ -1273,11 +1410,11 @@ First 5 geometries:</code></pre>
 <section id="put-them-into-a-data.frame" class="slide level2">
 <h2>Put them into a <code>data.frame</code></h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb80"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href=""></a><span class="fu">data.frame</span>(</span>
-<span id="cb80-2"><a href=""></a>  <span class="at">Distance =</span> kmDistFromConst,</span>
-<span id="cb80-3"><a href=""></a>  <span class="at">Elevation =</span> elevationExtract<span class="sc">$</span>alt_22</span>
-<span id="cb80-4"><a href=""></a>) <span class="ot">-&gt;</span> profile</span>
-<span id="cb80-5"><a href=""></a><span class="fu">head</span>(profile, <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb85"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href=""></a><span class="fu">data.frame</span>(</span>
+<span id="cb85-2"><a href=""></a>  <span class="at">Distance =</span> kmDistFromConst,</span>
+<span id="cb85-3"><a href=""></a>  <span class="at">Elevation =</span> elevationExtract<span class="sc">$</span>alt_22</span>
+<span id="cb85-4"><a href=""></a>) <span class="ot">-&gt;</span> profile</span>
+<span id="cb85-5"><a href=""></a><span class="fu">head</span>(profile, <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      Distance Elevation
 1 0.000000 [m]  51.09939
@@ -1291,16 +1428,16 @@ First 5 geometries:</code></pre>
 <div class="columns">
 <div class="column" style="width:40%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb82"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href=""></a>profile <span class="sc">|&gt;</span></span>
-<span id="cb82-2"><a href=""></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(Distance, Elevation)) <span class="sc">+</span></span>
-<span id="cb82-3"><a href=""></a>  <span class="fu">geom_area</span>(<span class="at">fill =</span> <span class="st">"tan"</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
-<span id="cb82-4"><a href=""></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb82-5"><a href=""></a>  <span class="fu">geom_hline</span>(</span>
-<span id="cb82-6"><a href=""></a>    <span class="at">yintercept =</span> <span class="fu">max</span>(beetles<span class="sc">$</span>Elevation),</span>
-<span id="cb82-7"><a href=""></a>    <span class="at">linetype =</span> <span class="st">"dashed"</span>,</span>
-<span id="cb82-8"><a href=""></a>    <span class="at">color =</span> <span class="st">"red"</span></span>
-<span id="cb82-9"><a href=""></a>  ) <span class="sc">+</span></span>
-<span id="cb82-10"><a href=""></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Distance from const (km)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb87"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href=""></a>profile <span class="sc">|&gt;</span></span>
+<span id="cb87-2"><a href=""></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(Distance, Elevation)) <span class="sc">+</span></span>
+<span id="cb87-3"><a href=""></a>  <span class="fu">geom_area</span>(<span class="at">fill =</span> <span class="st">"tan"</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb87-4"><a href=""></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb87-5"><a href=""></a>  <span class="fu">geom_hline</span>(</span>
+<span id="cb87-6"><a href=""></a>    <span class="at">yintercept =</span> <span class="fu">max</span>(beetles<span class="sc">$</span>Elevation),</span>
+<span id="cb87-7"><a href=""></a>    <span class="at">linetype =</span> <span class="st">"dashed"</span>,</span>
+<span id="cb87-8"><a href=""></a>    <span class="at">color =</span> <span class="st">"red"</span></span>
+<span id="cb87-9"><a href=""></a>  ) <span class="sc">+</span></span>
+<span id="cb87-10"><a href=""></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Distance from const (km)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>&nbsp;</p>
 <p>About 2.5km of the direct route is above every sampled beetle site (peak: 804m).</p>
@@ -1309,7 +1446,7 @@ First 5 geometries:</code></pre>
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="slides_files/figure-revealjs/unnamed-chunk-59-1.png" width="960"></p>
+<p><img data-src="slides_files/figure-revealjs/unnamed-chunk-64-1.png" width="960"></p>
 </figure>
 </div>
 </div>
@@ -1353,9 +1490,9 @@ First 5 geometries:</code></pre>
 <section id="isolating-the-point" class="slide level2">
 <h2>Isolating the Point</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb83"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href=""></a>beetles <span class="sc">|&gt;</span></span>
-<span id="cb83-2"><a href=""></a>  <span class="fu">filter</span>(Site <span class="sc">==</span> <span class="st">"sfran"</span>) <span class="ot">-&gt;</span> sfran</span>
-<span id="cb83-3"><a href=""></a>sfran</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb88"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href=""></a>beetles <span class="sc">|&gt;</span></span>
+<span id="cb88-2"><a href=""></a>  <span class="fu">filter</span>(Site <span class="sc">==</span> <span class="st">"sfran"</span>) <span class="ot">-&gt;</span> sfran</span>
+<span id="cb88-3"><a href=""></a>sfran</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Simple feature collection with 1 feature and 8 fields
 Geometry type: POINT
@@ -1374,8 +1511,8 @@ Geodetic CRS:  WGS 84
 <h2>Extracting Data at a Point</h2>
 <p>To extract data from <code>SpatRaster</code> objects, we need to coerce (<code>sf</code> <span class="math inline">\(\to\)</span> <code>SpatVector</code> with <code>vect()</code>).</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb85"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href=""></a>alt <span class="sc">|&gt;</span></span>
-<span id="cb85-2"><a href=""></a>  terra<span class="sc">::</span><span class="fu">extract</span>(<span class="fu">vect</span>(sfran))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb90"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href=""></a>alt <span class="sc">|&gt;</span></span>
+<span id="cb90-2"><a href=""></a>  terra<span class="sc">::</span><span class="fu">extract</span>(<span class="fu">vect</span>(sfran))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  ID alt_22
 1  1    305</code></pre>
@@ -1402,10 +1539,10 @@ Geodetic CRS:  WGS 84
 <h2>Filter the Raster based on Elevation Similarity</h2>
 <p><code>filter()</code> the raster itself: cells outside the band become <code>NA</code> and the result is still a <code>SpatRaster</code>.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb87"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href=""></a>baja_elev <span class="sc">|&gt;</span></span>
-<span id="cb87-2"><a href=""></a>  <span class="fu">filter</span>(Elevation <span class="sc">&gt;=</span> <span class="dv">205</span>, Elevation <span class="sc">&lt;=</span> <span class="dv">405</span>) <span class="ot">-&gt;</span> elev_band</span>
-<span id="cb87-3"><a href=""></a></span>
-<span id="cb87-4"><a href=""></a>elev_band</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb92"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href=""></a>baja_elev <span class="sc">|&gt;</span></span>
+<span id="cb92-2"><a href=""></a>  <span class="fu">filter</span>(Elevation <span class="sc">&gt;=</span> <span class="dv">205</span>, Elevation <span class="sc">&lt;=</span> <span class="dv">405</span>) <span class="ot">-&gt;</span> elev_band</span>
+<span id="cb92-3"><a href=""></a></span>
+<span id="cb92-4"><a href=""></a>elev_band</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>class       : SpatRaster
 size        : 960, 840, 1  (nrow, ncol, nlyr)
@@ -1423,11 +1560,11 @@ max value   :       405</code></pre>
 <h2>Make a <em>Background</em>.</h2>
 <p>The land underneath is for context (<code>fill = "gray80"</code>) and we omit the ocean (the non-<code>NA</code> cells) and convert this layer into a polygon (a <code>SpatVector</code>).</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb89"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href=""></a>baja_elev <span class="sc">|&gt;</span></span>
-<span id="cb89-2"><a href=""></a>  <span class="fu">not.na</span>() <span class="sc">|&gt;</span></span>
-<span id="cb89-3"><a href=""></a>  <span class="fu">as.polygons</span>() <span class="sc">|&gt;</span></span>
-<span id="cb89-4"><a href=""></a>  <span class="fu">filter</span>(Elevation <span class="sc">==</span> <span class="dv">1</span>) <span class="ot">-&gt;</span> land</span>
-<span id="cb89-5"><a href=""></a>land</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb94"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href=""></a>baja_elev <span class="sc">|&gt;</span></span>
+<span id="cb94-2"><a href=""></a>  <span class="fu">not.na</span>() <span class="sc">|&gt;</span></span>
+<span id="cb94-3"><a href=""></a>  <span class="fu">as.polygons</span>() <span class="sc">|&gt;</span></span>
+<span id="cb94-4"><a href=""></a>  <span class="fu">filter</span>(Elevation <span class="sc">==</span> <span class="dv">1</span>) <span class="ot">-&gt;</span> land</span>
+<span id="cb94-5"><a href=""></a>land</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>class       : SpatVector
 geometry    : polygons
@@ -1443,36 +1580,36 @@ values      :         1</code></pre>
 <section id="pulling-it-together" class="slide level2 smaller">
 <h2>Pulling It Together</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb91"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href=""></a><span class="fu">library</span>(ggrepel)</span>
-<span id="cb91-2"><a href=""></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb91-3"><a href=""></a>  <span class="fu">geom_spatvector</span>(<span class="at">data =</span> land, <span class="at">fill =</span> <span class="st">"gray80"</span>, <span class="at">color =</span> <span class="cn">NA</span>) <span class="sc">+</span></span>
-<span id="cb91-4"><a href=""></a>  <span class="fu">geom_spatraster</span>(<span class="at">data =</span> elev_band) <span class="sc">+</span></span>
-<span id="cb91-5"><a href=""></a>  <span class="fu">scale_fill_gradient2</span>(</span>
-<span id="cb91-6"><a href=""></a>    <span class="at">low =</span> <span class="st">"darkolivegreen"</span>,</span>
-<span id="cb91-7"><a href=""></a>    <span class="at">mid =</span> <span class="st">"yellow"</span>,</span>
-<span id="cb91-8"><a href=""></a>    <span class="at">high =</span> <span class="st">"brown"</span>,</span>
-<span id="cb91-9"><a href=""></a>    <span class="at">midpoint =</span> <span class="dv">305</span>,</span>
-<span id="cb91-10"><a href=""></a>    <span class="at">na.value =</span> <span class="cn">NA</span></span>
-<span id="cb91-11"><a href=""></a>  ) <span class="sc">+</span></span>
-<span id="cb91-12"><a href=""></a>  <span class="fu">geom_sf</span>(</span>
-<span id="cb91-13"><a href=""></a>    <span class="fu">aes</span>(<span class="at">size =</span> MFRatio),</span>
-<span id="cb91-14"><a href=""></a>    <span class="at">alpha =</span> <span class="fl">0.5</span>,</span>
-<span id="cb91-15"><a href=""></a>    <span class="at">color =</span> <span class="st">"dodgerblue3"</span>,</span>
-<span id="cb91-16"><a href=""></a>    <span class="at">data =</span> beetles</span>
-<span id="cb91-17"><a href=""></a>  ) <span class="sc">+</span></span>
-<span id="cb91-18"><a href=""></a>  <span class="fu">geom_text_repel</span>(</span>
-<span id="cb91-19"><a href=""></a>    <span class="fu">aes</span>(<span class="at">label =</span> Site, <span class="at">geometry =</span> geometry),</span>
-<span id="cb91-20"><a href=""></a>    <span class="at">data =</span> beetles,</span>
-<span id="cb91-21"><a href=""></a>    <span class="at">stat =</span> <span class="st">"sf_coordinates"</span>,</span>
-<span id="cb91-22"><a href=""></a>    <span class="at">size =</span> <span class="dv">4</span>,</span>
-<span id="cb91-23"><a href=""></a>    <span class="at">color =</span> <span class="st">"dodgerblue4"</span></span>
-<span id="cb91-24"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb96"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href=""></a><span class="fu">library</span>(ggrepel)</span>
+<span id="cb96-2"><a href=""></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb96-3"><a href=""></a>  <span class="fu">geom_spatvector</span>(<span class="at">data =</span> land, <span class="at">fill =</span> <span class="st">"gray80"</span>, <span class="at">color =</span> <span class="cn">NA</span>) <span class="sc">+</span></span>
+<span id="cb96-4"><a href=""></a>  <span class="fu">geom_spatraster</span>(<span class="at">data =</span> elev_band) <span class="sc">+</span></span>
+<span id="cb96-5"><a href=""></a>  <span class="fu">scale_fill_gradient2</span>(</span>
+<span id="cb96-6"><a href=""></a>    <span class="at">low =</span> <span class="st">"darkolivegreen"</span>,</span>
+<span id="cb96-7"><a href=""></a>    <span class="at">mid =</span> <span class="st">"yellow"</span>,</span>
+<span id="cb96-8"><a href=""></a>    <span class="at">high =</span> <span class="st">"brown"</span>,</span>
+<span id="cb96-9"><a href=""></a>    <span class="at">midpoint =</span> <span class="dv">305</span>,</span>
+<span id="cb96-10"><a href=""></a>    <span class="at">na.value =</span> <span class="cn">NA</span></span>
+<span id="cb96-11"><a href=""></a>  ) <span class="sc">+</span></span>
+<span id="cb96-12"><a href=""></a>  <span class="fu">geom_sf</span>(</span>
+<span id="cb96-13"><a href=""></a>    <span class="fu">aes</span>(<span class="at">size =</span> MFRatio),</span>
+<span id="cb96-14"><a href=""></a>    <span class="at">alpha =</span> <span class="fl">0.5</span>,</span>
+<span id="cb96-15"><a href=""></a>    <span class="at">color =</span> <span class="st">"dodgerblue3"</span>,</span>
+<span id="cb96-16"><a href=""></a>    <span class="at">data =</span> beetles</span>
+<span id="cb96-17"><a href=""></a>  ) <span class="sc">+</span></span>
+<span id="cb96-18"><a href=""></a>  <span class="fu">geom_text_repel</span>(</span>
+<span id="cb96-19"><a href=""></a>    <span class="fu">aes</span>(<span class="at">label =</span> Site, <span class="at">geometry =</span> geometry),</span>
+<span id="cb96-20"><a href=""></a>    <span class="at">data =</span> beetles,</span>
+<span id="cb96-21"><a href=""></a>    <span class="at">stat =</span> <span class="st">"sf_coordinates"</span>,</span>
+<span id="cb96-22"><a href=""></a>    <span class="at">size =</span> <span class="dv">4</span>,</span>
+<span id="cb96-23"><a href=""></a>    <span class="at">color =</span> <span class="st">"dodgerblue4"</span></span>
+<span id="cb96-24"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="section-1" class="slide level2">
 <h2>&nbsp;</h2>
 
-<img data-src="slides_files/figure-revealjs/unnamed-chunk-65-1.png" width="960" class="r-stretch"></section>
+<img data-src="slides_files/figure-revealjs/unnamed-chunk-70-1.png" width="960" class="r-stretch"></section>
 <section id="questions" class="slide level2">
 <h2>Questions</h2>
 <div class="quarto-layout-panel" data-layout-ncol="2">

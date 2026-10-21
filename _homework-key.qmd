@@ -1,0 +1,148 @@
+---
+title: "Raster Data Homework Key"
+author: "Rodney J. Dyer"
+date: today
+abstract: |
+  A worked answer to the Raster Data homework. We downloaded the WorldClim 30 arc-second bioclim tile for Baja California, mapped annual mean temperature and annual precipitation, extracted both at 31 sampling sites, and tested each against genetic variation in the bark beetle *Araptus attenuatus* and the plant *Euphorbia lomelii*. Beetle genetic variation was lower at warmer sites, while plant genetic variation was unrelated to either climate variable, so the two species do not respond to climate in the same way.
+format: dyerlab-html
+---
+
+```{r}
+#| message: false
+#| warning: false
+library(terra)
+library(tidyterra)
+library(sf)
+library(tidyverse)
+library(geodata)
+library(knitr)
+library(kableExtra)
+```
+
+## Methods
+
+**Data.** We used the genetic variation of the bark beetle *Araptus attenuatus* (`GenVarArapat`) and of the plant *Euphorbia lomelii* (`GenVarEuphli`) at 31 sampling sites in Baja California and Sonora, stored as a CSV in the course data repository, and converted the site coordinates into spatial points (longitude/latitude, WGS 84). For climate, we used two of the WorldClim 2.1 bioclimatic variables (Fick & Hijmans 2017), annual mean temperature (BIO1, °C) and annual precipitation (BIO12, mm), which summarize the climate from 1970--2000 at 30 arc-second (about 1km) resolution. We downloaded the bioclim tile covering the region with `geodata`, cropped it to 116°W--109°W and 22°N--30°N, and kept those two layers.
+
+```{r}
+beetle_url <- "https://dyerlabteaching.github.io/CourseData/Spatial/AraptusDispersalBias.csv"
+read_csv(beetle_url) |>
+  st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326) -> sites
+
+# Get
+bio <- worldclim_tile(var = "bio", lon = -112, lat = 26, path = "data")
+
+# Manipulate
+baja_extent <- ext(c(-116, -109, 22, 30))
+bio |>
+  crop(baja_extent) |>
+  select(bio_1, bio_12) |>
+  rename(Temperature = bio_1, Precipitation = bio_12) -> baja_clim
+baja_clim
+```
+
+**Analysis.** We mapped both climate variables across the region along with the sampling sites, and extracted the value of each at every site. We then tested for an association between each measure of genetic variation and each climate variable (four tests in all) with a Pearson product-moment correlation using `cor.test()`.
+
+```{r}
+# Extract
+site_clim <- terra::extract(baja_clim, vect(sites), ID = FALSE)
+sites |>
+  mutate(Temperature = site_clim$Temperature,
+         Precipitation = site_clim$Precipitation) -> sites
+
+beetle_temp <- cor.test(sites$GenVarArapat, sites$Temperature)
+beetle_precip <- cor.test(sites$GenVarArapat, sites$Precipitation)
+plant_temp <- cor.test(sites$GenVarEuphli, sites$Temperature)
+plant_precip <- cor.test(sites$GenVarEuphli, sites$Precipitation)
+
+tibble(
+  Species = c("A. attenuatus", "A. attenuatus", "E. lomelii", "E. lomelii"),
+  Climate = c("Temperature", "Precipitation", "Temperature", "Precipitation"),
+  r = c(beetle_temp$estimate, beetle_precip$estimate,
+        plant_temp$estimate, plant_precip$estimate),
+  t = c(beetle_temp$statistic, beetle_precip$statistic,
+        plant_temp$statistic, plant_precip$statistic),
+  df = c(beetle_temp$parameter, beetle_precip$parameter,
+         plant_temp$parameter, plant_precip$parameter),
+  P = c(beetle_temp$p.value, beetle_precip$p.value,
+        plant_temp$p.value, plant_precip$p.value)
+) -> tests
+```
+
+## Reporting values
+
+```{r}
+N <- nrow(sites)
+
+temp_min <- format(min(sites$Temperature), digits = 3)
+temp_max <- format(max(sites$Temperature), digits = 3)
+precip_min <- min(sites$Precipitation)
+precip_max <- max(sites$Precipitation)
+
+bt_r <- format(beetle_temp$estimate, digits = 2)
+bt_t <- format(beetle_temp$statistic, digits = 3)
+bt_p <- format(beetle_temp$p.value, digits = 2)
+bp_r <- format(beetle_precip$estimate, digits = 2)
+bp_p <- format(beetle_precip$p.value, digits = 2)
+pt_r <- format(plant_temp$estimate, digits = 2)
+pt_p <- format(plant_temp$p.value, digits = 2)
+pp_r <- format(plant_precip$estimate, digits = 2)
+pp_p <- format(plant_precip$p.value, digits = 2)
+```
+
+## Results
+
+The region spans a strong climatic gradient (@fig-temp, @fig-precip). Temperatures are lowest in the north of the peninsula and in its mountains and highest on the mainland coastal plain. Most of the peninsula is very dry, with the wettest conditions in the mountains at the southern tip and on the mainland side of the Gulf. Across the `r N` sampling sites, annual mean temperature ranged from `r temp_min` to `r temp_max` °C and annual precipitation from `r precip_min` to `r precip_max` mm.
+
+Genetic variation in *A. attenuatus* was significantly and negatively correlated with annual mean temperature (*r* = `r bt_r`, *t* = `r bt_t`, *P* = `r bt_p`; @tbl-tests, @fig-beetle-temp): beetle populations at warmer sites had less genetic variation. Beetle genetic variation also tended to be lower at wetter sites, but this was not significant (*r* = `r bp_r`, *P* = `r bp_p`). Genetic variation in *E. lomelii* was not related to either temperature (*r* = `r pt_r`, *P* = `r pt_p`) or precipitation (*r* = `r pp_r`, *P* = `r pp_p`).
+
+```{r}
+#| label: fig-temp
+#| fig-cap: "Annual mean temperature (°C, WorldClim BIO1) across southern Baja California and Sonora, with the 31 sampling sites."
+ggplot() +
+  geom_spatraster(data = baja_clim, aes(fill = Temperature)) +
+  scale_fill_distiller(palette = "YlOrRd", direction = 1, na.value = NA) +
+  geom_sf(data = sites, color = "black", size = 2) +
+  labs(fill = "Annual Mean\nTemperature (°C)") +
+  theme_minimal()
+```
+
+```{r}
+#| label: fig-precip
+#| fig-cap: "Annual precipitation (mm, WorldClim BIO12) across southern Baja California and Sonora, with the 31 sampling sites."
+ggplot() +
+  geom_spatraster(data = baja_clim, aes(fill = Precipitation)) +
+  scale_fill_distiller(palette = "YlGnBu", direction = 1, na.value = NA) +
+  geom_sf(data = sites, color = "black", size = 2) +
+  labs(fill = "Annual\nPrecipitation (mm)") +
+  theme_minimal()
+```
+
+```{r}
+#| label: tbl-tests
+#| tbl-cap: "Pearson correlations between genetic variation at each sampling site and the annual mean temperature and annual precipitation at that site (N = 31 sites)."
+tests |>
+  kable(digits = 3) |>
+  kable_paper("striped", full_width = FALSE)
+```
+
+```{r}
+#| label: fig-beetle-temp
+#| fig-cap: "Genetic variation in *Araptus attenuatus* as a function of the annual mean temperature at each sampling site, with the least-squares line and its 95% confidence band."
+#| message: false
+ggplot(sites, aes(x = Temperature, y = GenVarArapat)) +
+  geom_point(size = 3) +
+  geom_smooth(method = "lm") +
+  labs(x = "Annual Mean Temperature (°C)",
+       y = "Genetic Variation (A. attenuatus)") +
+  theme_minimal()
+```
+
+## Interpretation
+
+The two species do not respond to climate in the same way. In the beetle, genetic variation declines as sites get warmer: temperature alone accounts for about `r round(100 * beetle_temp$estimate^2)`% of the variation among sites. Precipitation points in the same direction, though not significantly. The plant shows no relationship with either variable, even though it was sampled at the very same sites. These are correlations among 31 sites, so they do not tell us *why* warmer sites have less beetle genetic variation; climate changes along with many other things across the peninsula, and any of those could be responsible. They do suggest that if climate shapes genetic variation here, it does so for the beetle and not for the plant.
+
+## Questions
+
+**Which kind of palette did you use for each map, and why does it fit that variable?** Both are sequential. Temperature and precipitation each run from low to high with no meaningful middle value, so a palette that goes from light to dark in one direction fits both. I used yellow-to-red for temperature and yellow-to-blue for precipitation so that each reads intuitively (red as hot, blue as wet). A diverging palette would only make sense if some middle value, such as a long-term average, meant something.
+
+**What does one extracted value represent for the organisms at that site, and when could that be misleading?** Each value is the 1970--2000 average for a whole cell about 1km on a side, interpolated from weather stations, so it describes the general climate of the area around a site rather than the conditions any one beetle or plant actually experiences. It could be misleading in rugged terrain, where elevation, slope, and shade can change the local climate a great deal within a single cell; for small organisms that live in microhabitats (like a beetle inside a plant stem); or where the site's coordinates are imprecise enough to fall in a neighboring cell.

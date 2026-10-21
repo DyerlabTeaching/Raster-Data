@@ -1,37 +1,184 @@
 ---
 title: "Raster Data Homework"
+subtitle: "Does climate shape genetic variation in a beetle and a plant?"
 author: "YOUR NAME HERE"
+date: today
+abstract: |
+  A sentence or two saying what the document does: the sampling sites, the climate rasters, and whether temperature or precipitation is related to genetic variation in the beetle or the plant.
 format: dyerlab-html
 ---
 
-## Libraries
+## The Idea
 
-This assignment uses `terra` for the raster data, `sf` for the point data, and `tidyterra` so that rasters work with `ggplot` and the `dplyr` verbs.  If any of these are not yet installed, RStudio will offer to install them when you open this file.
+One of the central habits of reproducible research is that the **words and the code that produce them are written together**. A paragraph of *Methods* is followed immediately by the chunk that carries out what it describes. A sentence in *Results* is backed by a figure or value generated in the chunk beside it, and every number that appears in the running text is read straight from a variable in memory with an inline `` `r ` `` expression --- never typed by hand.
+
+This topic also had a workflow of its own. Nearly every analysis with raster data comes down to the same four steps:
+
+1. **Get** the raster (from a file, a URL, or a package like `geodata`).
+2. **Manipulate** it, at the very least cropping it to your study area.
+3. **Plot** it, usually with your sample sites on top.
+4. **Extract** values from it at your sites, for display or for downstream analysis.
+
+The worked example below runs through all four with the elevation raster we used in the narrative (`alt_22`) and asks whether elevation is related to the sex ratio (`MFRatio`) of the bark beetle *Araptus attenuatus* at each of its 31 sampling sites. Your job is to do the same thing with **climate** (annual mean temperature and annual precipitation from the WorldClim bioclim data) and ask whether climate is related to the **genetic variation** at each site, both in the beetle and in the plant *Euphorbia lomelii*.
+
+## A Worked Example
+
+### Methods
+
+> **Data.** We used the sex ratio (males/females, `MFRatio`) of *Araptus attenuatus* at 31 sites in Baja California and Sonora, stored as a CSV in the course data repository, and converted the site coordinates into spatial points (longitude/latitude, WGS 84). For elevation, we used a 30 arc-second (about 1km) elevation raster, also from the course data repository, and cropped it to the region from 116°W to 109°W and 22°N to 30°N.
 
 ```{r}
-library( tidyverse )
+#| message: false
+#| warning: false
 library( terra )
 library( tidyterra )
 library( sf )
+library( tidyverse )
+
+beetle_url <- "https://dyerlabteaching.github.io/CourseData/Spatial/AraptusDispersalBias.csv"
+read_csv( beetle_url ) |>
+  st_as_sf( coords = c("Longitude", "Latitude"),
+            crs = 4326 ) -> beetles
+
+# 1. Get
+elev <- rast( "https://dyerlabteaching.github.io/CourseData/Spatial/alt_22.tif" )
+
+# 2. Manipulate
+baja_extent <- ext( c(-116, -109, 22, 30) )
+elev |>
+  crop( baja_extent ) |>
+  rename( Elevation = alt_22 ) -> baja_elev
 ```
 
-## Homework
-
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
-
-## Running Code
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+> **Analysis.** We mapped elevation across the region along with the sampling sites, extracted the elevation at each site, and tested for an association between sex ratio and elevation with a Pearson product-moment correlation using `cor.test()`.
 
 ```{r}
-1 + 1
+#| label: fig-elevation
+#| fig-cap: "Elevation (m) across southern Baja California and Sonora. Points are the 31 sampling sites for *Araptus attenuatus*, sized by the male:female sex ratio."
+# 3. Plot
+ggplot() +
+  geom_spatraster( data = baja_elev ) +
+  scale_fill_hypso_c( na.value = NA ) +
+  geom_sf( aes( size = MFRatio ),
+           data = beetles,
+           color = "dodgerblue4",
+           alpha = 0.75 ) +
+  labs( fill = "Elevation (m)",
+        size = "Male:Female" ) +
+  theme_minimal()
 ```
-
-You can add options to executable code like this
 
 ```{r}
-#| echo: false
-2 * 2
+# 4. Extract
+site_elev <- terra::extract( baja_elev, vect(beetles), ID = FALSE )
+beetles |>
+  mutate( Elevation = site_elev$Elevation ) -> beetles
+
+fit <- cor.test( beetles$MFRatio, beetles$Elevation )
+fit
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+### Preparing the reporting values
+
+Before writing the Results, pull the numbers you are going to report into one small chunk and give each a short name. That way the Results paragraph has no `format()` calls in it and reads almost exactly like the rendered sentence.
+
+```{r}
+N        <- nrow( beetles )
+min_elev <- min( beetles$Elevation )
+max_elev <- max( beetles$Elevation )
+
+r <- format( fit$estimate,  digits = 3 )
+t <- format( fit$statistic, digits = 3 )
+p <- format( fit$p.value,   digits = 3 )
+```
+
+### Results
+
+> The `r N` sites ranged from `r min_elev` m to `r max_elev` m in elevation, all in the lowlands and foothills of the region (@fig-elevation). There was no significant association between sex ratio and elevation (Pearson correlation, *r* = `r r`, *t* = `r t`, *P* = `r p`).
+
+Here is the literal source of that Results paragraph --- note that every number is an inline expression:
+
+```{verbatim}
+The `r N` sites ranged from `r min_elev` m to `r max_elev` m in elevation, all in the lowlands and foothills of the region (@fig-elevation). There was no significant association between sex ratio and elevation (Pearson correlation, *r* = `r r`, *t* = `r t`, *P* = `r p`).
+```
+
+## Your Assignment
+
+The beetle data set has two more columns we have not used yet: `GenVarArapat` is the genetic variation of *Araptus attenuatus* at each sampling site, and `GenVarEuphli` is the genetic variation of the plant *Euphorbia lomelii* at the same sites. Repeat the four steps with **climate** in place of elevation, using annual mean temperature (`bio_1`, °C) and annual precipitation (`bio_12`, mm) from the WorldClim bioclim variables, and test whether either one is related to genetic variation in the beetle or in the plant.[^ref-narrative]
+
+To get the climate data, download the 30 arc-second bioclim tile that covers Baja California with `geodata`:
+
+```{r}
+#| eval: false
+library( geodata )
+bio <- worldclim_tile( var = "bio",
+                       lon = -112,
+                       lat = 26,
+                       path = "data" )
+```
+
+The tile is about 126 MB, so the first time you run this it will take a minute or so. It is saved into a `data` folder in your project, and every time after that `worldclim_tile()` finds the file there and loads it without downloading it again. The tile has the same extent and resolution as `alt_22`, so everything in the worked example carries over.
+
+### Your document must have
+
+1. **Methods** --- a *Data* paragraph (the sampling sites and their genetic variation, and the WorldClim climate data with its citation[^ref-worldclim]) followed by the chunk that loads the site data, downloads the bioclim tile (**get**), and crops it to the same region keeping just the two layers you need (**manipulate**).
+2. **Two maps** (**plot**) --- one of annual mean temperature and one of annual precipitation across the region, each with the sampling sites on top and each with a color palette you chose for that variable (not the default).
+3. **An *Analysis* paragraph** followed by the chunk that extracts the climate values at each site (**extract**) and tests each of the two genetic variation measures against each of the two climate variables (four tests in all).
+4. **A table** summarizing the results of all four tests.
+5. **A figure** of genetic variation as a function of the local climate for any test that turns out to be significant.
+6. **A reporting-values chunk** --- `format()` the numbers you quote in the Results, and give each a short name.
+7. **Results** --- a paragraph that reports your numbers as bare inline `` `r ` `` values (no `format()` in the prose) and refers to your maps, table, and figure(s) using Quarto's cross-reference system.[^ref-xref]
+8. **An interpretation** --- a paragraph on what your results say about climate and genetic variation in these two species. Do they respond to climate in the same way?
+
+Then answer briefly, a sentence or two each:
+
+- Which *kind* of palette (sequential, diverging, or qualitative) did you use for each map, and why does it fit that variable?
+- Each climate value you extracted comes from a single cell about 1km on a side. What does that one number actually represent for the beetles or plants at that site, and when could that be misleading?
+
+[^ref-narrative]: Every step is in the module [narrative](https://dyerlabteaching.github.io/Raster-Data/narrative.html): see *Downloading Rasters with `geodata`* for the bioclim data, *Choosing a Color Palette* for palettes, and *Research Question 1* under *Applications* for extracting values and testing them.
+
+[^ref-worldclim]: Fick, S.E. and R.J. Hijmans, 2017. WorldClim 2: new 1km spatial resolution climate surfaces for global land areas. *International Journal of Climatology* 37 (12): 4302--4315.
+
+[^ref-xref]: Cross-referencing tables is in the [Tidyverse](https://dyerlabteaching.github.io/Tidyverse/narrative.html#cross-referencing-tables-in-text) narrative; figures work the same way with a `fig-` label and a `fig-cap`.
+
+## What You Turn In
+
+**One file: the rendered, self-contained `.html`.** Not the `.qmd`, and not a copy of this page. Make a *new* Quarto document that contains only your own work --- your Methods and Results sections with their chunks, your maps, table, and figure(s), the reporting-values chunk, your interpretation, and your brief answers to the two questions.
+
+The worked example above is a model to imitate, not text to paste into your document.
+
+### Making the document
+
+1. In RStudio: **File ▸ New File ▸ Quarto Document…**
+2. In the dialog, enter a title and your name, leave the engine set to **Knitr**, and click **Create**.
+3. Delete everything RStudio puts below the header (the "Quarto" boilerplate and its example chunk).
+4. Replace the header it generated with the one below.
+5. Save the file into your course project folder as `Raster-Data-Homework.qmd`.
+6. Write your content, then click **Render** to produce the `.html`. That HTML file is what you submit.
+
+### The full YAML header
+
+```yaml
+---
+title: "Raster Data Homework"
+author: "Your Name"
+date: today
+abstract: |
+  A sentence or two saying what the document does: the data, the question, and what you found.
+format:
+  html:
+    self-contained: true
+    code-tools: true
+---
+```
+
+- **`title` / `author` / `date` / `abstract`** --- complete front matter, including a short summary where a scientific paper would put its abstract. `date: today` fills itself in at render time.
+- **`format: html`** --- render to a single web page I can open in any browser.
+- **`self-contained: true`** --- bundle every image, style, and script *into* that one `.html` file. Without it the file depends on a sibling `*_files/` folder that never makes it into the upload, and your figures and formatting arrive broken.
+- **`code-tools: true`** --- adds the "</> Code" button in the top-right that lets a reader view the full source. **This is not optional.** If I cannot see the code behind a wrong answer, I cannot tell whether you were one typo away or lost the plot entirely --- which means I cannot give partial credit, point out where it went sideways, or help you fix it.
+
+Use this same header layout for every document you turn in this course.
+
+## How This Is Graded
+
+This assignment is scored with the **Online Homework Rubric** on the Canvas site --- the same rubric used for every online homework in this course. It covers online access to the published document, front matter, formatting, and whether the document stands on its own; the remaining points come from the assignment-specific work above.
