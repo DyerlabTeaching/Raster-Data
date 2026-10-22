@@ -140,7 +140,7 @@ window.Quarto = {
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>terra 1.9.46</code></pre>
+<pre><code>terra 1.9.50</code></pre>
 </div>
 </div>
 <p>Rasters are representations of continuous, or semi-continuous, data. You can envision a raster just like an image. <mark>When me make a <code>leaflet()</code> map and how the tiles, each pixel is colored a particular value representing elevation, temperature, precipitation, habitat type, or whatever.</mark> This is exactly the same for rasters. The <em>key point</em> here is that each pixel represents some defined region on the earth and as such the raster itself is georeferenced. It has a coordinate reference system (CRS), boundaries, etc.</p>
@@ -154,20 +154,20 @@ window.Quarto = {
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>x</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2] [,3] [,4] [,5] [,6] [,7]
-[1,]   16   17   11   12   11   11   13
-[2,]   11   16   16   10   10   17   10
-[3,]    9    8   18   12   10   12    9
-[4,]   12   17   14    5   15   11    8
-[5,]   12    8   13   11   10   10    7
-[6,]    7    7   11   15   12   11   13
-[7,]   12    6   11    8   10   15   12</code></pre>
+[1,]   13   16   15   17   13    8   16
+[2,]    8    5    7   10   14    9   11
+[3,]    9   13   12   17   11   12    7
+[4,]   15   11    7   12   14   11   14
+[5,]    7   18   13    8   16   10   16
+[6,]    9    7    4   12    6    7   15
+[7,]    6   11   20   12   14   11   16</code></pre>
 </div>
 </div>
 <p>While we haven’t used matrices much thus far, it is a lot like a <code>data.frame</code> with respect to getting and setting values using numerical indices. For example, the value of the 3rd row and 5th column is:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>x[<span class="dv">3</span>,<span class="dv">5</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 10</code></pre>
+<pre><code>[1] 11</code></pre>
 </div>
 </div>
 <p>To convert this set of data, as a matrix, into a geospatially referenced <code>SpatRaster</code> object we pass it to the <code>rast()</code> function:</p>
@@ -182,8 +182,8 @@ extent      : 0, 7, 0, 7  (xmin, xmax, ymin, ymax)
 coord. ref. : 
 source(s)   : memory
 name        : lyr.1
-min value   :     5
-max value   :    18</code></pre>
+min value   :     4
+max value   :    20</code></pre>
 </div>
 </div>
 <p>Notice that when I plot it out, it does not show the data, but a summary of the data along with some key data about the contents, including:<br>
@@ -886,7 +886,6 @@ max values  : 28.754168,   20.975, 88.148148, 786.332458,  42.5,  22.4, ...</cod
 <ul>
 <li>The result is a single <code>SpatRaster</code> with 19 layers, named <code>bio_1</code> through <code>bio_19</code>.</li>
 <li>The tile is about 126 MB, so the first download takes a while. <code>geodata</code> checks <code>path</code> first and only downloads the file if it is not already there, so after the first time it loads instantly. On your own machine, use a <code>data/</code> folder in your project for <code>path</code>.</li>
-<li>WorldClim’s terms of use do not allow redistributing the data, so do not commit those files to GitHub. Add the folder to your <code>.gitignore</code> and let <code>geodata</code> download them for anyone who runs your code.</li>
 <li>The extent and resolution are exactly the same as <code>alt_22</code>, so the cells line up one-to-one.</li>
 </ul>
 <p>Because the grids match, we can use the same <code>baja_extent</code> from before to crop it, and <code>select()</code> from <code>tidyterra</code> to keep just the layers we want: annual mean temperature (<code>bio_1</code>) and annual precipitation (<code>bio_12</code>).</p>
