@@ -46,8 +46,10 @@ baja_clim
 # Extract
 site_clim <- terra::extract(baja_clim, vect(sites), ID = FALSE)
 sites |>
-  mutate(Temperature = site_clim$Temperature,
-         Precipitation = site_clim$Precipitation) -> sites
+      mutate(
+            Temperature = site_clim$Temperature,
+            Precipitation = site_clim$Precipitation
+      ) -> sites
 
 beetle_temp <- cor.test(sites$GenVarArapat, sites$Temperature)
 beetle_precip <- cor.test(sites$GenVarArapat, sites$Precipitation)
@@ -55,16 +57,37 @@ plant_temp <- cor.test(sites$GenVarEuphli, sites$Temperature)
 plant_precip <- cor.test(sites$GenVarEuphli, sites$Precipitation)
 
 tibble(
-  Species = c("A. attenuatus", "A. attenuatus", "E. lomelii", "E. lomelii"),
-  Climate = c("Temperature", "Precipitation", "Temperature", "Precipitation"),
-  r = c(beetle_temp$estimate, beetle_precip$estimate,
-        plant_temp$estimate, plant_precip$estimate),
-  t = c(beetle_temp$statistic, beetle_precip$statistic,
-        plant_temp$statistic, plant_precip$statistic),
-  df = c(beetle_temp$parameter, beetle_precip$parameter,
-         plant_temp$parameter, plant_precip$parameter),
-  P = c(beetle_temp$p.value, beetle_precip$p.value,
-        plant_temp$p.value, plant_precip$p.value)
+      Species = c("A. attenuatus", "A. attenuatus", "E. lomelii", "E. lomelii"),
+      Climate = c(
+            "Temperature",
+            "Precipitation",
+            "Temperature",
+            "Precipitation"
+      ),
+      r = c(
+            beetle_temp$estimate,
+            beetle_precip$estimate,
+            plant_temp$estimate,
+            plant_precip$estimate
+      ),
+      t = c(
+            beetle_temp$statistic,
+            beetle_precip$statistic,
+            plant_temp$statistic,
+            plant_precip$statistic
+      ),
+      df = c(
+            beetle_temp$parameter,
+            beetle_precip$parameter,
+            plant_temp$parameter,
+            plant_precip$parameter
+      ),
+      P = c(
+            beetle_temp$p.value,
+            beetle_precip$p.value,
+            plant_temp$p.value,
+            plant_precip$p.value
+      )
 ) -> tests
 ```
 
@@ -130,11 +153,13 @@ tests |>
 #| fig-cap: "Genetic variation in *Araptus attenuatus* as a function of the annual mean temperature at each sampling site, with the least-squares line and its 95% confidence band."
 #| message: false
 ggplot(sites, aes(x = Temperature, y = GenVarArapat)) +
-  geom_point(size = 3) +
-  geom_smooth(method = "lm") +
-  labs(x = "Annual Mean Temperature (°C)",
-       y = "Genetic Variation (A. attenuatus)") +
-  theme_minimal()
+     geom_point(size = 3) +
+     geom_smooth(method = "lm") +
+     labs(
+          x = "Annual Mean Temperature (°C)",
+          y = "Genetic Variation (A. attenuatus)"
+     ) +
+     theme_minimal()
 ```
 
 ## Interpretation
