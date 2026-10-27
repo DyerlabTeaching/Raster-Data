@@ -238,8 +238,8 @@ Rodney Dyer, PhD
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a>values <span class="ot">&lt;-</span> <span class="fu">rpois</span>(<span class="at">n =</span> <span class="dv">36</span>, <span class="at">lambda =</span> <span class="dv">12</span>)</span>
 <span id="cb1-2"><a href=""></a>values</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] 21 15 16 14  6 16 15 13 11  9 14 11 19 12  9 18 12 10 12 10  9 26  7 16 16
-[26]  8 17 14 15 10 14  7 10 11 10 17</code></pre>
+<pre><code> [1] 18 15 15 12 10 10 13 15  5 13 18 11  8 13 11 11 15 14 21 21 12 16 11 17  8
+[26] 10  9  5 11  9 13 11  8 15  6 17</code></pre>
 </div>
 </div>
 <div class="fragment">
@@ -248,12 +248,12 @@ Rodney Dyer, PhD
 <span id="cb3-2"><a href=""></a>x</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2] [,3] [,4] [,5] [,6]
-[1,]   21   15   19   12   16   14
-[2,]   15   13   12   10    8    7
-[3,]   16   11    9    9   17   10
-[4,]   14    9   18   26   14   11
-[5,]    6   14   12    7   15   10
-[6,]   16   11   10   16   10   17</code></pre>
+[1,]   18   13    8   21    8   13
+[2,]   15   15   13   21   10   11
+[3,]   15    5   11   12    9    8
+[4,]   12   13   11   16    5   15
+[5,]   10   18   15   11   11    6
+[6,]   10   11   14   17    9   17</code></pre>
 </div>
 </div>
 </div>
@@ -285,8 +285,8 @@ extent      : 0, 6, 0, 6  (xmin, xmax, ymin, ymax)
 coord. ref. : 
 source(s)   : memory
 name        : lyr.1
-min value   :     6
-max value   :    26</code></pre>
+min value   :     5
+max value   :    21</code></pre>
 </div>
 </div>
 </section>
@@ -316,10 +316,10 @@ max value   :    26</code></pre>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href=""></a><span class="fu">c</span>(x[<span class="dv">1</span>, <span class="dv">2</span>], r[<span class="dv">1</span>, <span class="dv">2</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[[1]]
-[1] 15
+[1] 13
 
 $lyr.1
-[1] 15</code></pre>
+[1] 13</code></pre>
 </div>
 </div>
 </section>
@@ -674,7 +674,7 @@ max value   :   2263</code></pre>
 </div>
 </div></div>
 </section>
-<section id="distiller-color-palettes" class="slide level2">
+<section id="distiller-color-palettes" class="slide level2 smaller">
 <h2><code>distiller</code> Color Palettes</h2>
 <p>Associated with <a href="https://colorbrewer2.org/">ColorBrewer</a> (the distiller is the <em>continuous</em> version).</p>
 <div class="columns">
@@ -706,7 +706,7 @@ max value   :   2263</code></pre>
 </div>
 </div></div>
 </section>
-<section id="scico-color-palettes" class="slide level2">
+<section id="scico-color-palettes" class="slide level2 smaller">
 <h2><code>scico</code> Color Palettes</h2>
 <p><em>Perceptually uniform</em> color ramps for scientific output.</p>
 <div class="cell">
@@ -740,7 +740,7 @@ max value   :   2263</code></pre>
 </div>
 </div></div>
 </section>
-<section id="manual-color-gradients" class="slide level2">
+<section id="manual-color-gradients" class="slide level2 smaller">
 <h2>Manual Color Gradients</h2>
 <div class="columns">
 <div class="column" style="width:50%;">

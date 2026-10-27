@@ -399,7 +399,7 @@ baja_elevation +
 ::::
 
 
-## `distiller` Color Palettes 
+## `distiller` Color Palettes {.smaller}
 
 Associated with [ColorBrewer](https://colorbrewer2.org/) (the distiller is the *continuous* version).
 
@@ -429,7 +429,7 @@ baja_elevation +
 
 
 
-## `scico` Color Palettes 
+## `scico` Color Palettes {.smaller}
 
 *Perceptually uniform* color ramps for scientific output.
 
@@ -465,7 +465,7 @@ baja_elevation +
 
 
 
-## Manual Color Gradients
+## Manual Color Gradients {.smaller}
 
 :::: {.columns}
 

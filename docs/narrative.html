@@ -154,20 +154,20 @@ window.Quarto = {
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>x</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2] [,3] [,4] [,5] [,6] [,7]
-[1,]   13   16   15   17   13    8   16
-[2,]    8    5    7   10   14    9   11
-[3,]    9   13   12   17   11   12    7
-[4,]   15   11    7   12   14   11   14
-[5,]    7   18   13    8   16   10   16
-[6,]    9    7    4   12    6    7   15
-[7,]    6   11   20   12   14   11   16</code></pre>
+[1,]   14   13   13   12    9   15   10
+[2,]   11    9   13   10    7   10   12
+[3,]   17   15   16   10   12   12   11
+[4,]   13   13   16   11    9   13   17
+[5,]   11   12   10    6   13   15   11
+[6,]    8   11   21   10    7   11   10
+[7,]   12   17   13   12   22   14    6</code></pre>
 </div>
 </div>
 <p>While we haven’t used matrices much thus far, it is a lot like a <code>data.frame</code> with respect to getting and setting values using numerical indices. For example, the value of the 3rd row and 5th column is:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>x[<span class="dv">3</span>,<span class="dv">5</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 11</code></pre>
+<pre><code>[1] 12</code></pre>
 </div>
 </div>
 <p>To convert this set of data, as a matrix, into a geospatially referenced <code>SpatRaster</code> object we pass it to the <code>rast()</code> function:</p>
@@ -182,8 +182,8 @@ extent      : 0, 7, 0, 7  (xmin, xmax, ymin, ymax)
 coord. ref. : 
 source(s)   : memory
 name        : lyr.1
-min value   :     4
-max value   :    20</code></pre>
+min value   :     6
+max value   :    22</code></pre>
 </div>
 </div>
 <p>Notice that when I plot it out, it does not show the data, but a summary of the data along with some key data about the contents, including:<br>

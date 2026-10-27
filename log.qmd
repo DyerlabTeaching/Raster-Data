@@ -5,6 +5,8 @@ format: dyerlab-html
 
 > Daily updates on progress for the course in each section.
 
+
+- 2026.10.27: 
 - 2026.10.22: Got to [here](https://dyerlabteaching.github.io/Raster-Data/slides.html#/manual-color-gradients)
 
 
