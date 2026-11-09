@@ -19,7 +19,7 @@ library(terra)
 
 Rasters are representations of continuous, or semi-continuous, data.  You can envision a raster just like an image.  <mark>When me make a `leaflet()` map and how the tiles, each pixel is colored a particular value representing elevation, temperature, precipitation, habitat type, or whatever.</mark>  This is exactly the same for rasters.  The *key point* here is that each pixel represents some defined region on the earth and as such the raster itself is georeferenced.  It has a coordinate reference system (CRS), boundaries, etc.
 
-## Making Rasters *de novo*
+## Making Rasters *de novo* {.application}
 
 A raster is simply a matrix with rows and columns and each element has a value associated with it.  You can create a raster *de novo* by making a matrix of data and filling it with values, then turning it into a raster.
 
@@ -55,7 +55,7 @@ Notice that when I plot it out, it does not show the data, but a summary of the 
 
 If these data represent something on the planet, we can assign the dimensions and `CRS` values to it and use it in our normal day-to-day operations.
 
-## Loading Rasters from Files or URLs
+## Loading Rasters from Files or URLs {.application}
 
 We can also grab a raster object from the filesystem or from some online repository by passing the link to the `rast()` function.  Here is the elevation, in meters, of the region in which Mexico is found. To load it in, pass the url.
 
@@ -80,7 +80,7 @@ format( sum( is.na( values(r) ) ), big.mark = "," )
 ```
 
 
-## Cropping
+## Cropping {.application}
 
 One of the first things to do is to crop the data down to represent the size and extent of our study area.  If we have over 10 million missing data points (the ocean) and most of Mexico in this raster above but we are only working with sites in Baja California (Norte y Sur), we would do well to excise (or crop) the raster to only include the area we are interested in working with.  
 
@@ -123,7 +123,7 @@ plot( beetles["Suitability"], pch=16, add=TRUE)
 You need to be careful here.  When you use built-in graphics processes in a markdown document such as this and intend to add subsequent plots to an existing plot you **cannot** run the lines individually.  They **must** be all executed as the whole chunk.  So there is no `CTRL/CMD + RETURN` action here, it will plot the first one and then complain throughout the remaining ones saying something like `plot.new has not been called yet`.  So you have to either render the whole document or just run the whole chunk to get them to overlay.
 :::
 
-## Masking
+## Masking {.application}
 
 There is another way to grab just a portion of the raster—similar to cropping—which is to mask.  A mask will not change the size of the raster but just put `NA` values in the cells that are not in the area of interest.  So if we were to just mask above, it would never actually reduce the size of the raster, just add a lot more `NA` values.  However, the setup is the same.  The one difference is that `terra` functions want their vector data as a `terra` vector object (a `SpatVector`) rather than an `sf` object, so we convert the hull with `vect()`[^1].
 
@@ -145,7 +145,7 @@ plot(baja)
 ```
 
 
-## Plotting with GGPlot
+## Plotting with GGPlot {.application}
 
 As you may suspect, our old friend `ggplot` has some tricks up its sleeve for us.  The main thing here is that `ggplot` requires a `data.frame` object and a raster is not a `data.frame` --- Unless we turn it into one (hehehe).  Remember from the [lecture on `data.frame` objects](https://dyerlabteaching.github.io/Data-Containers/narrative.html) that we can coerce other data containers into a `data.frame` using the `as.data.frame()` function.  The same works for a raster.  If we pass `xy=TRUE` it takes each cell of the raster (and underlying matrix), makes a row from it, and includes the coordinates of the center of that cell as the `x` and `y` columns.  By default, cells that are `NA` (the ocean) are dropped.
 
@@ -308,7 +308,7 @@ baja_map +
 ```
 Now that looks nice.
 
-## Plotting with `tidyterra`
+## Plotting with `tidyterra` {.application}
 
 Converting the raster into a `data.frame` works, and it is worth knowing how to do because it shows exactly what `ggplot` needs.  It is, however, a bit clunky.  We had to make a second copy of the data (`alt.df`), rename the columns by hand, and remember to add `coord_equal()`.  The `tidyterra` library is a bridge between `terra` and the `tidyverse` that takes care of all of this for us.
 
@@ -395,7 +395,7 @@ baja_elev |>
 
 We will put `filter()` to work in the *Applications* section below.
 
-## Downloading Rasters with `geodata`
+## Downloading Rasters with `geodata` {.application}
 
 So far, the only raster we have used is the elevation file from the course data site.  For real projects, you will usually need some other variable (climate, land cover, soils) for your own study area, and finding, downloading, and unpacking those files by hand from each data provider gets old fast.  The `geodata` library takes care of this for many of the most commonly used *global* data sets, downloading them straight into `SpatRaster` (or, for boundaries, `SpatVector`) objects.
 
@@ -485,7 +485,7 @@ ggplot() +
 
 Most of the peninsula gets less than 250mm of rain a year.  The wettest parts are the Sierra de la Laguna at the southern tip and the mountains on the mainland side of the Gulf.
 
-## Identifying Points
+## Identifying Points {.application}
 
 You can get some information from a raster plot interactively by using the `click` function.  This **must** be done with an active raster plot.  After that, you use the `click()` function to grab what you need.  Your mouse will turn from an arrow into a cross hair and you can position it where you like and get information such as the coordinates (spatial) of the point and the value of the raster pixel at that location.
 
@@ -531,7 +531,7 @@ baja_map +
 
 Mexellent! 
 
-## Reprojecting Rasters 
+## Reprojecting Rasters {.theory .application}
 
 Our raster is in longitude and latitude, whose units are degrees.  Degrees are fine for saying *where* something is, but they are a poor ruler: a degree of longitude is about 111 km wide at the equator and shrinks to nothing at the poles.  If we want to measure distances or areas (e.g., how much land lies within an elevation band), we want a projected coordinate system whose units are meters.
 
@@ -592,7 +592,7 @@ ggplot() +
 The beetles land exactly where they should.  Notice also the slight tilt in the grid lines.  `ggplot` labels the graticule in degrees, but lines of longitude are not parallel in UTM, which is exactly what we would expect.
 
 
-## Applications
+## Applications {.application}
 
 OK, so now we can make and show a raster but what about doing some operations?  A raster is just a matrix *decorated* with more geospatial information.  This allows us to do normal `R` like data manipulations on the underlying data.  Let's put that to work on two research questions from the Baja California data.
 
