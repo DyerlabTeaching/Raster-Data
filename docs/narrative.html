@@ -144,8 +144,8 @@ window.Quarto = {
 </div>
 </div>
 <p>Rasters are representations of continuous, or semi-continuous, data. You can envision a raster just like an image. <mark>When me make a <code>leaflet()</code> map and how the tiles, each pixel is colored a particular value representing elevation, temperature, precipitation, habitat type, or whatever.</mark> This is exactly the same for rasters. The <em>key point</em> here is that each pixel represents some defined region on the earth and as such the raster itself is georeferenced. It has a coordinate reference system (CRS), boundaries, etc.</p>
-<section id="making-rasters-de-novo" class="level2">
-<h2 class="anchored" data-anchor-id="making-rasters-de-novo">Making Rasters <em>de novo</em></h2>
+<section id="making-rasters-de-novo" class="level2 application">
+<h2 class="application anchored" data-anchor-id="making-rasters-de-novo">Making Rasters <em>de novo</em></h2>
 <p>A raster is simply a matrix with rows and columns and each element has a value associated with it. You can create a raster <em>de novo</em> by making a matrix of data and filling it with values, then turning it into a raster.</p>
 <p>Here I make a raster with random numbers selected from the Poisson Distribution (fishy, I know) using the <code>rpois()</code> function. I then turn it into a matrix with 7 rows (and 7 columns).</p>
 <div class="cell">
@@ -154,20 +154,20 @@ window.Quarto = {
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>x</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2] [,3] [,4] [,5] [,6] [,7]
-[1,]   14   13   13   12    9   15   10
-[2,]   11    9   13   10    7   10   12
-[3,]   17   15   16   10   12   12   11
-[4,]   13   13   16   11    9   13   17
-[5,]   11   12   10    6   13   15   11
-[6,]    8   11   21   10    7   11   10
-[7,]   12   17   13   12   22   14    6</code></pre>
+[1,]   13   13   13   14   15    8   13
+[2,]   12   11   11   12   13   13   12
+[3,]   18   13   15   10   21    5   11
+[4,]   14   10    7   12   12   19   16
+[5,]    8    9   10   21   15   11   13
+[6,]   11   13   15   10   13   13   18
+[7,]   11    7    7    8   14   12   11</code></pre>
 </div>
 </div>
 <p>While we haven’t used matrices much thus far, it is a lot like a <code>data.frame</code> with respect to getting and setting values using numerical indices. For example, the value of the 3rd row and 5th column is:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>x[<span class="dv">3</span>,<span class="dv">5</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 12</code></pre>
+<pre><code>[1] 21</code></pre>
 </div>
 </div>
 <p>To convert this set of data, as a matrix, into a geospatially referenced <code>SpatRaster</code> object we pass it to the <code>rast()</code> function:</p>
@@ -182,8 +182,8 @@ extent      : 0, 7, 0, 7  (xmin, xmax, ymin, ymax)
 coord. ref. : 
 source(s)   : memory
 name        : lyr.1
-min value   :     6
-max value   :    22</code></pre>
+min value   :     5
+max value   :    21</code></pre>
 </div>
 </div>
 <p>Notice that when I plot it out, it does not show the data, but a summary of the data along with some key data about the contents, including:<br>
@@ -191,8 +191,8 @@ max value   :    22</code></pre>
 - The extent (the bounding box) and again since we do not have a CRS defined it just goes from <span class="math inline">\(0\)</span> to <span class="math inline">\(1\)</span>. - The <code>coord. ref.</code> (missing) - The source, which is <code>memory</code> if the values are held in R or the name of the file the values are read from.</p>
 <p>If these data represent something on the planet, we can assign the dimensions and <code>CRS</code> values to it and use it in our normal day-to-day operations.</p>
 </section>
-<section id="loading-rasters-from-files-or-urls" class="level2">
-<h2 class="anchored" data-anchor-id="loading-rasters-from-files-or-urls">Loading Rasters from Files or URLs</h2>
+<section id="loading-rasters-from-files-or-urls" class="level2 application">
+<h2 class="application anchored" data-anchor-id="loading-rasters-from-files-or-urls">Loading Rasters from Files or URLs</h2>
 <p>We can also grab a raster object from the filesystem or from some online repository by passing the link to the <code>rast()</code> function. Here is the elevation, in meters, of the region in which Mexico is found. To load it in, pass the url.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">"https://dyerlabteaching.github.io/CourseData/Spatial/alt_22.tif"</span></span>
@@ -230,8 +230,8 @@ max value   :   5469</code></pre>
 </div>
 </div>
 </section>
-<section id="cropping" class="level2">
-<h2 class="anchored" data-anchor-id="cropping">Cropping</h2>
+<section id="cropping" class="level2 application">
+<h2 class="application anchored" data-anchor-id="cropping">Cropping</h2>
 <p>One of the first things to do is to crop the data down to represent the size and extent of our study area. If we have over 10 million missing data points (the ocean) and most of Mexico in this raster above but we are only working with sites in Baja California (Norte y Sur), we would do well to excise (or crop) the raster to only include the area we are interested in working with.</p>
 <p>To do this, we need to figure out a bounding box (e.g., the minimum and maximum values of longitude and latitude that enclose our data). Let’s assume we are working with the Beetle Data from the <a href="https://dyerlabteaching.github.io/Spatial-Points/slides.html">Spatial Points Slides</a> and load in the Sex-biased dispersal data set and use those points as a starting estimate of the bounding box.</p>
 <div class="cell">
@@ -330,8 +330,8 @@ Warning
 </div>
 </div>
 </section>
-<section id="masking" class="level2">
-<h2 class="anchored" data-anchor-id="masking">Masking</h2>
+<section id="masking" class="level2 application">
+<h2 class="application anchored" data-anchor-id="masking">Masking</h2>
 <p>There is another way to grab just a portion of the raster—similar to cropping—which is to mask. A mask will not change the size of the raster but just put <code>NA</code> values in the cells that are not in the area of interest. So if we were to just mask above, it would never actually reduce the size of the raster, just add a lot more <code>NA</code> values. However, the setup is the same. The one difference is that <code>terra</code> functions want their vector data as a <code>terra</code> vector object (a <code>SpatVector</code>) rather than an <code>sf</code> object, so we convert the hull with <code>vect()</code><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>beetles <span class="sc">|&gt;</span></span>
@@ -367,8 +367,8 @@ max value   :   1875</code></pre>
 </div>
 </div>
 </section>
-<section id="plotting-with-ggplot" class="level2">
-<h2 class="anchored" data-anchor-id="plotting-with-ggplot">Plotting with GGPlot</h2>
+<section id="plotting-with-ggplot" class="level2 application">
+<h2 class="application anchored" data-anchor-id="plotting-with-ggplot">Plotting with GGPlot</h2>
 <p>As you may suspect, our old friend <code>ggplot</code> has some tricks up its sleeve for us. The main thing here is that <code>ggplot</code> requires a <code>data.frame</code> object and a raster is not a <code>data.frame</code> — Unless we turn it into one (hehehe). Remember from the <a href="https://dyerlabteaching.github.io/Data-Containers/narrative.html">lecture on <code>data.frame</code> objects</a> that we can coerce other data containers into a <code>data.frame</code> using the <code>as.data.frame()</code> function. The same works for a raster. If we pass <code>xy=TRUE</code> it takes each cell of the raster (and underlying matrix), makes a row from it, and includes the coordinates of the center of that cell as the <code>x</code> and <code>y</code> columns. By default, cells that are <code>NA</code> (the ocean) are dropped.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>alt <span class="sc">|&gt;</span></span>
@@ -594,8 +594,8 @@ max value   :   1875</code></pre>
 </section>
 </section>
 </section>
-<section id="plotting-with-tidyterra" class="level2">
-<h2 class="anchored" data-anchor-id="plotting-with-tidyterra">Plotting with <code>tidyterra</code></h2>
+<section id="plotting-with-tidyterra" class="level2 application">
+<h2 class="application anchored" data-anchor-id="plotting-with-tidyterra">Plotting with <code>tidyterra</code></h2>
 <p>Converting the raster into a <code>data.frame</code> works, and it is worth knowing how to do because it shows exactly what <code>ggplot</code> needs. It is, however, a bit clunky. We had to make a second copy of the data (<code>alt.df</code>), rename the columns by hand, and remember to add <code>coord_equal()</code>. The <code>tidyterra</code> library is a bridge between <code>terra</code> and the <code>tidyverse</code> that takes care of all of this for us.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>( tidyterra )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -729,8 +729,8 @@ max values  :      2263, 7424.54092</code></pre>
 <p>We will put <code>filter()</code> to work in the <em>Applications</em> section below.</p>
 </section>
 </section>
-<section id="downloading-rasters-with-geodata" class="level2">
-<h2 class="anchored" data-anchor-id="downloading-rasters-with-geodata">Downloading Rasters with <code>geodata</code></h2>
+<section id="downloading-rasters-with-geodata" class="level2 application">
+<h2 class="application anchored" data-anchor-id="downloading-rasters-with-geodata">Downloading Rasters with <code>geodata</code></h2>
 <p>So far, the only raster we have used is the elevation file from the course data site. For real projects, you will usually need some other variable (climate, land cover, soils) for your own study area, and finding, downloading, and unpacking those files by hand from each data provider gets old fast. The <code>geodata</code> library takes care of this for many of the most commonly used <em>global</em> data sets, downloading them straight into <code>SpatRaster</code> (or, for boundaries, <code>SpatVector</code>) objects.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>( geodata )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -926,8 +926,8 @@ max values  : 28.754168,   20.975, 88.148148, 786.332458,  42.5,  22.4, ...</cod
 <p>Most of the peninsula gets less than 250mm of rain a year. The wettest parts are the Sierra de la Laguna at the southern tip and the mountains on the mainland side of the Gulf.</p>
 </section>
 </section>
-<section id="identifying-points" class="level2">
-<h2 class="anchored" data-anchor-id="identifying-points">Identifying Points</h2>
+<section id="identifying-points" class="level2 application">
+<h2 class="application anchored" data-anchor-id="identifying-points">Identifying Points</h2>
 <p>You can get some information from a raster plot interactively by using the <code>click</code> function. This <strong>must</strong> be done with an active raster plot. After that, you use the <code>click()</code> function to grab what you need. Your mouse will turn from an arrow into a cross hair and you can position it where you like and get information such as the coordinates (spatial) of the point and the value of the raster pixel at that location.</p>
 <p>The <code>n=</code> argument sets how many points to collect (it defaults to 10); you can stop early by pressing <code>ESC</code>. If you set <code>id=TRUE</code> it will plot the number of the point onto the map so you can see where you had clicked. Since this is interactive, you will not see the process when you execute the code below, but it will look like this:</p>
 <div class="cell">
@@ -974,8 +974,8 @@ max values  : 28.754168,   20.975, 88.148148, 786.332458,  42.5,  22.4, ...</cod
 </div>
 <p>Mexellent!</p>
 </section>
-<section id="reprojecting-rasters" class="level2">
-<h2 class="anchored" data-anchor-id="reprojecting-rasters">Reprojecting Rasters</h2>
+<section id="reprojecting-rasters" class="level2 theory application">
+<h2 class="theory application anchored" data-anchor-id="reprojecting-rasters">Reprojecting Rasters</h2>
 <p>Our raster is in longitude and latitude, whose units are degrees. Degrees are fine for saying <em>where</em> something is, but they are a poor ruler: a degree of longitude is about 111 km wide at the equator and shrinks to nothing at the poles. If we want to measure distances or areas (e.g., how much land lies within an elevation band), we want a projected coordinate system whose units are meters.</p>
 <p>Just like points, we can reproject the entire raster using the <code>project()</code> function. Here I am going to project the raster into UTM Zone 12N, a common projection for this part of <a href="https://epsg.io/6367">Mexico from epsg.io</a>.</p>
 <p>The <code>terra</code> library understands EPSG codes, so all we need is the code for that projection (6367) written as a character string.</p>
@@ -1046,8 +1046,8 @@ max values  : 28.754168,   20.975, 88.148148, 786.332458,  42.5,  22.4, ...</cod
 </div>
 <p>The beetles land exactly where they should. Notice also the slight tilt in the grid lines. <code>ggplot</code> labels the graticule in degrees, but lines of longitude are not parallel in UTM, which is exactly what we would expect.</p>
 </section>
-<section id="applications" class="level2">
-<h2 class="anchored" data-anchor-id="applications">Applications</h2>
+<section id="applications" class="level2 application">
+<h2 class="application anchored" data-anchor-id="applications">Applications</h2>
 <p>OK, so now we can make and show a raster but what about doing some operations? A raster is just a matrix <em>decorated</em> with more geospatial information. This allows us to do normal <code>R</code> like data manipulations on the underlying data. Let’s put that to work on two research questions from the Baja California data.</p>
 <section id="research-question-1-the-elevation-envelope-of-araptus-attenuatus" class="level3">
 <h3 class="anchored" data-anchor-id="research-question-1-the-elevation-envelope-of-araptus-attenuatus">Research Question 1: The Elevation Envelope of <em>Araptus attenuatus</em></h3>
